@@ -1,0 +1,7 @@
+/build
+/xtream/build
+/data/build
+/*/build
+/simplesearchview/build
+.gradle
+error*.log
