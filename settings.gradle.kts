@@ -1,3 +1,4 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
 
@@ -54,14 +55,12 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Fire Tv"
-
+rootProject.name = "FireTv"
 include(":app")
 include(":features:ui")
 include(":simplesearchview")
 include(":data")
 include(":xtream")
-
 
 include(":shared")
 project(":shared").projectDir = File("C:\\src\\Synced\\WalhallaUI\\shared")

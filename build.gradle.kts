@@ -10,3 +10,6 @@ plugins {
 
     //id("kotlin-parcelize") apply false
 }
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
+}
