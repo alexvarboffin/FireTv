@@ -18,7 +18,7 @@ class AllChannelPresenter  //    protected final Handler mThread;
 //        this.repo = LocalDatabaseRepo.getStoreInfoDatabase(context, handler);
 //        this.executor = Executors.newSingleThreadExecutor();
 //    }
-    (handler: Handler?, context: Context?) : BasePresenter(handler, context) {
+    (handler: Handler, context: Context) : BasePresenter(handler, context) {
     fun getAllChannels(sortOption: Int, callback: RepoCallback<MutableList<Channel?>?>) {
         executeInBackground(Runnable {
             try {
@@ -72,9 +72,9 @@ class AllChannelPresenter  //    protected final Handler mThread;
                 val mm = db_repo.isFavorite(channel._id)
                 d(mm.toString())
 
-                postToMainThread(Runnable {
+                postToMainThread {
                     callback.successResult(mm == 1)
-                })
+                }
             } catch (e: Exception) {
                 postToMainThread(Runnable {
                     callback.errorResult(e.message!!)
@@ -85,7 +85,7 @@ class AllChannelPresenter  //    protected final Handler mThread;
     }
 
     fun addFavorite(channel: Channel, callback: RepoCallback<Int?>) {
-        executeInBackground(Runnable {
+        executeInBackground {
             try {
                 val m = db_repo.addFavorite(channel)
                 postToMainThread(Runnable {
@@ -94,7 +94,7 @@ class AllChannelPresenter  //    protected final Handler mThread;
             } catch (e: Exception) {
                 handleException(e)
             }
-        })
+        }
     }
 
     fun deleteFavorite(channel: Channel) {
@@ -108,16 +108,16 @@ class AllChannelPresenter  //    protected final Handler mThread;
     }
 
     fun getAllFavorite(callback: RepoCallback<MutableList<Channel?>?>) {
-        executeInBackground(Runnable {
+        executeInBackground {
             try {
                 val m = db_repo.getFavorite(-1)
-                postToMainThread(Runnable {
+                postToMainThread {
                     callback.successResult(m)
-                })
+                }
             } catch (e: Exception) {
                 handleException(e)
             }
-        })
+        }
     }
 
     fun searchChannel(categoryName: String, callback: RepoCallback<MutableList<Channel?>?>) {

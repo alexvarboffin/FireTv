@@ -20,7 +20,7 @@ import java.util.Locale
 import java.util.TreeSet
 import kotlin.math.min
 
-internal class LocalDatabaseRepo private constructor(context: Context) {
+class LocalDatabaseRepo private constructor(context: Context) {
     private val db: FavoriteDatabase
     private val context: Context?
 

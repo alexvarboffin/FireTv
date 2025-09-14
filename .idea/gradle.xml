@@ -9,14 +9,15 @@
         <option name="gradleJvm" value="17" />
         <option name="modules">
           <set>
-            <option value="C:/src/Synced/WalhallaUI/features/ui" />
-            <option value="C:/src/Synced/WalhallaUI/shared" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/features" />
+            <option value="$PROJECT_DIR$/mylibrary" />
             <option value="$PROJECT_DIR$/simplesearchview" />
             <option value="$PROJECT_DIR$/xtream" />
+            <option value="$PROJECT_DIR$/../WalhallaUI/features/ui" />
+            <option value="$PROJECT_DIR$/../WalhallaUI/shared" />
           </set>
         </option>
       </GradleProjectSettings>

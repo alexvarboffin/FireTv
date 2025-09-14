@@ -28,6 +28,7 @@ cardview = "1.0.0"
 coilCompose = "3.3.0"
 coilNetworkKtor2 = "3.0.4"
 coilNetworkKtor3 = "3.0.4"
+compiler = "5.0.5"
 compose-bom = "2025.09.00"
 compose-compiler = "1.5.8"
 compose-multiplatform = "1.7.0"
@@ -68,7 +69,10 @@ ktorClientOkhttp = "3.3.0"
 ktorClientSerialization = "3.3.0"
 ktorHttp = "3.3.0"
 legacySupportV4 = "1.0.0"
-lifecycle = "2.9.3"
+
+#lifecycle = "2.9.3"
+lifecycle = "2.9.0"
+
 logback = "1.5.16"
 lottie = "6.6.7"
 materialIconsExtendedAndroid = "1.7.8"
@@ -133,6 +137,7 @@ androidx-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls
 androidx-media3-extractor = { module = "androidx.media3:media3-extractor", version.ref = "media3Exoplayer" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
 androidx-mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
+compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 dropbox-core-sdk = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropboxCoreSdk" }
 flexbox = { module = "com.google.android:flexbox", version.ref = "flexbox" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }

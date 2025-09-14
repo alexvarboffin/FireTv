@@ -137,8 +137,8 @@ dependencies {
 //    implementation 'com.google.firebase:firebase-database:21.0.0'
 
     //images
-    implementation("com.github.bumptech.glide:glide:5.0.5")
-    annotationProcessor("com.github.bumptech.glide:compiler:5.0.5")
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
     implementation("com.github.bumptech.glide:okhttp3-integration:5.0.5") {
         exclude(group = "glide-parent")
     }

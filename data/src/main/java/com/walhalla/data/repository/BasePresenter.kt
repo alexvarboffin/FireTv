@@ -1,40 +1,35 @@
-package com.walhalla.data.repository;
+package com.walhalla.data.repository
 
-import android.content.Context;
-import android.os.Handler;
+import android.content.Context
+import android.os.Handler
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-public abstract class BasePresenter {
-
-    protected final Handler handler;
-    protected final ExecutorService executor;
-    protected final LocalDatabaseRepo db_repo;
-    protected final Context context;
+abstract class BasePresenter(protected val handler: Handler, @JvmField protected val context: Context) {
+    protected val executor: ExecutorService
+    @JvmField
+    protected val db_repo: LocalDatabaseRepo
 
 
-    public BasePresenter(Handler handler, Context context) {
-        this.handler = handler;
-        this.db_repo = LocalDatabaseRepo.getStoreInfoDatabase(context);
-        this.executor = Executors.newSingleThreadExecutor();
-        this.context = context;
+    init {
+        this.db_repo = LocalDatabaseRepo.getStoreInfoDatabase(context)
+        this.executor = Executors.newSingleThreadExecutor()
     }
 
     // Метод для выполнения любой задачи в фоновом потоке
-    protected void executeInBackground(Runnable task) {
-        executor.execute(task);
+    protected fun executeInBackground(task: Runnable?) {
+        executor.execute(task)
     }
 
     // Метод для выполнения задачи в основном потоке
-    protected void postToMainThread(Runnable task) {
-        handler.post(task);
+    protected fun postToMainThread(task: Runnable) {
+        handler.post(task)
     }
 
     // Закрываем Executor, когда он больше не нужен
-    public void shutdown() {
-        if (!executor.isShutdown()) {
-            executor.shutdown();
+    fun shutdown() {
+        if (!executor.isShutdown) {
+            executor.shutdown()
         }
     }
 }
