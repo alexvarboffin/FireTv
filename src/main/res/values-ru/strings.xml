@@ -1,0 +1,143 @@
+<resources>
+
+
+    <string name="menu_home">Главная</string>
+<!--    <string name="unlock_premium">Разблокировать Премиум</string>-->
+    <string name="channels">Каналы</string>
+    <string name="profile">Избранное</string>
+    <string name="settings">Настройки</string>
+    <string name="about">О программе</string>
+    <string name="rate_this_app">Оценить приложение</string>
+    <string name="share_this_app">Поделиться приложением</string>
+
+    <!-- SETTING PAGE -->
+    <string name="version_label">Текущая версия</string>
+    <string name="search_hint">Какие каналы вы хотите?</string>
+    <string name="dialog_option_cancel">Отмена</string>
+    <string name="msg_clearing_cache">Очистить кешВы уверены, что хотите очистить кеш?</string>
+    <string name="msg_please_wait">Пожалуйста, подождите…</string>
+    <string name="msg_cache_cleared">Кеш был очищен!</string>
+    <string name="dialog_option_yes">Да</string>
+    <string name="msg_clear_cache">Очистить кеш</string>
+    <string name="display_channel">Показать каналы</string>
+    <string name="wallpaper_columes">2 столбца</string>
+    <string name="msg_about_version">Версия</string>
+    <string name="storage">Место сохранения обоев</string>
+    <string name="storagelocation">Внутренняя память/</string>
+    <string name="clear_cache">Очистить кеш</string>
+    <string name="label_cache">Удалите кеш изображений из вашей памяти, созданный после загрузки миниатюр каналов. В настоящее время:</string>
+    <string name="title_notification">Push-уведомления</string>
+    <string name="label_notification">Хотите получать уведомления о каналах от</string>
+    <string name="policy_privacy">Политика конфиденциальности</string>
+    <string name="views">Просмотры</string>
+    <string name="downloads">Загрузки</string>
+    <string name="sets">Наборы</string>
+    <string name="size">Размер</string>
+    <string name="resolution">Разрешение</string>
+
+    <string name="whoops">Упс</string>
+    <string name="no_wallpaper_found">Каналы не найдены!\n Пожалуйста, попробуйте позже</string>
+    <string name="action_search">Поиск</string>
+    <string name="add_fav">Добавлено в избранное</string>
+    <string name="remove_fav">Удалить из избранного</string>
+    <string name="no_favoite">Нет избранного</string>
+    <string name="no_lines_found">Строк не обнаружено</string>
+
+
+
+    <string name="dialog_sort_title">Выберите сортировку</string>
+    <string name="sort_by_name_asc">По имени (по возрастанию Aa-Az)</string>
+    <string name="sort_by_name_desc">По имени (по убыванию Zz-Aa)</string>
+    <string name="sort_by_id_asc">По ID (по возрастанию)</string>
+    <string name="sort_by_id_desc">По ID (по убыванию)</string>
+    <string name="media_player_title">Выберите медиаплеер</string>
+
+    <!-- Заголовок диалога -->
+    <string name="dialog_activity_mode_title">Событие при клике на канал</string>
+    <!-- Опции для выбора -->
+    <string name="option_details_activity">Перейти к Деталям канала</string>
+    <string name="option_player_activity">Перейти к Проигрывателю канала</string>
+
+
+    <string name="playlist_management">Управление плейлистами</string>
+    <string name="playlist_name">Название плейлиста</string>
+    <string name="playlist_link">Ссылка на плейлист</string>
+    <string name="local_storage">Локальное хранилище</string>
+    <string name="subscribe">Подписаться</string>
+    <string name="parse_clipboard">Распознать буфер обмена</string>
+    <string name="backup">Резервное копирование</string>
+    <string name="restore">Восстановить</string>
+    <string name="error_playlist_name">Пожалуйста, введите название плейлиста</string>
+    <string name="error_playlist_link">Пожалуйста, введите ссылку на плейлист</string>
+    <string name="error_download_failed">Не удалось загрузить плейлист</string>
+    <string name="download_successful">Плейлист успешно загружен</string>
+
+    <string name="change_ijk">Переключиться на Ijkplayer</string>
+    <string name="change_system_player">Переключиться на android.media.MediaPlayer</string>
+    <string name="change_exo">Переключиться на Exoplayer</string>
+    <string name="change_aliyun">Переключиться на Aliyunplayer</string>
+
+    <string name="tab_playlists">Плейлист</string>
+    <string name="tab_channel">Канал</string>
+    <string name="tab_category">Категория</string>
+    <string name="tab_favorites">Избранное</string>
+
+    <string name="playlist_selectFile">Выбрать файл</string>
+    <string name="edit_playlist">Редактировать плейлист</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+
+    <string name="save_playlist_label">Сохранить</string>
+<!--    <string name="channels_format">Каналы: %1$d</string>-->
+    <string name="clipboard_contains_no_text">Буфер обмена не содержит текста.</string>
+    <string name="you_can_switch_your_app_to_dark_and_light_mode">Вы можете переключить приложение на тёмную и светлую тему</string>
+
+
+    <string name="channels_format">Каналов: %1$d</string>
+    <string name="added_on">Добавлен: %1$s</string>
+    <string name="updated_on">Обновлен: %1$s</string>
+    <string name="empty_list_message">Пока еще не было добавлено ни одного плейлиста</string>
+    <string name="frequentlyAskedQuestions">Часто задаваемые вопросы</string>
+
+    <string name="playlist_name_label">Название*</string>
+    <string name="playlist_name_hint">chs.m3u</string>
+    <string name="file_name_label">Имя файла при загрузке</string>
+    <string name="file_name_hint">chs.m3u</string>
+    <string name="channel_count_label">Количество каналов</string>
+    <string name="auto_update_label">Автообновление</string>
+    <string name="export_playlist_label">Экспортировать плейлист (m3u)</string>
+
+    <string name="error_player">Произошла ошибка при инициализации YouTubePlayer (%1$s)</string>
+    <string name="msg_failed">Не удалось!</string>
+    <string name="option_retry">Повторить</string>
+    <string name="option_no">Нет</string>
+
+    <string name="type_grid_layout">Сетка</string>
+    <string name="type_list_layout">Список</string>
+
+    <string name="tab_tutorial">Руководство</string>
+    <string name="tab_faqs">Часто задаваемые вопросы</string>
+
+    <string name="how_to_add_playlist">Как добавить плейлист</string>
+    <string name="tutorial">Руководство</string>
+    <string name="step1">1. Найдите «Бесплатный популярный IPTV плейлист» в любом поисковике.</string>
+    <string name="step2">2. Скопируйте ссылку на плейлист «.m3u» или скачайте файл.</string>
+    <string name="step3">3. Вернитесь в приложение. Нажмите кнопку «Добавить плейлист», затем выберите «Импортировать URL плейлиста» и вставьте ссылку.</string>
+    <string name="search_button">Искать «Бесплатный популярный IPTV плейлист»</string>
+
+    <string name="sample_playlist_url">Пример URL плейлиста</string>
+    <string name="playlist_uk">iptv-org | Великобритания</string>
+
+    <string name="playlist_country">iptv-org | Группировка по странам</string>
+    <string name="playlist_category">iptv-org | Группировка по категориям</string>
+
+    <!-- FAQ Вопросы -->
+    <string name="faq_question_1">Ищете плейлист? Вот наше предложение</string>
+    <string name="faq_question_2">Как добавить IPTV плейлист</string>
+    <string name="faq_question_3">Почему приложение не может воспроизвести мой плейлист или канал?</string>
+    <string name="faq_question_4">Редактировать, удалить плейлист или сделать его приватным</string>
+    <string name="splash_subtitle">IPTV плеер</string>
+    <string name="sort_channel">Группировать каналы</string>
+    <string name="import_date_label">Дата импорта</string>
+    <string name="dialog_title_display_channels">Отображение списка каналов</string>
+
+</resources>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="tab_titles_xtream">
+        <item>@string/tab_xtream_live</item>
+        <item>@string/tab_xtream_vod</item>
+        <item>@string/tab_xtream_series</item>
+<!--        <item>@string/tab_xtream_favorites</item>-->
+    </string-array>
+
+    <string-array name="tab_titles_main">
+        <item>@string/tab_playlists</item>
+        <item>@string/tab_channel</item>
+        <item>@string/tab_category</item>
+        <item>@string/tab_favorites</item>
+    </string-array>
+
+    <string-array name="tab_titles_playlist">
+        <item>@string/tab_channel</item>
+        <item>@string/tab_category</item>
+        <item>@string/tab_favorites</item>
+    </string-array>
+
+    <string-array name="category_colors">
+        <item>#FF0000</item> <!-- CNN -->
+        <item>#1A1A1A</item> <!-- BBC -->
+        <item>#0066CC</item> <!-- HBO -->
+        <item>#D7141A</item> <!-- ESPN -->
+        <item>#FFCC00</item> <!-- National Geographic -->
+        <item>#0056A4</item> <!-- Discovery Channel -->
+        <item>#E50914</item> <!-- Netflix -->
+        <item>#FC9A24</item> <!-- Nickelodeon -->
+        <item>#6A1B9A</item> <!-- Cartoon Network -->
+        <item>#0A74DA</item> <!-- NBC -->
+        <item>#FFA500</item> <!-- Fox News -->
+        <item>#008000</item> <!-- Syfy -->
+        <item>#F4511E</item> <!-- HGTV -->
+        <item>#0078D4</item> <!-- Sky News -->
+        <item>#00A4E4</item> <!-- CBS -->
+        <item>#0072C6</item> <!-- ABC -->
+        <item>#FF0000</item> <!-- YouTube -->
+        <item>#D81B60</item> <!-- Univision -->
+        <item>#00BFFF</item> <!-- MSNBC -->
+        <item>#000080</item> <!-- AMC -->
+        <item>#FFD700</item> <!-- History Channel -->
+        <item>#FF69B4</item> <!-- E! -->
+        <item>#32CD32</item> <!-- MTV -->
+        <item>#4B0082</item> <!-- TLC -->
+    </string-array>
+
+    <string-array name="faq_questions">
+        <item>@string/faq_question_1</item>
+<!--        <item>@string/faq_question_2</item>-->
+        <item>@string/faq_question_3</item>
+<!--        <item>@string/faq_question_4</item>-->
+    </string-array>
+
+    <string-array name="playlist_types">
+        <item>M3U</item>
+<!--        <item>EPG</item>-->
+        <item>Xtream</item>
+
+<!--        <item>XSPF</item>-->
+<!--        <item>PLS</item>-->
+<!--        <item>ASX</item>-->
+    </string-array>
+
+    <string-array name="tab_titles_xtream_serial">
+        <item>@string/tab_stream_info</item>
+        <item>@string/tab_stream_seasons</item>
+        <item>@string/tab_stream_episodes</item>
+    </string-array>
+
+
+    <integer-array name="mm">
+        <item>@drawable/edittext_background</item>
+        <item>@drawable/ic_actions_search</item>
+        <item>@drawable/ic_actions_settings</item>
+        <item>@drawable/ic_action_action</item>
+        <item>@drawable/ic_add_black_24dp</item>
+        <item>@drawable/ic_baseline_arrow</item>
+        <item>@drawable/ic_baseline_arrow_white</item>
+        <item>@drawable/ic_copied_icon</item>
+
+        <item>@drawable/ic_copy_02</item>
+
+        <item>@drawable/ic_copy_03</item>
+        <item>@drawable/ic_crown</item>
+        <item>@drawable/ic_delete</item>
+
+        <item>@drawable/ic_download</item>
+
+        <item>@drawable/ic_faq</item>
+        <item>@drawable/ic_favorite_border</item>
+        <item>@drawable/ic_favorite_fill_green</item>
+        <item>@drawable/ic_ic_actions_star</item>
+        <item>@drawable/ic_ic_contact_mail</item>
+        <item>@drawable/ic_info</item>
+        <item>@drawable/ic_information</item>
+        <item>@drawable/ic_instagram_outlined</item>
+
+        <item>@drawable/ic_list_arrow_down</item>
+        <item>@drawable/ic_nightmode</item>
+        <item>@drawable/ic_notify</item>
+        <item>@drawable/ic_play_icon</item>
+        <item>@drawable/ic_privacy</item>
+        <item>@drawable/ic_share</item>
+        <item>@drawable/ic_tv</item>
+        <item>@drawable/ic_tv_icon</item>
+        <item>@drawable/ic_verified_protection</item>
+        <item>@drawable/round_bg</item>
+        <item>@drawable/selected</item>
+        <item>@drawable/side_nav_bar</item>
+        <item>@drawable/spinner_background</item>
+        <item>@drawable/tab_selector</item>
+        <item>@drawable/unselected</item>
+    </integer-array>
+
+<!--    <integer-array name="channel_icons">-->
+<!--        <item>@drawable/ic_animation</item>-->
+<!--        <item>@drawable/ic_auto</item>-->
+<!--        <item>@drawable/ic_business</item>-->
+<!--        <item>@drawable/ic_classic</item>-->
+<!--        <item>@drawable/ic_comedy</item>-->
+<!--        <item>@drawable/ic_cooking</item>-->
+<!--        <item>@drawable/ic_culture</item>-->
+<!--        <item>@drawable/ic_documentary</item>-->
+<!--        <item>@drawable/ic_education</item>-->
+<!--        <item>@drawable/ic_entertainment</item>-->
+<!--        <item>@drawable/ic_family</item>-->
+<!--        <item>@drawable/ic_general</item>-->
+<!--        <item>@drawable/ic_kids</item>-->
+<!--        <item>@drawable/ic_legislative</item>-->
+<!--        <item>@drawable/ic_lifestyle</item>-->
+<!--        <item>@drawable/ic_movies</item>-->
+<!--        <item>@drawable/ic_music</item>-->
+<!--        <item>@drawable/ic_news</item>-->
+<!--        <item>@drawable/ic_outdoor</item>-->
+<!--        <item>@drawable/ic_relax</item>-->
+<!--        <item>@drawable/ic_religious</item>-->
+<!--        <item>@drawable/ic_science</item>-->
+<!--        <item>@drawable/ic_series</item>-->
+<!--        <item>@drawable/ic_shop</item>-->
+<!--        <item>@drawable/ic_sports</item>-->
+<!--        <item>@drawable/ic_travel</item>-->
+<!--        <item>@drawable/ic_undefined</item>-->
+<!--        <item>@drawable/ic_weather</item>-->
+<!--    </integer-array>-->
+
+<!--    Live Streams-->
+
+    <string name="tab_xtream_live">Live</string>
+    <string name="tab_xtream_vod">Movies</string>
+    <string name="tab_xtream_series">Series</string>
+    <string name="tab_stream_info">Info</string>
+    <string name="tab_stream_seasons">Seasons</string>
+    <string name="tab_stream_episodes">Episodes</string>
+
+</resources>

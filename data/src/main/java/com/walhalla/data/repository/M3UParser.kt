@@ -1,44 +1,42 @@
-package com.walhalla.data.repository;
+package com.walhalla.data.repository
 
-import android.content.Context;
-import android.text.TextUtils;
+import android.content.Context
+import android.text.TextUtils
+import com.walhalla.data.model.Channel
+import com.walhalla.ui.BuildConfig
+import com.walhalla.ui.DLog.d
+import java.util.Arrays
+import java.util.TreeSet
+import java.util.regex.Pattern
 
-import com.walhalla.data.model.Channel;
-
-
-import com.walhalla.ui.BuildConfig;
-import com.walhalla.ui.DLog;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-
-public class M3UParser {
-
+object M3UParser {
     //http-user-agent OR http-referrer without quotes ""
-    static final String extVlCoptHttpUserAgent = "http-user-agent=([^\"]*)";
-    static final String extVlCoptHttpReferrer = "http-referrer=([^\"]*)";
+    const val extVlCoptHttpUserAgent: String = "http-user-agent=([^\"]*)"
+    const val extVlCoptHttpReferrer: String = "http-referrer=([^\"]*)"
 
-    static final Pattern extVlCoptHttpUserPattern = Pattern.compile(extVlCoptHttpUserAgent);
-    static final Pattern extVlCoptHttpReferrerPattern = Pattern.compile(extVlCoptHttpReferrer);
-
-
-    static final String regex = "(?:^|\\n)#EXTINF:([^,]*),([^\n]*)[\\r\\n]*(#EXTVLCOPT:[^\n]*[\\r\\n]*)?(.*)";
-
-    private static TreeSet<String> categorySet;
-
-
-    public static List<Channel> parseM3U(Context context, String text) {
-
-        categorySet = new TreeSet<>();
+    val extVlCoptHttpUserPattern: Pattern = Pattern.compile(
+        extVlCoptHttpUserAgent
+    )
+    val extVlCoptHttpReferrerPattern: Pattern = Pattern.compile(
+        extVlCoptHttpReferrer
+    )
 
 
-        List<Channel> result = new ArrayList<>();
-//        final String reg2 =
+    const val regex: String =
+        "(?:^|\\n)#EXTINF:([^,]*),([^\n]*)[\\r\\n]*(#EXTVLCOPT:[^\n]*[\\r\\n]*)?(.*)"
+
+    private var categorySet: TreeSet<String> = TreeSet()
+
+
+    @JvmStatic
+    fun parseM3U(context: Context, text: String): List<Channel> {
+        categorySet = TreeSet()
+
+
+        val result: MutableList<Channel> = ArrayList()
+
+
+        //        final String reg2 =
 //                "(?:\\s+tvg-id=\"([^\"]*)\")?" +
 //                "(?:\\s+tvg-name=\"([^\"]*)\")?" +
 //                "(?:\\s+tvg-logo=\"([^\"]*)\")?" +
@@ -46,36 +44,36 @@ public class M3UParser {
 
 
 // Регулярные выражения для каждого атрибута
-        final String idRegex = "tvg-id=\"([^\"]*)\"";
-        final String nameRegex = "tvg-name=\"([^\"]*)\"";
-        final String logoRegex = "tvg-logo=\"([^\"]*)\"";
-        final String groupRegex = "group-title=\"([^\"]*)\"";
-        final String userAgentRegex = "user-agent=\"([^\"]*)\"";
+        val idRegex = "tvg-id=\"([^\"]*)\""
+        val nameRegex = "tvg-name=\"([^\"]*)\""
+        val logoRegex = "tvg-logo=\"([^\"]*)\""
+        val groupRegex = "group-title=\"([^\"]*)\""
+        val userAgentRegex = "user-agent=\"([^\"]*)\""
 
         //+++
-        final String _tvgLanguage = "tvg-language=\"([^\"]*)\"";
-        final String _tvgCountry = "tvg-country=\"([^\"]*)\"";
-        final String _tvgUrl = "tvg-url=\"([^\"]*)\"";
+        val _tvgLanguage = "tvg-language=\"([^\"]*)\""
+        val _tvgCountry = "tvg-country=\"([^\"]*)\""
+        val _tvgUrl = "tvg-url=\"([^\"]*)\""
 
-        final Pattern tvgLanguagePattern = Pattern.compile(_tvgLanguage);
-        final Pattern tvgCountryPattern = Pattern.compile(_tvgCountry);
-        final Pattern tvgUrlPattern = Pattern.compile(_tvgUrl);
+        val tvgLanguagePattern = Pattern.compile(_tvgLanguage)
+        val tvgCountryPattern = Pattern.compile(_tvgCountry)
+        val tvgUrlPattern = Pattern.compile(_tvgUrl)
 
-// Создаем паттерны
-        final Pattern idPattern = Pattern.compile(idRegex);
-        final Pattern namePattern = Pattern.compile(nameRegex);
-        final Pattern logoPattern = Pattern.compile(logoRegex);
-        final Pattern groupPattern = Pattern.compile(groupRegex);
-        final Pattern userAgentPattern = Pattern.compile(userAgentRegex);
+        // Создаем паттерны
+        val idPattern = Pattern.compile(idRegex)
+        val namePattern = Pattern.compile(nameRegex)
+        val logoPattern = Pattern.compile(logoRegex)
+        val groupPattern = Pattern.compile(groupRegex)
+        val userAgentPattern = Pattern.compile(userAgentRegex)
 
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(text);
+        val pattern = Pattern.compile(regex, Pattern.MULTILINE)
+        val matcher = pattern.matcher(text)
 
-        int k = 0;
+        var k = 0
         while (matcher.find()) {
-            ++k;
+            ++k
 
-//            System.out.println("Full match: " + matcher.group(0));
+            //            System.out.println("Full match: " + matcher.group(0));
 //
 //            for (int i = 1; i <= matcher.groupCount(); i++) {
 //                System.out.println("Group " + i + ": " + matcher.group(i));
@@ -86,156 +84,149 @@ public class M3UParser {
 //            Group 3: http://stream.lytv.net.cn/2/sd/live.m3u8
 
             //String _link_ = matcher.group(3);
-            String _link_ = matcher.group(4);
-            String _name_ = matcher.group(2);
-            String _extvlcopt_ = matcher.group(3);
+            val _link_ = matcher.group(4)
+            val _name_ = matcher.group(2)
+            val _extvlcopt_ = matcher.group(3)
 
 
-            Channel channel = new Channel();
-            channel.setType("url");
-            channel.setLnk(_link_);
+            val channel = Channel()
+            channel.type = "url"
+            channel.lnk = _link_
 
-            String name = clearTitle(_name_);
-            String description = _name_;
+            val name = clearTitle(_name_)
+            var description = _name_
 
-            final String EXTVLCOPT = matcher.group(3);
+            val EXTVLCOPT = matcher.group(3)
             if (EXTVLCOPT != null) {
-                final String extUserAgent = extractValue(EXTVLCOPT, extVlCoptHttpUserPattern);
-                final String extReferer = extractValue(EXTVLCOPT, extVlCoptHttpReferrerPattern);
+                val extUserAgent = extractValue(EXTVLCOPT, extVlCoptHttpUserPattern)
+                val extReferer = extractValue(EXTVLCOPT, extVlCoptHttpReferrerPattern)
 
                 //DLog.d(extReferer + "@@@@" + extUserAgent);
-
-                channel.extUserAgent = extUserAgent;
-                channel.extReferer = extReferer;
+                channel.extUserAgent = extUserAgent
+                channel.extReferer = extReferer
             }
-            String line = matcher.group(1);
+            val line = matcher.group(1)
             if (line != null) {
-                String tvGid = extractValue(line, idPattern);
-                String tvgName = extractValue(line, namePattern);
-                String tvgLogo = extractValue(line, logoPattern);
-                String groupTitle = extractValue(line, groupPattern);
-                String userAgent = extractValue(line, userAgentPattern);
+                val tvGid = extractValue(line, idPattern)
+                val tvgName = extractValue(line, namePattern)
+                val tvgLogo = extractValue(line, logoPattern)
+                var groupTitle = extractValue(line, groupPattern)
+                val userAgent = extractValue(line, userAgentPattern)
 
 
                 //
-                final String tvgLanguage = extractValue(line, tvgLanguagePattern);
-                final String tvgCountry = extractValue(line, tvgCountryPattern);
-                final String tvgUrl = extractValue(line, tvgUrlPattern);
-                //
+                val tvgLanguage = extractValue(line, tvgLanguagePattern)
+                val tvgCountry = extractValue(line, tvgCountryPattern)
+                val tvgUrl = extractValue(line, tvgUrlPattern)
 
-                groupTitle = clearGroup(groupTitle);
+                //
+                groupTitle = clearGroup(groupTitle)
 
                 if (groupTitle.contains(";")) {
-                    String[] m = groupTitle.split(";");
+                    val m = groupTitle.split(";".toRegex()).dropLastWhile { it.isEmpty() }
+                        .toTypedArray()
                     //@@
-                    categorySet.addAll(Arrays.asList(m));
+                    categorySet.addAll(listOf(*m))
                 } else {
                     //@@
-                    categorySet.add(groupTitle);
+                    categorySet.add(groupTitle)
                 }
-
-                if (BuildConfig.DEBUG) {
+                description =""
+                description = if (BuildConfig.DEBUG) {
                     //if (!TextUtils.isEmpty(tvgName)) {
-                    description = description + " :: "
+                    (description + " :: "
                             + tvgName
                             + "::" + _extvlcopt_
                             + "::" + tvgLanguage
                             + "::" + tvgCountry
-                            + "::" + tvgUrl
-
-
-                    ;
+                            + "::" + tvgUrl)
                     //}
                 } else {
-                    description = description
-                            + (TextUtils.isEmpty(tvgName) ? "" : " :: " + tvgName)
-                            + (TextUtils.isEmpty(_extvlcopt_) ? "" : " :: " + _extvlcopt_);
+                    (description
+                            + (if (TextUtils.isEmpty(tvgName)) "" else " :: $tvgName")
+                            + (if (TextUtils.isEmpty(_extvlcopt_)) "" else " :: $_extvlcopt_"))
                 }
 
-                channel.setUa(userAgent);
-                channel.setName(name);
-                channel.setTvgId(tvGid);//empty or not
-                channel.setDesc(description);
-                channel.setCover(tvgLogo);
+                channel.ua = userAgent
+                channel.name = name
+                channel.tvgId = tvGid //empty or not
+                channel.desc = description
+                channel.cover = tvgLogo
                 //@@@channel.country = groupTitle;
-                channel.setCat(groupTitle);
+                channel.cat = groupTitle
+
+
                 //@@@channel.lang = lang;
+                channel.tvgLanguage = tvgLanguage
+                channel.tvgCountry = tvgCountry
+                channel.tvgUrl = tvgUrl
 
-
-                channel.tvgLanguage = tvgLanguage;
-                channel.tvgCountry = tvgCountry;
-                channel.tvgUrl = tvgUrl;
-
-//                DLog.d("-----------------------------------");
+                //                DLog.d("-----------------------------------");
 //                DLog.d(line);
-////                DLog.d("tvg-id: " + (tvGid != null ? tvGid : "Not present"));
-////                DLog.d("tvg-name: " + (tvgName != null ? tvgName : "Not present"));
-////                DLog.d("tvg-logo: " + (tvgLogo != null ? tvgLogo : "Not present"));
-////                DLog.d("group-title: " + (groupTitle != null ? groupTitle : "Not present"));
+                /*               d("tvg-id: " + (tvGid != null ? tvGid : "Not present"));
+                * /                DLog.d("tvg-name: "+(tvgName != null ? tvgName : "Not present"));
+                * /                DLog.d("tvg-logo: "+(tvgLogo != null ? tvgLogo : "Not present"));
+                * /                DLog.d("group-title: "+(groupTitle != null ? groupTitle : "Not present")); */
 
 //                DLog.d("-----------------------------------");
-
                 if (BuildConfig.DEBUG) {
-                    if (TextUtils.isEmpty(channel.getName())) {
-                        DLog.d("=NAME=> [" + tvGid + "] @@@@" + channel.getLnk() + " " + name);
-                    } else if (TextUtils.isEmpty(channel.getTvgId())) {
+                    if (TextUtils.isEmpty(channel.name)) {
+                        d("=NAME=> [" + tvGid + "] @@@@" + channel.lnk + " " + name)
+                    } else if (TextUtils.isEmpty(channel.tvgId)) {
                         //DLog.d("=TV-GID=> [" + tvGid + "] @@@@" + channel.getLnk() + " " + name);
                     }
                 }
 
-                result.add(channel);
+                result.add(channel)
             }
-
-
         }
 
         if (BuildConfig.DEBUG) {
-
-            String substring = "#EXTINF:";
-            int occurrences = countOccurrences(text, substring);
+            val substring = "#EXTINF:"
+            val occurrences = countOccurrences(text, substring)
             //11692
-            DLog.d("@@@@" + result.size() + "/" + occurrences);
+            d("@@@@" + result.size + "/" + occurrences)
         }
 
-        LocalDatabaseRepo repo = LocalDatabaseRepo.getStoreInfoDatabase(context);
-        repo.addCategory(categorySet);
+        val repo = LocalDatabaseRepo.getStoreInfoDatabase(context)
+        repo.addCategory(categorySet)
         //System.out.println(k);
-        return result;
+        return result
     }
 
-    public static int countOccurrences(String text, String substring) {
-        int count = 0;
-        int index = 0;
+    fun countOccurrences(text: String, substring: String): Int {
+        var count = 0
+        var index = 0
 
-        while ((index = text.indexOf(substring, index)) != -1) {
-            count++;
-            index += substring.length(); // Перемещаем индекс вперед на длину подстроки
+        while ((text.indexOf(substring, index).also { index = it }) != -1) {
+            count++
+            index += substring.length // Перемещаем индекс вперед на длину подстроки
         }
 
-        return count;
+        return count
     }
 
-    private static String clearGroup(String trim) {
+    private fun clearGroup(trim: String?): String {
         //   $#[]./
         if (trim == null) {
-            return "";
+            return ""
         }
-        return trim.trim().replace(".", "_");
+        return trim.trim { it <= ' ' }.replace(".", "_")
     }
 
-    private static String clearTitle(String trim) {
+    private fun clearTitle(trim: String?): String? {
         //   $#[]./
         if (trim == null) {
-            return trim;
+            return trim
         }
-        return trim.trim().replace(".", "_");
+        return trim.trim { it <= ' ' }.replace(".", "_")
     }
 
-    private static String extractValue(String line, Pattern pattern) {
-        Matcher matcher = pattern.matcher(line);
+    private fun extractValue(line: String, pattern: Pattern): String? {
+        val matcher = pattern.matcher(line)
         if (matcher.find()) {
-            return matcher.group(1);
+            return matcher.group(1)
         }
-        return null;
+        return null
     }
 }

@@ -1,8 +1,24 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
+
+        flatDir {
+            dirs("C:\\libs")
+        }
+
+        mavenLocal()
+        mavenCentral()  // Primary repository for dependencies
+        google()        // Required for Android-specific dependencies
+        gradlePluginPortal()  // Access to Gradle plugins
+
+//        google {
+//            mavenContent {
+//                includeGroupAndSubgroups("androidx")
+//                includeGroupAndSubgroups("com.android")
+//                includeGroupAndSubgroups("com.google")
+//            }
+//        }
+        maven("https://maven.google.com")
+        maven("https://dl.bintray.com/videolan/Android")
         maven {
             url = uri("https://maven.aliyun.com/nexus/content/repositories/releases")
         }
@@ -10,13 +26,28 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
-        mavenCentral()
-        maven {
-            url = uri("https://jitpack.io")
+
+        flatDir {
+            dirs("C:\\libs")
         }
+        //google()
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
+        mavenLocal()
+        mavenCentral()
+        maven("https://jitpack.io")
+        maven("https://repo1.maven.org/maven2/")
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
+
+        maven("https://maven.google.com")
+        maven("https://dl.bintray.com/videolan/Android")
         maven {
             url = uri("https://maven.aliyun.com/repository/public")
         }

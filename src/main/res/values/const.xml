@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="admob_app_id" translatable="false">ca-app-pub-5111357348858303~6069049164</string>
+    <string name="b1" translatable="false">ca-app-pub-5111357348858303/6032819324</string>
+
+<!--    <string name="applovin_sdk_key" translatable="false">0abtnmqy4iDgM8Ek_MRML7WCdv123456</string>-->
+    <string name="youtube_api_key0" translatable="false">@null</string>
+
+</resources>

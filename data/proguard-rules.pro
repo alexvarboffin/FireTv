@@ -1,0 +1,2 @@
+-keep class com.walhalla.data.model.** {*; }
+-keep class com.walhalla.data.database.** {*; }

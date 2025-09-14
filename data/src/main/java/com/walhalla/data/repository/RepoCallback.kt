@@ -1,7 +1,7 @@
-package com.walhalla.data.repository;
+package com.walhalla.data.repository
 
-public interface RepoCallback<T> {
-    void successResult(T data);
+interface RepoCallback<T> {
+    fun successResult(data: T)
 
-    void errorResult(String err);
+    fun errorResult(err: String)
 }

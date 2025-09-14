@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboard_action_next">Next</string>
+    <string name="onboard_action_finish">GOT IT</string>
+    <string name="onboard_1_title">Welcome!</string>
+    <string name="onboard_1_description">First time setup.\nLet\`s begin!</string>
+    <string name="onboard_2_title" translatable="false">@string/app_name</string>
+    <string name="onboard_2_description" translatable="false">Firebase Analytics\nData collection consent</string>
+    <string name="onboard_3_title">Done!\nThank You!</string>
+    <string name="onboard_3_description">This app is configured and ready to use.</string>
+
+    <string name="onboard2title">We use device identifiers to analyse our traffic.</string>
+    <string name="onboard2text">We need your consent to send this information to Firebase in order to better understand our users, enabling us to create better Apps.</string>
+
+    <string name="deny_consent">Deny Consent (Opt-out)</string>
+    <string name="give_consent">Give Consent (Opt-in)</string>
+    <string name="onboard2PrivacyPolicy">For more information please read our\n<u>Privacy Policy</u></string>
+
+    <string name="error_msg_terms">Please accept terms and conditions first</string>
+    <string name="error_msg_firebase">Please express your consent</string>
+    <string name="i_accept_terms_and_conditions">I accept Terms and Conditions</string>
+
+</resources>

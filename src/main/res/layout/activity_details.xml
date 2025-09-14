@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgMain"
+    tools:context="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.DetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:theme="@style/Theme.FireTvAppByGDevelopers.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimaryDark"
+            app:titleTextColor="@color/black"
+            android:elevation="0dp"
+            app:navigationIcon="@drawable/ic_baseline_arrow"
+            app:popupTheme="@style/Theme.FireTvAppByGDevelopers.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_below="@id/appBarLayout"
+        android:layout_above="@id/lyt_banner_ad"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="230dp">
+
+                <ImageView
+                    android:id="@+id/channelImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="230dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder" />
+
+                <RelativeLayout
+                    android:id="@+id/channelPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/round_bg"
+                        app:tint="#A17F899C"
+                        android:layout_marginEnd="2dp"
+                        android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_play_icon"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="10dp"
+                    android:scaleType="centerCrop"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/channelName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cartoon Network"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/tvCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category : Kids Channel"
+                android:textSize="14sp"
+                android:textColor="@color/lightGray"
+                android:layout_marginStart="10dp"/>
+
+
+            <TextView
+                android:id="@+id/channelDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kids Channel"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_margin="10dp"/>
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/lyt_banner_ad"
+        layout="@layout/include_banner_ad"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

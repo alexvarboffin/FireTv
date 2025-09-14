@@ -1,0 +1,226 @@
+<resources>
+
+    <string name="app_name" translatable="false">Ultimate TV</string>
+    <string name="url_privacy_policy" translatable="false">https://fightmagick.web.app/en/privacy.html</string>
+
+    <!--    <string name="nav_header_title">Android Studio</string>-->
+    <!--    <string name="nav_header_subtitle">android.studio@android.com</string>-->
+    <string name="feedback_amp_bugs" translatable="false"><![CDATA[Feedback & Bugs]]></string>
+    <!--    <string name="follow_us_on_instagram">Follow us on Instagram</string>-->
+    <!--    <string name="unlock_premium">Unlock Premium</string>-->
+
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+
+    <string name="menu_home">Home</string>
+
+    <string name="channels">Channels</string>
+    <string name="profile">Favorite</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="rate_this_app">Rate this app</string>
+    <string name="share_this_app">Share this app</string>
+
+    <!-- SETTING PAGE -->
+    <string name="version_label">Current Version</string>
+    <string name="search_hint">Which channels you want?</string>
+    <string name="dialog_option_cancel">Cancel</string>
+    <string name="msg_clearing_cache">Clear CacheAre you sure want to clear cache?</string>
+    <string name="msg_please_wait">Please Wait…</string>
+    <string name="msg_cache_cleared">Cache has been cleared !</string>
+    <string name="dialog_option_yes">Yes</string>
+    <string name="msg_clear_cache">Clear Cache</string>
+
+    <string name="display_channel">Display Channels</string>
+    <string name="sort_channel">Group channels</string>
+
+
+    <string name="wallpaper_columes">2 Columes</string>
+    <string name="msg_about_version">Version</string>
+    <string name="storage">Wallpaper Save Location</string>
+    <string name="storagelocation">Internal Storage/</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="label_cache">Remove image cache from your storage which created after loading Channels thumbnails. Currently : </string>
+    <string name="title_notification">Push Notification</string>
+    <string name="label_notification">Want Channels Notifications from </string>
+    <string name="policy_privacy">Privacy Policy</string>
+    <string name="views">Views</string>
+    <string name="downloads">Downloads</string>
+    <string name="sets">Sets</string>
+    <string name="size">Size</string>
+    <string name="resolution">Resolution</string>
+
+    <string name="whoops">Whoops</string>
+    <string name="no_wallpaper_found">No TV Channels Found ! \n Please Try Again Later</string>
+    <string name="action_search">Search</string>
+    <string name="add_fav">Added to Favorites</string>
+    <string name="remove_fav">Remove from Favorites</string>
+    <string name="no_favoite">No Favorites</string>
+
+
+    <string name="empty_list_message">No playlists have been added yet</string>
+
+    <!-- youtube -->
+
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="msg_failed">Failed!</string>
+    <string name="option_retry">Retry</string>
+    <string name="option_no">No</string>
+
+    <string name="type_grid_layout">Grid Layout</string>
+    <string name="type_list_layout">List Layout</string>
+
+
+    <string name="tab_tutorial">Tutorial</string>
+    <string name="tab_faqs">FAQs</string>
+
+    <string name="how_to_add_playlist">How to Add a Playlist</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="step1">1. Search for "Free Popular IPTV Playlist" in any search engine.</string>
+    <string name="step2">2. Copy the ".m3u" playlist link or download the file.</string>
+    <string name="step3">3. Go back to the app. Click "Add playlist" button, then select "Import Playlist URL" and paste the link.</string>
+    <string name="search_button">Search "Free Popular IPTV Playlist"</string>
+
+
+    <string name="sample_playlist_url">Sample Playlist URL</string>
+    <string name="playlist_uk">iptv-org | UK</string>
+
+    <string name="playlist_country">iptv-org | Grouped by Country</string>
+    <string name="playlist_category">iptv-org | Grouped by Category</string>
+
+    <!-- FAQ Questions -->
+    <string name="faq_question_1">Finding a playlist? Here is our suggestion</string>
+    <string name="faq_question_2">How to add an IPTV playlist</string>
+    <string name="faq_question_3">Why cannot the app play my playlist or channel?</string>
+    <string name="faq_question_4">Edit, delete a playlist or set it private</string>
+    <string name="splash_subtitle">IPTV Player</string>
+
+    <string-array name="layout_options">
+        <!--        <item>Tile Layout</item>-->
+        <item>@string/type_grid_layout</item>
+        <item>@string/type_list_layout</item>
+
+    </string-array>
+
+    <string name="dialog_sort_title">Select Sorting</string>
+    <string name="sort_by_name_asc">By Name (Ascending Aa-Az)</string>
+    <string name="sort_by_name_desc">By Name (Descending Zz-Aa)</string>
+    <string name="sort_by_id_asc">By ID (Ascending)</string>
+    <string name="sort_by_id_desc">By ID (Descending)</string>
+    <string name="media_player_title">Select Media Player</string>
+
+
+    <string name="media_player_JZMediaSystem" translatable="false">JZMediaSystem (Default)</string>
+    <string name="media_player_jz_aliyun" translatable="false">JZMediaAliyun</string>
+    <string name="media_player_jz_exo" translatable="false">JZMediaExo</string>
+    <string name="media_player_jz_ijk" translatable="false">JZMediaIjk</string>
+
+    <!--    <string-array name="layout_sort">-->
+    <!--        <item>Сортировка по id</item>-->
+    <!--        <item>Сортировка по Алфавиту Aa-Zz</item>-->
+    <!--        <item>Сортировка по Алфавиту Zz-Aa</item>-->
+    <!--    </string-array>-->
+
+    <string name="playlist_management">Playlist Management</string>
+    <string name="playlist_name">Playlist Name</string>
+    <string name="playlist_link">Playlist Link</string>
+    <string name="local_storage">Local Storage</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="parse_clipboard">Parse Clipboard</string>
+    <string name="backup">Backup</string>
+    <string name="restore">Restore</string>
+    <string name="error_playlist_name">Please enter a playlist name</string>
+    <string name="error_playlist_link">Please enter a playlist link</string>
+    <string name="error_download_failed">Failed to download playlist</string>
+    <string name="download_successful">Playlist downloaded successfully</string>
+
+    <string name="change_ijk">Change to Ijkplayer</string>
+    <string name="change_system_player">Change to android.media.MediaPlayer</string>
+    <string name="change_exo">Change to Exoplayer</string>
+    <string name="change_aliyun">Change to Aliyunplayer</string>
+
+
+    <string name="tab_playlists">Playlist</string>
+    <string name="tab_channel">Channel</string>
+    <string name="tab_category">Category</string>
+    <string name="tab_favorites">Favorites</string>
+
+    <string name="playlist_selectFile">Select File</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="delete_playlist">Delete Playlist</string>
+
+    <!--    <item>Плитка</item>-->
+    <!--    <item>Сетка</item>-->
+    <!--    <item>Список</item>-->
+
+
+    <string name="no_lines_found">No lines found</string>
+
+    <string name="playlist_name_label">Name*</string>
+    <string name="playlist_name_hint">chs.m3u</string>
+    <string name="file_name_label">File Name for Download</string>
+    <string name="file_name_hint">chs.m3u</string>
+    <string name="channel_count_label">Channel Count</string>
+    <string name="auto_update_label">Auto-update</string>
+    <string name="export_playlist_label">Export Playlist (m3u)</string>
+
+    <string name="import_date_label">Import Date</string>
+
+    <string name="save_playlist_label">Save</string>
+    <string name="channels_format">Channels: %1$d</string>
+    <string name="added_on">Added on: %1$s</string>
+    <string name="updated_on">Updated on: %1$s</string>
+    <string name="clipboard_contains_no_text">Clipboard contains no text.</string>
+    <string name="you_can_switch_your_app_to_dark_and_light_mode">You can Switch Your App to Dark and Light Mode</string>
+    <string name="frequentlyAskedQuestions">Frequently Asked Questions</string>
+
+
+    <!-- Dialog title -->
+    <string name="dialog_activity_mode_title">Event on Channel Click</string>
+    <!-- Options for selection -->
+    <string name="option_details_activity">Go to Channel Details</string>
+    <string name="option_player_activity">Go to Channel Player</string>
+    <string name="dialog_title_display_channels">Display Channels</string>
+
+    <string name="chromecast_app_id" translatable="false">12345678</string>
+    <string name="media_route_menu_title">@null</string>
+
+
+
+
+
+
+
+
+
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="profile_name_hint">Enter profile name</string>
+    <string name="username">Username</string>
+    <string name="username_hint">Enter username</string>
+    <string name="password">Password</string>
+    <string name="password_hint">Enter password</string>
+    <string name="server_url">Server URL</string>
+    <string name="server_url_hint">http://your_server.com:port</string>
+    <string name="profile_image_desc">Profile image</string>
+    <string name="xtream_success_saved">Profile saved successfully!</string>
+    <string name="error_playlist_username">Please enter a profile UserName</string>
+    <string name="error_playlist_password">Please enter a profile Password</string>
+    <string name="msg_xtream_playlist">Xtream Playlist</string>
+    <string name="cannotfind">Can\'t find an account?</string>
+
+
+    <string name="name_label">Name:</string>
+    <string name="cast_label">Cast:</string>
+    <string name="category_id_label">Category ID:</string>
+    <string name="director_label">Director:</string>
+    <string name="episode_run_time_label">Episode Run Time:</string>
+    <string name="genre_label">Genre:</string>
+    <string name="last_modified_label">Last Modified:</string>
+    <string name="plot_label">Plot:</string>
+    <string name="rating_label">Rating:</string>
+    <string name="rating_5based_label">Rating (5-based):</string>
+    <string name="release_date_label">Release Date:</string>
+    <string name="youtube_trailer_label">YouTube Trailer:</string>
+
+</resources>

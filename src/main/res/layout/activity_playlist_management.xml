@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#202020"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/playlist_management"
+        android:textColor="@android:color/white"
+        android:textSize="24sp" />
+
+    <Spinner
+        android:id="@+id/spinnerPlaylistType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/spinner_background"
+        android:padding="12dp"
+        android:textColor="@android:color/black" />
+
+    <EditText
+        android:id="@+id/etPlaylistName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerPlaylistType"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edittext_background"
+        android:hint="@string/playlist_name"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray" />
+
+    <FrameLayout
+        android:id="@+id/mm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etPlaylistName">
+
+        <EditText
+            android:id="@+id/etPlaylistLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/edittext_background"
+            android:hint="@string/playlist_link"
+            android:inputType="textUri"
+            android:maxLines="1"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/darker_gray"
+            tools:ignore="Autofill" />
+
+        <RelativeLayout
+            android:id="@+id/etPlaylistFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/edittext_background"
+            android:padding="12dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/fileSelect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/playlist_selectFile"
+                android:textColor="@android:color/darker_gray" />
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_launch"
+                tools:ignore="ContentDescription" />
+
+        </RelativeLayout>
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/cannot_find"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mm"
+        android:gravity="end"
+        android:text="@string/cannotfind"
+        android:textColor="#00BFA5"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:id="@+id/xtream"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cannot_find"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edittext_background"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <!-- Username Input -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/username"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/username_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/username_hint"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textColor="@android:color/darker_gray"
+            tools:ignore="Autofill" />
+        <!-- Password Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@string/password"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/password_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password_hint"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@android:color/darker_gray"
+            tools:ignore="Autofill" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvLocalStorage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/xtream"
+        android:layout_marginTop="16dp"
+        android:text="@string/local_storage"
+        android:textColor="@android:color/white" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchLocalStorage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvLocalStorage"
+        android:layout_marginTop="8dp"
+        android:thumbTint="@color/colorAccent"
+        android:trackTint="@color/colorPrimaryDark"
+        tools:ignore="UnusedAttribute" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/btnSubscribe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+            android:background="@color/colorAccent"
+            android:text="@string/subscribe"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/btnParseClipboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnSubscribe"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/parse_clipboard"
+            android:textColor="@android:color/white" />
+
+        <!--        <Button-->
+        <!--            android:id="@+id/btnBackup"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_below="@id/btnParseClipboard"-->
+        <!--            android:layout_marginTop="8dp"-->
+        <!--            android:background="@color/colorPrimaryDark"-->
+        <!--            android:text="@string/backup"-->
+        <!--            android:textColor="@android:color/white" />-->
+
+        <!--        <Button-->
+        <!--            android:id="@+id/btnRestore"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_below="@id/btnBackup"-->
+        <!--            android:layout_marginTop="8dp"-->
+        <!--            android:background="@color/colorPrimaryDark"-->
+        <!--            android:text="@string/restore"-->
+        <!--            android:textColor="@android:color/white" />-->
+    </RelativeLayout>
+</RelativeLayout>

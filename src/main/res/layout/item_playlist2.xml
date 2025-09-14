@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/faq_item_playlist_bg"
+    android:elevation="2dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="12dp"
+    tools:ignore="UnusedAttribute">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/btnCopy1"
+        android:elevation="2dp"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/tvPlaylistUK"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/playlist_uk"
+            android:textColor="@color/link_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvPlaylistUKUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btnCopy1"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_copy_02" />
+
+</RelativeLayout>

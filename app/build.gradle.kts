@@ -112,18 +112,19 @@ apply(from = "C:\\scripts/copyReports.gradle")
 
 //============================================================
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.multidex:multidex:2.0.1")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.multidex)
 
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.9.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3")
-    implementation("androidx.navigation:navigation-fragment:2.9.3")
-    implementation("androidx.navigation:navigation-ui:2.9.3")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.media3:media3-exoplayer-hls:1.8.0")
-    implementation("androidx.media3:media3-cast:1.8.0")
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.swiperefreshlayout)
+
+
+
     implementation(project(":xtream"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
@@ -161,8 +162,8 @@ dependencies {
 
 //  DEPRECATED  implementation 'com.google.android.ads.consent:consent-library:1.0.8'
 
-    implementation("com.google.android.gms:play-services-ads:24.5.0")
-    implementation("com.google.firebase:firebase-ads:23.6.0")
+    implementation(libs.play.services.ads)
+    implementation(libs.firebase.ads)
 
     //implementation 'com.github.Ferfalk:SimpleSearchView:0.2.0'
     implementation(project(":simplesearchview"))
@@ -171,8 +172,8 @@ dependencies {
 
     //implementation 'com.android.volley:volley:1.2.1'
 
-    implementation("com.google.firebase:firebase-messaging:25.0.0")
-    implementation("com.onesignal:OneSignal:5.1.37")
+    implementation(libs.firebase.messaging)
+    implementation(libs.onesignal)
 
     implementation(project(":features:ui"))
     implementation(project(":data"))
@@ -184,7 +185,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
 
     implementation("com.github.rahimlis:badgedtablayout:v1.2")
-    implementation("com.google.code.gson:gson:2.13.2")
+    implementation(libs.gson)
 
     implementation(libs.lottie)
 
@@ -198,9 +199,10 @@ dependencies {
     //migration
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
-    implementation(libs.androidx.media3.datasource.okhttp)  // Если вы используете OkHttp
+    //implementation(libs.androidx.media3.datasource.okhttp)  // Если вы используете OkHttp
     implementation(libs.androidx.media3.extractor)  // Для поддержки разных форматов
-
+    //implementation(libs.androidx.media3.exoplayer.hls)
+    implementation(libs.androidx.media3.cast)
     //0.8.4'
     implementation("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
     implementation("tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8")

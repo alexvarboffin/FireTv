@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.FireTvAppByGDevelopers.AppBarOverlay"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimaryDark"
+            android:elevation="0dp"
+            app:popupTheme="@style/Theme.FireTvAppByGDevelopers.PopupOverlay"
+            app:titleTextColor="@color/black" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.ferfalk.simplesearchview.SimpleSearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/bgMain"
+        android:theme="@style/SimpleSearchViewStyle" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.rahimlis.badgedtablayout.BadgedTabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bgMain"
+                app:badgeBackgroundColor="@color/badge_background_color"
+                app:badgeTextColor="@color/badge_text_color"
+                app:tabBackground="@drawable/tab_selector"
+                app:tabIndicator="@null"
+                app:tabMode="scrollable"
+                app:tabSelectedTextColor="@color/colorPrimary"
+                app:tabTextAppearance="@style/MyCustomTextAppearance"
+                app:tabTextColor="@color/black" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/lyt_banner_ad"
+                android:layout_below="@id/tabLayout"
+                android:layout_centerInParent="true" />
+
+            <include
+                android:id="@+id/lyt_banner_ad"
+                layout="@layout/include_banner_ad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true" />
+
+        </RelativeLayout>
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/add_fab"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="end"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:layout_marginBottom="16dp"-->
+<!--            android:contentDescription="@null"-->
+<!--            android:src="@drawable/ic_add_black_24dp"-->
+<!--            app:fabSize="normal"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/lyt_banner_ad"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent" />-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

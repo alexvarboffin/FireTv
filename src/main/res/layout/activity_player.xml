@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.player.PlrActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#08A48F"
+            app:elevation="0dp"
+            app:navigationIcon="@drawable/ic_baseline_arrow_white"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <tv.hdonlinetv.besttvchannels.movies.watchfree.utils.JZVideoPlayerNew
+            android:id="@+id/videoPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_centerInParent="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/change_to_ijkplayer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:text="@string/change_ijk" />
+
+            <Button
+                android:id="@+id/change_to_system_mediaplayer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:text="@string/change_system_player" />
+
+            <Button
+                android:id="@+id/change_to_exo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:text="@string/change_exo" />
+
+            <Button
+                android:id="@+id/change_to_aliyun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:text="@string/change_aliyun" />
+        </LinearLayout>
+
+
+        <!-- app:mediaRouteSelector="@string/media_route_selector"-->
+
+        <!--        <androidx.mediarouter.app.MediaRouteButton-->
+        <!--            android:id="@+id/media_route_button"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+<!--            android:layout_weight="1"-->
+            <androidx.mediarouter.app.MediaRouteButton
+                android:id="@+id/media_route_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:mediaRouteTypes="user"
+                android:visibility="gone"
+                tools:ignore="ObsoleteLayoutParam" />
+
+            <fragment
+                android:id="@+id/castMiniController"
+                class="com.google.android.gms.cast.framework.media.widget.MiniControllerFragment"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

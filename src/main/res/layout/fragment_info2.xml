@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <!--            <ImageView-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:background="@drawable/ic_onboard_0" />-->
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_onboard_1"
+            tools:ignore="ContentDescription" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="75dp" />
+
+        <TextView
+            style="@style/AppTheme.OnboarTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/onboard_2_title"
+            android:textColor="@color/colorAccent"
+
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/AppTheme.OnboarDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/onboard_2_description"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/AppTheme.OnboarDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/onboard2title"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <!-- Текст -->
+    <TextView
+        android:id="@+id/tvText"
+        style="@style/AppTheme.OnboarDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/onboard2text" />
+
+    <!-- Кнопки -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <!-- RadioButton "Deny Consent" -->
+            <RadioButton
+                android:id="@+id/radioDenyConsent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/deny_consent"
+                android:textColor="@android:color/black" />
+
+            <!-- RadioButton "Give Consent" -->
+
+            <RadioButton
+                android:id="@+id/radioGiveConsent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/give_consent"
+                android:textColor="@android:color/black" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tvPrivacyPolicy"
+        style="@style/AppTheme.OnboarDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:autoLink="web"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/onboard2PrivacyPolicy"
+        android:textColorLink="@color/colorAccent"
+        android:textSize="14sp" />
+
+</LinearLayout>

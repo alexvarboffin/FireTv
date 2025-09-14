@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "1030286180551",
+    "firebase_url": "https://fightmagick-default-rtdb.firebaseio.com",
+    "project_id": "fightmagick",
+    "storage_bucket": "fightmagick.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030286180551:android:37e8a4b01f77806b63bee2",
+        "android_client_info": {
+          "package_name": "com.appmk.book"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030286180551-3qadunfbj1pqln1j6mde9clfukuq5etl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYBOGgTHjtJhkq1BR19aa10rsItN_Anos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1030286180551-3qadunfbj1pqln1j6mde9clfukuq5etl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030286180551:android:9bce928fa42680ec63bee2",
+        "android_client_info": {
+          "package_name": "com.walhalla.firetv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030286180551-3qadunfbj1pqln1j6mde9clfukuq5etl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYBOGgTHjtJhkq1BR19aa10rsItN_Anos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1030286180551-3qadunfbj1pqln1j6mde9clfukuq5etl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030286180551:android:babeec54091861f763bee2",
+        "android_client_info": {
+          "package_name": "tv.hdonlinetv.besttvchannels.movies.watchfree"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030286180551-3qadunfbj1pqln1j6mde9clfukuq5etl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYBOGgTHjtJhkq1BR19aa10rsItN_Anos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1030286180551-3qadunfbj1pqln1j6mde9clfukuq5etl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,23 +4,23 @@
 #agp = "8.12.0"
 #agp = "8.6.1"
 #agp = "8.7.3"
-accompanistSwiperefresh = "0.32.0"
-activity-compose = "1.9.3"
-agp = "8.9.3"
-analytics = "7.2.0"
+accompanistSwiperefresh = "0.36.0"
+activity-compose = "1.11.0"
+agp = "8.8.2"
+analytics = "7.12.0"
 android-buildTools = "36.0.0"
 android-compileSdk = "36"
 android-minSdk = "23"
 android-targetSdk = "36"
-androidbrowserhelper = "2.5.0"
+androidbrowserhelper = "2.6.2"
 androidx-activityCompose = "1.10.0"
 androidx-appcompat = "1.7.1"
 androidx-constraintlayout = "2.2.1"
 androidx-core-ktx = "1.15.0"
 androidx-espresso-core = "3.6.1"
-androidx-lifecycle = "2.8.4"
+
 androidx-material = "1.13.0"
-androidx-test-junit = "1.2.1"
+androidx-test-junit = "1.3.0"
 annotation = "1.9.1"
 appUpdate = "2.1.0"
 browser = "1.9.0"
@@ -28,17 +28,17 @@ cardview = "1.0.0"
 coilCompose = "3.3.0"
 coilNetworkKtor2 = "3.0.4"
 coilNetworkKtor3 = "3.0.4"
-compose-bom = "2024.04.01"
+compose-bom = "2025.09.00"
 compose-compiler = "1.5.8"
 compose-multiplatform = "1.7.0"
 constraintlayout = "2.2.0"
-core = "1.15.0"
+core = "1.17.0"
 core-ktx = "1.17.0"
 coreSplashscreen = "1.0.1"
-datastore = "1.1.3"
+datastore = "1.1.7"
 dropboxCoreSdk = "3.1.5"
-espressoCore = "3.6.1"
-firebase-bom = "33.10.0"
+espressoCore = "3.7.0"
+firebase-bom = "34.2.0"
 firebase-crashlytics-gradle = "3.0.6"
 firebaseAds = "23.6.0"
 firebaseCrashlytics = "19.4.0"
@@ -48,16 +48,16 @@ flexbox = "2.0.1"
 fragmentKtx = "1.5.6"
 glide = "5.0.5"
 google-services = "4.4.3"
-gradle = "8.2.2"
+gradle = "8.12.3"
 gson = "2.13.2"
-hilt = "2.51.1"
-hilt-navigation-compose = "1.2.0"
+hilt = "2.57.1"
+hilt-navigation-compose = "1.3.0"
 installreferrer = "2.2"
-jsoup = "1.18.3"
+jsoup = "1.21.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-koinAndroid = "4.0.1"
-kotlin = "2.1.0"
+koinAndroid = "4.1.1"
+kotlin = "2.1.21"
 kotlinGradlePlugin = "2.1.0"
 kotlinStdlibJdk7 = "2.1.21"
 kotlinx-coroutines = "1.10.2"
@@ -68,22 +68,23 @@ ktorClientOkhttp = "3.3.0"
 ktorClientSerialization = "3.3.0"
 ktorHttp = "3.3.0"
 legacySupportV4 = "1.0.0"
-lifecycle = "2.9.3"
+lifecycle = "2.8.4"
 lifecycle-runtime-ktx = "2.8.7"
 
 logback = "1.5.16"
 lottie = "6.6.7"
-material = "1.12.0"
+
 materialIconsExtendedAndroid = "1.7.8"
-media3DatasourceOkhttp = "1.8.0"
-media3Exoplayer = "1.8.0"
-media3Extractor = "1.8.0"
-media3Ui = "1.8.0"
-mediarouter = "1.8.1"
-minSdk = "24"
+
+#media3Exoplayer = "1.6.1"
+media3Cast = "1.8.0"
+media3Exoplayer = "1.7.1"
+media3ExoplayerHls = "1.8.0"
+mediarouter = "1.7.0"
+
 multidex = "2.0.1"
-navigation-compose = "2.9.3"
-navigationFragment = "2.9.3"
+navigation-compose = "2.9.4"
+navigationFragment = "2.9.4"
 okhttp = "5.1.0"
 onesignal = "5.1.37"
 oopsnointernet = "2.0.0"
@@ -125,13 +126,15 @@ androidx-espresso-core = { version.ref = "espressoCore", group = "androidx.test.
 androidx-hilt-navigation-compose = { version.ref = "hilt-navigation-compose", group = "androidx.hilt", name = "hilt-navigation-compose"}
 androidx-legacy-support-v4 = { version.ref = "legacySupportV4", module = "androidx.legacy:legacy-support-v4"}
 
-androidx-lifecycle-runtime-compose = { version.ref = "androidx-lifecycle", group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose"}
+
 
 androidx-material-icons-extended-android = { module = "androidx.compose.material:material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
-androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3DatasourceOkhttp" }
+androidx-media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3Cast" }
+androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3Exoplayer" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
-androidx-media3-extractor = { module = "androidx.media3:media3-extractor", version.ref = "media3Extractor" }
-androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Ui" }
+androidx-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3ExoplayerHls" }
+androidx-media3-extractor = { module = "androidx.media3:media3-extractor", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
 androidx-mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
 dropbox-core-sdk = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropboxCoreSdk" }
 flexbox = { module = "com.google.android:flexbox", version.ref = "flexbox" }
@@ -207,10 +210,10 @@ androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime", 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-
+androidx-lifecycle-runtime-compose = { version.ref = "lifecycle", group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose"}
 [plugins]
 android-application = { version.ref = "agp", id = "com.android.application"}
-kotlin-android = { version.ref = "kotlin", id = "org.jetbrains.kotlin.android"}
+kotlin-android = { version = "2.2.0", id = "org.jetbrains.kotlin.android"}
 hilt = { version.ref = "hilt", id = "com.google.dagger.hilt.android"}
 google-services = { version.ref = "google-services", id = "com.google.gms.google-services"}
 firebase-crashlytics = { version.ref = "firebase-crashlytics-gradle", id = "com.google.firebase.crashlytics"}

@@ -91,11 +91,11 @@ public class PlaylistXtreamActivity extends BaseActivity
     public static Intent newInstance(Context context, PlaylistImpl playlist) {
         Intent intent = new Intent(context, PlaylistXtreamActivity.class);
         intent.putExtra(EXTRA_ID, playlist._id);
-        intent.putExtra(EXTRA_NAME, playlist.getTitle());
-        intent.putExtra(EXTRA_FILE_NAME, playlist.getFileName());
-        intent.putExtra(EXTRA_IMPORT_DATE, playlist.getImportDate());
-        intent.putExtra(EXTRA_CHANNEL_COUNT, playlist.getCount());
-        intent.putExtra(EXTRA_AUTO_UPDATE, playlist.isAutoUpdate());
+        intent.putExtra(EXTRA_NAME, playlist.title);
+        intent.putExtra(EXTRA_FILE_NAME, playlist.fileName);
+        intent.putExtra(EXTRA_IMPORT_DATE, playlist.importDate);
+        intent.putExtra(EXTRA_CHANNEL_COUNT, playlist.count);
+        intent.putExtra(EXTRA_AUTO_UPDATE, playlist.isAutoUpdate);
         return intent;
     }
 
@@ -201,7 +201,7 @@ public class PlaylistXtreamActivity extends BaseActivity
 
     public com.m3u.data.parser.xtream.XtreamInput toXtrimInput(PlaylistImpl playlist) {
         XtreamInput mm = null;
-        HttpUrl baseUrl = HttpUrl.parse(playlist.getFileName());
+        HttpUrl baseUrl = HttpUrl.parse(playlist.fileName);
         if (baseUrl != null) {
             HttpUrl url = new HttpUrl.Builder()
                     .scheme(baseUrl.scheme())

@@ -166,8 +166,8 @@ class LocalDatabaseRepo {
             for (int i = 0; i < channels.size(); i++) {
                 if (newIds0.get(i) == -1) {
                     Channel channel = channels.get(i);
-                    String key = channel.getName();
-                    String value = channel.getLnk();
+                    String key = channel.name;
+                    String value = channel.lnk;
 
                     // Если ключ уже существует, то пропускаем добавление
                     putIfAbsent(nameLnkMap, key, value);
@@ -181,7 +181,7 @@ class LocalDatabaseRepo {
             // Создаем Map для быстрого поиска по комбинации name + lnk
             Map<String, Long> existingChannelsMap = new HashMap<>();
             for (Channel channel : existingChannels) {
-                String key = channel.getName() + "|" + channel.getLnk();
+                String key = channel.name + "|" + channel.lnk;
                 existingChannelsMap.put(key, channel._id);
             }
 
@@ -189,7 +189,7 @@ class LocalDatabaseRepo {
             for (int i = 0; i < channels.size(); i++) {
                 if (newIds0.get(i) == -1) {
                     Channel channel = channels.get(i);
-                    String key = channel.getName() + "|" + channel.getLnk();
+                    String key = channel.name + "|" + channel.lnk;
 
                     if (existingChannelsMap.containsKey(key)) {
                         newIds1.set(i, existingChannelsMap.get(key));

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.MyApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar"
+        android:usesCleartextTraffic="true"
+        tools:ignore="UnusedAttribute">
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.tutorial.TutorialActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.PlaylistManagementActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.ActivityYoutubePlayer"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.player.PlrActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="true"
+            android:theme="@style/AppTheme.Player" />
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.DetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.FavoriteActivity"
+            android:exported="false" />
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.ChannelActivity"
+            android:exported="true" />
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.PrivacyActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.MainActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.google.intent.action.TEST_LOOP" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/javascript" />
+            </intent-filter>
+            <!--            <intent-filter>-->
+            <!--                ... (other intent filters here)-->
+            <!--            </intent-filter>-->
+
+        </activity>
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.playlist.PlaylistActivity"
+            android:exported="true" />
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.playlist.PlaylistXtreamActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".activity.playlist.SerialInfoActivity"
+            android:exported="true" />
+
+
+        <activity
+            android:name=".activity.test.TestActivity"
+            android:exported="true" />
+
+        <activity
+            android:name="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.SplashActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="RedundantLabel">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+
+        <meta-data
+            android:name="com.google.test.loops"
+            android:value="5" />
+
+        <activity
+            android:name="com.walhalla.onboarding.OnboardingActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            tools:ignore="LockedOrientationActivity,RedundantLabel" />
+
+        <activity
+            android:name="com.walhalla.terms.PrivacyPolicyActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            tools:ignore="LockedOrientationActivity,RedundantLabel" />
+
+        <meta-data
+            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="tv.hdonlinetv.besttvchannels.movies.watchfree.MyOptionsProvider" />
+
+    </application>
+    <queries>
+        <intent>
+            <action android:name="com.google.android.youtube.api.service.START" />
+        </intent>
+    </queries>
+
+
+</manifest>

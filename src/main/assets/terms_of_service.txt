@@ -1,0 +1,27 @@
+%app% - Terms of Service
+
+ATTENTION: PLEASE READ THE FOLLOWING LEGAL AGREEMENT CAREFULLY. YOUR USE OF THIS SOFTWARE (THE "SOFTWARE") INDICATES YOUR ACCEPTANCE OF THESE TERMS. IF YOU DO NOT AGREE TO THE TERMS OF THIS AGREEMENT, PLEASE REFRAIN FROM USING THIS SOFTWARE. YOUR USE OF THIS SOFTWARE IS SUBJECT TO YOUR COMPLIANCE WITH THESE TERMS.
+
+1. LICENSE GRANT. %dev% grants you a license to use one copy of the current version of this SOFTWARE on a single system. The term "You" refers to the company, entity, or individual responsible for the license fee. "Use" encompasses storing, loading, installing, executing, or displaying the SOFTWARE. You may not modify the SOFTWARE or disable any licensing or control features, except as intended within the SOFTWARE's programming features. This license is non-transferable to other systems, organizations, or individuals.
+
+2. OWNERSHIP. The SOFTWARE is the copyrighted and proprietary property of %dev%. Your license does not confer any ownership or title to the SOFTWARE and should not be construed as a sale of any rights in the SOFTWARE. The SOFTWARE remains the exclusive property of the Vendor. Any Licensee complying fully with the terms of this license agreement may use the SOFTWARE as stipulated herein.
+
+3. COPYRIGHT. The SOFTWARE is protected by United States copyright law and international treaty provisions. You acknowledge that no intellectual property rights to the SOFTWARE are transferred to you. Furthermore, you recognize that the title and full ownership rights to the SOFTWARE shall remain the exclusive property of %dev%, and you shall not acquire any rights to the SOFTWARE except as expressly set forth in this license. You agree that any copies of the SOFTWARE shall contain the same proprietary notices as those displayed within the SOFTWARE.
+
+4. RESTRICTED ACTIONS. You agree not to attempt to reverse compile, modify, translate, or disassemble the SOFTWARE, either in whole or in part.
+
+5. NO OTHER WARRANTIES. %app% utilizes information from third-party lists and databases. %dev% DOES NOT WARRANT THAT THE SOFTWARE IS FREE OF ERRORS. %dev% DISCLAIMS ALL OTHER WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD-PARTY RIGHTS. SOME JURISDICTIONS DO NOT PERMIT THE EXCLUSION OF IMPLIED WARRANTIES, THE LIMITATION OF IMPLIED WARRANTIES TO A SPECIFIC DURATION, OR THE EXCLUSION OR LIMITATION OF INCIDENTAL OR CONSEQUENTIAL DAMAGES. THEREFORE, THE ABOVE LIMITATIONS OR EXCLUSIONS MAY NOT APPLY TO YOU. THIS WARRANTY PROVIDES YOU WITH SPECIFIC LEGAL RIGHTS, AND YOU MAY ALSO HAVE OTHER RIGHTS THAT VARY DEPENDING ON YOUR JURISDICTION. %dev% DOES NOT GUARANTEE THE ACCURACY OR QUALITY OF AVAILABLE CONTENT. UNDER NO CIRCUMSTANCES SHALL %dev% BE LIABLE FOR ANY USER-GENERATED CONTENT, INCLUDING BUT NOT LIMITED TO ERRORS OR OMISSIONS IN SUCH CONTENT OR ANY LOSS OR DAMAGE INCURRED THROUGH THE USE OF SUCH CONTENT POSTED, EMAILED, OR OTHERWISE TRANSMITTED VIA THE SERVICES. %dev% DOES NOT GUARANTEE THE ACCURACY OR QUALITY OF THE INFORMATION PROVIDED. INFORMATION IS PROVIDED "AS IS" WITH NO WARRANTY. THERE IS NO WARRANTY, IMPLIED OR OTHERWISE, REGARDING THE ACCURACY OF THE INFORMATION PROVIDED BY THIS SOFTWARE.
+
+6. SEVERABILITY. In the event that any provision of this license is
+
+ deemed invalid, the remaining provisions shall remain valid and enforceable.
+
+7. USAGE RESTRICTIONS. Use of the SOFTWARE is limited to internal business or personal purposes. You may not use the Software for any commercial purpose or for the benefit of any third parties. Service bureau or other forms of third-party access or use of the Software are prohibited.
+
+8. NO LIABILITY FOR CONSEQUENTIAL DAMAGES. UNDER NO CIRCUMSTANCES SHALL %dev% OR ITS SUPPLIERS BE LIABLE TO YOU FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES ARISING FROM THE DELIVERY, PERFORMANCE, OR USE OF THE SOFTWARE, EVEN IF %dev% HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. IN NO EVENT SHALL %dev%'S LIABILITY FOR ANY CLAIM, WHETHER IN CONTRACT, TORT, OR ANY OTHER THEORY OF LIABILITY, EXCEED THE LICENSE FEE PAID BY YOU, IF ANY.
+
+9. PRIVACY POLICY. To review our Privacy Policy, please navigate to Main Menu - Legal - Privacy Policy.
+
+10. GOVERNING LAW. This Agreement shall be governed by the laws of Romania and the international copyright regulations and treaties. This Agreement may only be modified by a license addendum accompanying this Agreement or by a written document signed by both you and %dev%. This Agreement has been drafted in the English language and shall not be translated or interpreted in any other language. Prices, costs, and fees for using %app% are subject to change without prior notice. In the event of the invalidity of any provision of this Agreement, such invalidity shall not affect the validity of the remaining provisions. %app% and %app% logos are trademarks of %dev%. Android and Google are registered trademarks of Google Corporation. All other trademarks are the property of their respective owners and may be protected by applicable copyright or intellectual property laws and treaties. This EULA does not grant you any rights to use such content. All rights not expressly granted herein are reserved by %dev%.
+
+11. ENTIRE AGREEMENT. This represents the complete agreement between you and %dev%, superseding any prior written or oral agreements pertaining to the subject matter of this license.

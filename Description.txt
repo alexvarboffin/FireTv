@@ -1,0 +1,25 @@
+A problem occurred evaluating project ':CordovaLib'.
+> Failed to apply plugin 'com.github.dcendents.android-maven'.
+   > Could not create plugin of type 'AndroidMavenPlugin'.
+      > Could not generate a decorated class for type AndroidMavenPlugin.
+         > org/gradle/api/publication/maven/internal/MavenPomMetaInfoProvider
+		 
+android 9.1.0
+
+cordova platform rm android
+cordova plugin rm cordova-plugin-firebase
+cordova plugin add cordova-plugin-firebasex
+cordova platform add android@latest
+
+ai.hdonlinetv.bestchannels.movies.watchfree
+tv.hdonlinetv.besttvchannels.movies.watchfree
+
+: Watch Movies & TV
+
+ОТКАЗ ОТ ОТВЕТСТВЕННОСТИ: ПРИЛОЖЕНИЕ НЕ СОДЕРЖИТ НИКАКИХ КАНАЛОВ!
+===========
+
+Поддержка режима картинка в картинке
+https://iptvbites.com/free-github-iptv-m3u-playlist/
+
+#353940

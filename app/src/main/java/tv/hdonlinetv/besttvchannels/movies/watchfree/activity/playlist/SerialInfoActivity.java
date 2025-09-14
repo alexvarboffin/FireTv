@@ -178,7 +178,7 @@ public class SerialInfoActivity extends BaseActivity
 
     public XtreamInput toXtrimInput(PlaylistImpl playlist) {
         XtreamInput mm = null;
-        HttpUrl baseUrl = HttpUrl.parse(playlist.getFileName());
+        HttpUrl baseUrl = HttpUrl.parse(playlist.fileName);
         if (baseUrl != null) {
             HttpUrl url = new HttpUrl.Builder()
                     .scheme(baseUrl.scheme())

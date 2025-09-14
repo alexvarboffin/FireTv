@@ -1,0 +1,92 @@
+<resources>
+    <string name="menu_home">الرئيسية</string>
+
+    <string name="channels">القنوات</string>
+    <string name="profile">المفضلة</string>
+    <string name="settings">الإعدادات</string>
+    <string name="about">حول</string>
+    <string name="rate_this_app">تقييم التطبيق</string>
+    <string name="share_this_app">مشاركة التطبيق</string>
+
+    <!-- SETTING PAGE -->
+    <string name="version_label">الإصدار الحالي</string>
+    <string name="search_hint">ما القنوات التي تريدها؟</string>
+    <string name="dialog_option_cancel">إلغاء</string>
+    <string name="msg_clearing_cache">مسح ذاكرة التخزين المؤقت هل أنت متأكد أنك تريد مسح ذاكرة التخزين المؤقت؟</string>
+    <string name="msg_please_wait">يرجى الانتظار…</string>
+    <string name="msg_cache_cleared">تم مسح ذاكرة التخزين المؤقت!</string>
+    <string name="dialog_option_yes">نعم</string>
+    <string name="msg_clear_cache">مسح ذاكرة التخزين المؤقت</string>
+
+    <string name="display_channel">عرض القنوات</string>
+    <string name="sort_channel">تجميع القنوات</string>
+
+    <string name="wallpaper_columes">عمودين</string>
+    <string name="msg_about_version">الإصدار</string>
+    <string name="storage">موقع حفظ الخلفيات</string>
+    <string name="storagelocation">التخزين الداخلي/</string>
+    <string name="clear_cache">مسح ذاكرة التخزين المؤقت</string>
+    <string name="label_cache">إزالة ذاكرة التخزين المؤقت للصور من التخزين الخاص بك والتي تم إنشاؤها بعد تحميل مصغرات القنوات. حالياً: </string>
+    <string name="title_notification">إشعارات الدفع</string>
+    <string name="label_notification">هل تريد إشعارات القنوات من </string>
+    <string name="policy_privacy">سياسة الخصوصية</string>
+    <string name="views">المشاهدات</string>
+    <string name="downloads">التنزيلات</string>
+    <string name="sets">المجموعات</string>
+    <string name="size">الحجم</string>
+    <string name="resolution">الدقة</string>
+
+    <string name="whoops">أوه</string>
+    <string name="no_wallpaper_found">لم يتم العثور على قنوات تلفزيونية! \n يرجى المحاولة لاحقاً</string>
+    <string name="action_search">بحث</string>
+    <string name="add_fav">تمت إضافته إلى المفضلة</string>
+    <string name="remove_fav">إزالة من المفضلة</string>
+    <string name="no_favoite">لا توجد مفضلة</string>
+
+    <string name="empty_list_message">لم تتم إضافة أي قوائم تشغيل بعد</string>
+
+    <!-- youtube -->
+
+    <string name="error_player">حدث خطأ أثناء تهيئة YouTubePlayer (%1$s)</string>
+    <string name="msg_failed">فشل!</string>
+    <string name="option_retry">إعادة المحاولة</string>
+    <string name="option_no">لا</string>
+    <string name="type_grid_layout">تخطيط الشبكة</string>
+
+    <string name="tab_tutorial">الدروس</string>
+    <string name="tab_faqs">الأسئلة الشائعة</string>
+
+    <string name="how_to_add_playlist">كيفية إضافة قائمة تشغيل</string>
+    <string name="tutorial">الدروس</string>
+    <string name="step1">1. ابحث عن "قائمة تشغيل IPTV الشهيرة المجانية" في أي محرك بحث.</string>
+    <string name="step2">2. انسخ رابط قائمة التشغيل ".m3u" أو قم بتنزيل الملف.</string>
+    <string name="step3">3. عد إلى التطبيق. انقر على زر "إضافة قائمة تشغيل"، ثم اختر "استيراد رابط قائمة التشغيل" والصق الرابط.</string>
+    <string name="search_button">بحث "قائمة تشغيل IPTV الشهيرة المجانية"</string>
+
+    <string name="sample_playlist_url">رابط قائمة التشغيل النموذجية</string>
+    <string name="playlist_uk">iptv-org | المملكة المتحدة</string>
+
+    <string name="playlist_country">iptv-org | مجمعة حسب البلد</string>
+    <string name="playlist_category">iptv-org | مجمعة حسب الفئة</string>
+
+    <!-- FAQ Questions -->
+    <string name="faq_question_1">هل تبحث عن قائمة تشغيل؟ إليك اقتراحنا</string>
+    <string name="faq_question_2">كيفية إضافة قائمة تشغيل IPTV</string>
+    <string name="faq_question_3">لماذا لا يمكن للتطبيق تشغيل قائمتي أو قناتي؟</string>
+    <string name="faq_question_4">تعديل، حذف قائمة تشغيل أو جعلها خاصة</string>
+    <string name="splash_subtitle">مشغل IPTV</string>
+
+    <string-array name="layout_options">
+        <!--        <item>تخطيط البلاط</item>-->
+        <item>تخطيط الشبكة</item>
+        <item>تخطيط القائمة</item>
+    </string-array>
+
+    <string name="dialog_sort_title">اختيار الترتيب</string>
+    <string name="sort_by_name_asc">حسب الاسم (تصاعدياً Aa-Az)</string>
+    <string name="sort_by_name_desc">حسب الاسم (تنازلياً Zz-Aa)</string>
+    <string name="sort_by_id_asc">حسب ID (تصاعدياً)</string>
+    <string name="sort_by_id_desc">حسب ID (تنازلياً)</string>
+    <string name="media_player_title">اختيار مشغل الوسائط</string>
+
+</resources>

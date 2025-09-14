@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#004480"
+    android:fitsSystemWindows="true">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/checkbox_accept"
+        android:paddingStart="0dp"
+        android:paddingEnd="5dp"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin">
+
+            <!--            <TextView-->
+            <!--                style="@style/Help.Title"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:focusable="false"-->
+            <!--                android:longClickable="false"-->
+            <!--                android:text="@string/a_terms" />-->
+
+            <TextView
+                android:id="@+id/terms"
+                style="@style/AppTheme.TermsContent"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:longClickable="false"
+                android:textColor="#FFFFFF"
+                tools:text="@string/app_name" />
+
+
+            <!--            <TextView-->
+            <!--                style="@style/Help.Title"-->
+            <!--                android:layout_width="fill_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="@string/fixedTitleHelp" />-->
+
+            <!--            <TextView-->
+            <!--                style="@style/Help.Content"-->
+            <!--                android:layout_width="fill_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="@string/fixedHelp" />-->
+        </LinearLayout>
+    </ScrollView>
+
+    <CheckBox
+        android:id="@+id/checkbox_accept"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:paddingStart="18dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="18dp"
+        android:text="@string/i_accept_terms_and_conditions"
+        android:textColor="#FFFFFF" />
+</RelativeLayout>
