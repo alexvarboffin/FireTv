@@ -3,7 +3,7 @@ pluginManagement {
     repositories {
 
         flatDir {
-            dirs("C:\\libs")
+            dirs("C:/libs")
         }
 
         mavenLocal()
@@ -31,16 +31,16 @@ dependencyResolutionManagement {
     repositories {
 
         flatDir {
-            dirs("C:\\libs")
+            dirs("C:/libs")
         }
-        //google()
-        google {
-            mavenContent {
-                includeGroupAndSubgroups("androidx")
-                includeGroupAndSubgroups("com.android")
-                includeGroupAndSubgroups("com.google")
-            }
-        }
+        google()
+//        google {
+//            mavenContent {
+//                includeGroupAndSubgroups("androidx")
+//                includeGroupAndSubgroups("com.android")
+//                includeGroupAndSubgroups("com.google")
+//            }
+//        }
         mavenLocal()
         mavenCentral()
         maven("https://jitpack.io")

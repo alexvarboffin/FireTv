@@ -148,7 +148,7 @@ object M3UParser {
                 }
 
                 channel.ua = userAgent
-                channel.name = name
+                channel.name = name?:""
                 channel.tvgId = tvGid //empty or not
                 channel.desc = description
                 channel.cover = tvgLogo

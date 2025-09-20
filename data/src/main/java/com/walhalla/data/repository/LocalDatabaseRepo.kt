@@ -121,7 +121,7 @@ class LocalDatabaseRepo private constructor(context: Context) {
     }
 
     fun addChannelAndPlaylist(
-        channels: MutableList<Channel>,
+        channels: List<Channel>,
         playlist: PlaylistImpl
     ): MutableList<Long?> {
         val tmp: MutableList<Long?> = ArrayList<Long?>()
@@ -432,14 +432,14 @@ class LocalDatabaseRepo private constructor(context: Context) {
         return playlistDao.insertPlaylist(playlist)
     }
 
-    fun selectAllPlaylist(): MutableList<PlaylistImpl?>? {
+    fun selectAllPlaylist(): MutableList<PlaylistImpl> {
         try {
             val playlistDao = db.playlistDao()
             return playlistDao.selectAll()
         } catch (e: Exception) {
             Log.d(TAG, "selectAllPlaylist: " + e.message)
         }
-        return ArrayList<PlaylistImpl?>()
+        return ArrayList<PlaylistImpl>()
     }
 
     fun getChannelsInPlaylist(id: Long, sortOption: Int): MutableList<Channel?>? {
@@ -486,7 +486,7 @@ class LocalDatabaseRepo private constructor(context: Context) {
         addCategory(categories)
     }
 
-    fun getChannelById(id: Long): Channel? {
+    fun getChannelById(id: Long): Channel {
         var list: Channel?
         try {
             val dao = db.channelDao()

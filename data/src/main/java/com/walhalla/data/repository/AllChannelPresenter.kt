@@ -6,7 +6,8 @@ import com.walhalla.data.model.Channel
 import com.walhalla.ui.DLog.d
 import com.walhalla.ui.DLog.handleException
 
-class AllChannelPresenter  //    protected final Handler mThread;
+class AllChannelPresenter
+//    protected final Handler mThread;
 //    public final LocalDatabaseRepo repo;
 //    protected final ExecutorService executor;
 //    private final Context context;
@@ -34,7 +35,7 @@ class AllChannelPresenter  //    protected final Handler mThread;
         })
     }
 
-    fun getChannelById(id: Long, callback: RepoCallback<Channel?>) {
+    fun getChannelById(id: Long, callback: RepoCallback<Channel>) {
         executeInBackground(Runnable {
             try {
                 val channel = db_repo.getChannelById(id)
@@ -84,7 +85,7 @@ class AllChannelPresenter  //    protected final Handler mThread;
         })
     }
 
-    fun addFavorite(channel: Channel, callback: RepoCallback<Int?>) {
+    fun addFavorite(channel: Channel, callback: RepoCallback<Int>) {
         executeInBackground {
             try {
                 val m = db_repo.addFavorite(channel)

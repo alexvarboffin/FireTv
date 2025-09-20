@@ -126,13 +126,14 @@ dependencies {
 
 
     implementation(project(":xtream"))
+    implementation(libs.androidx.media3.exoplayer.hls)
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 
     //firebase
-    implementation("com.google.firebase:firebase-analytics:23.0.0")
+    implementation(libs.google.firebase.analytics)
 //    implementation 'com.google.firebase:firebase-storage:21.0.0'
 //    implementation 'com.google.firebase:firebase-database:21.0.0'
 
@@ -229,6 +230,9 @@ dependencies {
     //CHROMECAST или Smart TV
     implementation(libs.androidx.mediarouter)
     implementation(libs.play.services.cast.framework)
+
+
+    implementation("androidx.work:work-runtime:2.10.4")
 }
 
 

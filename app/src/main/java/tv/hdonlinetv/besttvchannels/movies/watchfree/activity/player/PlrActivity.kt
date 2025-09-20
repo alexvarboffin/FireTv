@@ -191,11 +191,11 @@ class PlrActivity : BaseActivity() {
             if (TextUtils.isEmpty(channel!!.extUserAgent)) channel!!.ua else channel!!.extUserAgent
 
         headers = HashMap()
-        if (!TextUtils.isEmpty(tmpUa)) {
-            headers!![HttpHeaders.USER_AGENT] = tmpUa
+        if (tmpUa!=null&&!TextUtils.isEmpty(tmpUa)) {
+            headers!![HttpHeaders.USER_AGENT] = tmpUa!!
         }
-        if (!TextUtils.isEmpty(channel!!.extReferer)) {
-            headers!!["Referer"] = channel!!.extReferer
+        if (channel!!.extReferer!=null&&!TextUtils.isEmpty(channel!!.extReferer)) {
+            headers!!["Referer"] = channel!!.extReferer!!
         }
 
         //binding.videoPlayer.setUp(channelLink, channelName, mm);
@@ -253,7 +253,7 @@ class PlrActivity : BaseActivity() {
         )
 
         movieMetadata.putString(MediaMetadata.KEY_TITLE, channel!!.name)
-        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, channel!!.cat)
+        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, channel!!.cat?:"")
         movieMetadata.addImage(WebImage(Uri.parse(channel!!.cover)))
 
 
@@ -270,13 +270,13 @@ class PlrActivity : BaseActivity() {
 //                    //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
 //                    .build();
         val mediaInfo = if (customData == null) {
-            MediaInfo.Builder(channel!!.lnk)
+            MediaInfo.Builder(channel!!.lnk?:"")
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED) //.setContentUrl(channel.getLnk())
                 .setContentType("application/x-mpegURL") // Убедитесь, что это тип контента для M3U8
                 .setMetadata(movieMetadata) // Добавьте метаданные, если необходимо
                 .build()
         } else {
-            MediaInfo.Builder(channel!!.lnk)
+            MediaInfo.Builder(channel!!.lnk?:"")
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED) //.setContentUrl(channel.getLnk())
                 .setContentType("application/x-mpegURL") // Убедитесь, что это тип контента для M3U8
                 .setMetadata(movieMetadata) // Добавьте метаданные, если необходимо
@@ -405,14 +405,14 @@ class PlrActivity : BaseActivity() {
                 try {
 //                    Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 //                    DLog.d(GSON.toJson(channel));
-                    presenter!!.addFavorite(channel, addToFavoriteCallback)
+                    presenter!!.addFavorite(channel!!, addToFavoriteCallback)
                 } catch (e: Exception) {
                     handleException(e)
                 }
             } else {
                 setMenuIcon(false)
                 Toast.makeText(this, R.string.remove_fav, Toast.LENGTH_SHORT).show()
-                presenter!!.deleteFavorite(channel)
+                presenter!!.deleteFavorite(channel!!)
             }
         }
         return super.onOptionsItemSelected(item)

@@ -32,8 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChannelAdapter
-        extends RecyclerView.Adapter<ChannelViewHolder> implements Filterable {
+public class ChannelAdapter extends RecyclerView.Adapter<ChannelViewHolder> implements Filterable {
 
     private final Context context;
     private final List<Channel> data;
@@ -130,7 +129,7 @@ public class ChannelAdapter
                         .into(holder.imageView);
             } else {
                 //String thumb0 = channel.getLang();
-                String thumb0 = channel.getCover();
+                String thumb0 = channel.cover;
 
                 Glide.with(context)
                         .load(thumb0)
@@ -141,7 +140,7 @@ public class ChannelAdapter
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
                                 if (e != null) {
-                                    DLog.d("@@b@@" + channel.getName() + " " + e.getLocalizedMessage());
+                                    DLog.d("@@b@@" + channel.name + " " + e.getLocalizedMessage());
                                 }
                                 return false;
                             }
@@ -227,7 +226,7 @@ public class ChannelAdapter
                 } else {
                     ArrayList<Channel> filteredList = new ArrayList<>();
                     for (Channel row : data) {
-                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) || row.getCat().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.name.toLowerCase().contains(charString.toLowerCase()) || row.cat.toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }

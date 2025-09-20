@@ -6,7 +6,7 @@
 #agp = "8.7.3"
 accompanistSwiperefresh = "0.36.0"
 activity-compose = "1.11.0"
-agp = "8.8.2"
+agp = "8.9.1"
 analytics = "7.12.0"
 android-buildTools = "36.0.0"
 android-compileSdk = "36"
@@ -14,7 +14,7 @@ android-minSdk = "23"
 android-targetSdk = "36"
 androidbrowserhelper = "2.6.2"
 androidx-activityCompose = "1.10.0"
-androidx-appcompat = "1.7.1"
+
 androidx-constraintlayout = "2.2.1"
 androidx-core-ktx = "1.15.0"
 androidx-espresso-core = "3.6.1"
@@ -39,12 +39,13 @@ coreSplashscreen = "1.0.1"
 datastore = "1.1.7"
 dropboxCoreSdk = "3.1.5"
 espressoCore = "3.7.0"
-firebase-bom = "34.2.0"
+firebase-bom = "34.3.0"
 firebase-crashlytics-gradle = "3.0.6"
 firebaseAds = "23.6.0"
+firebaseAnalytics = "23.0.0"
 firebaseCrashlytics = "19.4.0"
-firebaseDatabase = "22.0.0"
-firebaseMessaging = "25.0.0"
+firebaseDatabase = "22.0.1"
+firebaseMessaging = "25.0.1"
 flexbox = "2.0.1"
 fragmentKtx = "1.5.6"
 glide = "5.0.5"
@@ -58,7 +59,7 @@ jsoup = "1.21.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 koinAndroid = "4.1.1"
-kotlin = "2.1.21"
+kotlin = "2.2.20"
 kotlinGradlePlugin = "2.1.0"
 kotlinStdlibJdk7 = "2.1.21"
 kotlinx-coroutines = "1.10.2"
@@ -71,7 +72,7 @@ ktorHttp = "3.3.0"
 legacySupportV4 = "1.0.0"
 
 #lifecycle = "2.9.3"
-lifecycle = "2.9.0"
+lifecycle = "2.9.4"
 
 logback = "1.5.16"
 lottie = "6.6.7"
@@ -79,9 +80,9 @@ materialIconsExtendedAndroid = "1.7.8"
 
 #media3Exoplayer = "1.6.1"
 media3Cast = "1.8.0"
-media3Exoplayer = "1.7.1"
+media3Exoplayer = "1.8.0"
 media3ExoplayerHls = "1.8.0"
-mediarouter = "1.7.0"
+mediarouter = "1.8.1"
 
 multidex = "2.0.1"
 navigation-compose = "2.9.4"
@@ -100,14 +101,14 @@ room = "2.7.2"
 runner = "1.7.0"
 swiperefreshlayout = "1.1.0"
 taptargetview = "1.15.0"
-
+androidx-appcompat = "1.7.0"
 [libraries]
 accompanist-swiperefresh = { version.ref = "accompanistSwiperefresh", module = "com.google.accompanist:accompanist-swiperefresh"}
 analytics = { version.ref = "analytics", module = "io.appmetrica.analytics:analytics"}
 androidbrowserhelper = { version.ref = "androidbrowserhelper", module = "com.google.androidbrowserhelper:androidbrowserhelper"}
 androidx-activity-compose = { version.ref = "activity-compose", group = "androidx.activity", name = "activity-compose"}
 androidx-annotation = { version.ref = "annotation", module = "androidx.annotation:annotation"}
-androidx-appcompat = { version.ref = "androidx-appcompat", group = "androidx.appcompat", name = "appcompat"}
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 androidx-browser = { version.ref = "browser", module = "androidx.browser:browser"}
 androidx-cardview = { version.ref = "cardview", module = "androidx.cardview:cardview"}
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation"}
@@ -141,6 +142,7 @@ compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compi
 dropbox-core-sdk = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropboxCoreSdk" }
 flexbox = { module = "com.google.android:flexbox", version.ref = "flexbox" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlinStdlibJdk7" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientOkhttp" }
@@ -215,7 +217,7 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 androidx-lifecycle-runtime-compose = { version.ref = "lifecycle", group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose"}
 [plugins]
 android-application = { version.ref = "agp", id = "com.android.application"}
-kotlin-android = { version = "2.2.0", id = "org.jetbrains.kotlin.android"}
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt = { version.ref = "hilt", id = "com.google.dagger.hilt.android"}
 google-services = { version.ref = "google-services", id = "com.google.gms.google-services"}
 firebase-crashlytics = { version.ref = "firebase-crashlytics-gradle", id = "com.google.firebase.crashlytics"}

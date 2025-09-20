@@ -176,7 +176,7 @@ class PlaylistActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     private fun handleIntent0(intent: Intent?) {
         if (intent != null) {
             val name = intent.getStringExtra(EXTRA_NAME)
-            val fileName = intent.getStringExtra(EXTRA_FILE_NAME)
+            val fileName = intent.getStringExtra(EXTRA_FILE_NAME)?:""
             val importDate = intent.getLongExtra(EXTRA_IMPORT_DATE, 0)
             val channelCount = intent.getIntExtra(EXTRA_CHANNEL_COUNT, 0)
             val autoUpdate = intent.getBooleanExtra(EXTRA_AUTO_UPDATE, false)
@@ -466,11 +466,11 @@ class PlaylistActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         fun newInstance(context: Context?, playlist: PlaylistImpl): Intent {
             val intent = Intent(context, PlaylistActivity::class.java)
             intent.putExtra(EXTRA_ID, playlist._id)
-            intent.putExtra(EXTRA_NAME, playlist.getTitle())
+            intent.putExtra(EXTRA_NAME, playlist.title)
             intent.putExtra(EXTRA_FILE_NAME, playlist.fileName)
             intent.putExtra(EXTRA_IMPORT_DATE, playlist.importDate)
             intent.putExtra(EXTRA_CHANNEL_COUNT, playlist.count)
-            intent.putExtra(EXTRA_AUTO_UPDATE, playlist.isAutoUpdate)
+            intent.putExtra(EXTRA_AUTO_UPDATE, playlist.autoUpdate)
             return intent
         }
     }

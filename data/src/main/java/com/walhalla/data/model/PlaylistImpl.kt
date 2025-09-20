@@ -23,11 +23,11 @@ class PlaylistImpl(
     //        this.name = name;
     //    }
     @JvmField @field:ColumnInfo(name = "title") var title: String, //private final String info;
-    @field:ColumnInfo(name = "file_name") private var fileName: String?, @field:ColumnInfo(
+    @field:ColumnInfo(name = "file_name") var fileName: String, @field:ColumnInfo(
         name = "import_date"
-    ) private var importDate: Long,
+    ) var importDate: Long,
     @field:ColumnInfo(name = "count") var count: Int,
-    @field:ColumnInfo(name = "auto_update") private var autoUpdate: Boolean,
+    @field:ColumnInfo(name = "auto_update") var autoUpdate: Boolean,
     @JvmField @field:ColumnInfo(name = "type") var type: Int
 ) {
     @JvmField

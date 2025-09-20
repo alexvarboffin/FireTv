@@ -28,7 +28,7 @@ class Channel : Serializable {
     var cover: String? = null
 
     @ColumnInfo(name = "name")
-    var name: String? = null
+    var name: String = ""
 
 
     var ua: String? = null //user_agent
@@ -47,7 +47,7 @@ class Channel : Serializable {
     constructor(
         id: String?,
         channelImage: String?,
-        channelName: String?,
+        channelName: String,
         channelCategory: String?,
         channelType: String?,
         channelLink: String?,
@@ -67,7 +67,7 @@ class Channel : Serializable {
     constructor(
         url: String?,
         category: String?,
-        title: String?,
+        title: String,
         cover: String?,
         playlistUrl: String?,
         originalId: String?

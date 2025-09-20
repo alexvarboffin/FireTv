@@ -34,7 +34,7 @@ class PlaylistFragment : BaseFragment(), PlaylistManagementView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val handler = Handler(Looper.getMainLooper())
-        presenter = PlaylistPresenterImpl(handler, this, context)
+        presenter = PlaylistPresenterImpl(handler, this, requireContext())
     }
 
     override fun onCreateView(
