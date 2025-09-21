@@ -42,7 +42,7 @@ class CategoryAdapter(private val context: Context, categoryList: MutableList<Ca
     }
 
     interface OnItemClickListener {
-        fun onItemClick(view: View?, obj: CategoryUI?, position: Int)
+        fun onItemClick(view: View, obj: CategoryUI?, position: Int)
     }
 
     fun setOnItemClickListener(mItemOverflowClickListener: OnItemClickListener?) {
@@ -53,14 +53,15 @@ class CategoryAdapter(private val context: Context, categoryList: MutableList<Ca
         this.data = ArrayList<CategoryUI>(categoryList)
         this.searchList = ArrayList<CategoryUI>(categoryList)
         this.prf = PrefManager(context)
-        this.mColors = context.getResources().getStringArray(R.array.category_colors)
+        this.mColors = context.resources.getStringArray(R.array.category_colors)
     }
 
 
-    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        val c = searchList.get(position)
+    override fun onBindViewHolder(holder: CategoryViewHolder, position0: Int) {
+        val c = searchList[holder.adapterPosition]
 
-        holder.binding.tvCategory.setText(c.name)
+
+        holder.binding.tvCategory.text = c.name
 
         if (TextUtils.isEmpty(c.thumb)) {
             Glide.with(context)
@@ -81,7 +82,7 @@ class CategoryAdapter(private val context: Context, categoryList: MutableList<Ca
                         isFirstResource: Boolean
                     ): Boolean {
                         if (e != null) {
-                            d("@@bb@@" + c.thumb + " " + e.getLocalizedMessage())
+                            d("@@bb@@" + c.thumb + " " + e.localizedMessage)
                         }
                         return false
                     }
@@ -100,7 +101,7 @@ class CategoryAdapter(private val context: Context, categoryList: MutableList<Ca
         }
 
 
-        holder.binding.colorBackground.setBackgroundColor(Color.parseColor(mColors[position % 24]))
+        holder.binding.colorBackground.setBackgroundColor(Color.parseColor(mColors[holder.adapterPosition % 24]))
     }
 
     override fun getItemCount(): Int {
@@ -125,7 +126,7 @@ class CategoryAdapter(private val context: Context, categoryList: MutableList<Ca
         //            binding.ivCategory.setImageResource(category.getImageResId());
         //            binding.colorBackground.setBackgroundColor(category.getBackgroundColor());
         //        }
-        override fun onClick(view: View?) {
+        override fun onClick(view: View) {
             val position = getAdapterPosition()
             if (mOnItemClickListener != null && position != RecyclerView.NO_POSITION) {
                 mOnItemClickListener!!.onItemClick(view, searchList.get(position), position)

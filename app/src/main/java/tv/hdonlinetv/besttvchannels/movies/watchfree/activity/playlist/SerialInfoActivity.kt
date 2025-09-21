@@ -221,8 +221,8 @@ class SerialInfoActivity : BaseActivity(), NavigationView.OnNavigationItemSelect
         if (intent.hasExtra(KEY_SERIES_ID)) {
             seriesId = intent.getIntExtra(KEY_SERIES_ID, -99)
             xtreamInput =
-                intent.getSerializableExtra(XstreamsLiveFragment.ARG_XTREAM_INPUT) as XtreamInput?
-            presenter = XtreamPresenter(handler, this, xtreamInput)
+                intent.getSerializableExtra(XstreamsLiveFragment.ARG_XTREAM_INPUT) as XtreamInput
+            presenter = XtreamPresenter(handler, this, xtreamInput!!)
         }
     }
 

@@ -24,9 +24,9 @@ class LocalDatabaseRepo private constructor(context: Context) {
     private val db: FavoriteDatabase
     private val context: Context?
 
-    fun getFavorite(playlistId: Long): MutableList<Channel?>? {
+    fun getFavorite(playlistId: Long): MutableList<Channel> {
         val dao = db.channelDao()
-        val list: MutableList<Channel?>?
+        val list: MutableList<Channel>
         if (playlistId > 0) {
             list = dao.getFavoriteChannelsForPlaylist(playlistId)
         } else {
@@ -319,7 +319,7 @@ class LocalDatabaseRepo private constructor(context: Context) {
             return ArrayList<Category>()
         }
 
-    fun searchChannel(raw: String): MutableList<Channel?>? {
+    fun searchChannel(raw: String): MutableList<Channel> {
         //query% - start with
         //%query
 
@@ -336,7 +336,7 @@ class LocalDatabaseRepo private constructor(context: Context) {
         } catch (e: Exception) {
             Log.d(TAG, "getAllChannels: " + e.message)
         }
-        return ArrayList<Channel?>()
+        return ArrayList<Channel>()
     }
 
     fun addCategory(categories: MutableList<Category>) {
@@ -348,7 +348,7 @@ class LocalDatabaseRepo private constructor(context: Context) {
         }
     }
 
-    fun getCategory(categoryName: String): MutableList<Channel?>? {
+    fun getCategory(categoryName: String): MutableList<Channel> {
         try {
             val query = "%$categoryName%"
             val res = db.channelDao().getCategory(query)
@@ -356,7 +356,7 @@ class LocalDatabaseRepo private constructor(context: Context) {
         } catch (e: Exception) {
             Log.d(TAG, "addChannel: " + e.message)
         }
-        return ArrayList<Channel?>()
+        return ArrayList<Channel>()
     }
 
     fun deletePlaylistAndRelatedChannels(playlist: PlaylistImpl): Int {

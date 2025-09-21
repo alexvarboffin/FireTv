@@ -106,7 +106,7 @@ class PlaylistPresenterImpl(handler: Handler, view: PlaylistManagementView, cont
         }
     }
 
-    fun selectAllPlaylist(callback: RepoCallback<MutableList<PlaylistImpl>>) {
+    fun selectAllPlaylist(callback: RepoCallback<List<PlaylistImpl>>) {
         executeInBackground(Runnable {
             val playlists = db_repo.selectAllPlaylist()
             postToMainThread(Runnable {

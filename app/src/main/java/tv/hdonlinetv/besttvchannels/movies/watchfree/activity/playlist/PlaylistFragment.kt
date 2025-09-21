@@ -56,7 +56,7 @@ class PlaylistFragment : BaseFragment(), PlaylistManagementView {
 //                true));
 //        playlistList.add(new Playlist("Rus.m3u", "ss", noW, 6,
 //                true));
-        adapter = PlaylistAdapter(activity, null, object : OnPlaylistActionListener {
+        adapter = PlaylistAdapter(requireActivity(), null, object : OnPlaylistActionListener {
             override fun onEdit(playlist: PlaylistImpl) {
                 val dialogFragment = PlaylistInfoDialogFragment(playlist)
                 dialogFragment.show(childFragmentManager, "PlaylistInfoDialogFragment")

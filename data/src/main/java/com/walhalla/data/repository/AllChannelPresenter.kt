@@ -50,7 +50,7 @@ class AllChannelPresenter
         })
     }
 
-    fun getChannelsInCategory(categoryName: String, callback: RepoCallback<MutableList<Channel?>?>) {
+    fun getChannelsInCategory(categoryName: String, callback: RepoCallback<MutableList<Channel>>) {
         executeInBackground(Runnable {
             try {
                 val channels = db_repo.getCategory(categoryName)
@@ -108,7 +108,7 @@ class AllChannelPresenter
         })
     }
 
-    fun getAllFavorite(callback: RepoCallback<MutableList<Channel?>?>) {
+    fun getAllFavorite(callback: RepoCallback<MutableList<Channel>>) {
         executeInBackground {
             try {
                 val m = db_repo.getFavorite(-1)
@@ -121,7 +121,7 @@ class AllChannelPresenter
         }
     }
 
-    fun searchChannel(categoryName: String, callback: RepoCallback<MutableList<Channel?>?>) {
+    fun searchChannel(categoryName: String, callback: RepoCallback<MutableList<Channel>>) {
         executeInBackground(Runnable {
             try {
                 val m = db_repo.searchChannel(categoryName)
