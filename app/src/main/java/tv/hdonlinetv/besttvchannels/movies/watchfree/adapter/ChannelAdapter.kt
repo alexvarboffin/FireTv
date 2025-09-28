@@ -23,7 +23,7 @@ import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.collections.MutableList
 
-class ChannelAdapter(private val context: Context, wallpaperList: MutableList<Channel>) :
+class ChannelAdapter(private val context: Context, wallpaperList: List<Channel>) :
     RecyclerView.Adapter<ChannelViewHolder?>(), Filterable {
     val items: MutableList<Channel>
 
@@ -48,7 +48,7 @@ class ChannelAdapter(private val context: Context, wallpaperList: MutableList<Ch
     private val prf: PrefManager?
     private var mOnItemClickListener: OnItemClickListener? = null
 
-    fun swapData(data: MutableList<Channel>) {
+    fun swapData(data: List<Channel>) {
         this.items.clear()
         this.items.addAll(data)
         // Обновляем searchList только при изменении данных

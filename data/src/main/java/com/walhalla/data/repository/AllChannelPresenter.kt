@@ -20,19 +20,19 @@ class AllChannelPresenter
 //        this.executor = Executors.newSingleThreadExecutor();
 //    }
     (handler: Handler, context: Context) : BasePresenter(handler, context) {
-    fun getAllChannels(sortOption: Int, callback: RepoCallback<MutableList<Channel?>?>) {
-        executeInBackground(Runnable {
+    fun getAllChannels(sortOption: Int, callback: RepoCallback<List<Channel>>) {
+        executeInBackground {
             try {
                 val channels = db_repo.getAllChannels(sortOption)
-                postToMainThread(Runnable {
+                postToMainThread {
                     callback.successResult(channels)
-                })
+                }
             } catch (e: Exception) {
                 postToMainThread(Runnable {
                     callback.errorResult(e.message!!)
                 })
             }
-        })
+        }
     }
 
     fun getChannelById(id: Long, callback: RepoCallback<Channel>) {
@@ -50,19 +50,19 @@ class AllChannelPresenter
         })
     }
 
-    fun getChannelsInCategory(categoryName: String, callback: RepoCallback<MutableList<Channel>>) {
-        executeInBackground(Runnable {
+    fun getChannelsInCategory(categoryName: String, callback: RepoCallback<List<Channel>>) {
+        executeInBackground {
             try {
                 val channels = db_repo.getCategory(categoryName)
-                postToMainThread(Runnable {
+                postToMainThread {
                     callback.successResult(channels)
-                })
+                }
             } catch (e: Exception) {
                 postToMainThread(Runnable {
                     callback.errorResult(e.message!!)
                 })
             }
-        })
+        }
     }
 
 
@@ -108,7 +108,7 @@ class AllChannelPresenter
         })
     }
 
-    fun getAllFavorite(callback: RepoCallback<MutableList<Channel>>) {
+    fun getAllFavorite(callback: RepoCallback<List<Channel>>) {
         executeInBackground {
             try {
                 val m = db_repo.getFavorite(-1)
@@ -121,13 +121,13 @@ class AllChannelPresenter
         }
     }
 
-    fun searchChannel(categoryName: String, callback: RepoCallback<MutableList<Channel>>) {
+    fun searchChannel(categoryName: String, callback: RepoCallback<List<Channel>>) {
         executeInBackground(Runnable {
             try {
                 val m = db_repo.searchChannel(categoryName)
-                postToMainThread(Runnable {
+                postToMainThread {
                     callback.successResult(m)
-                })
+                }
             } catch (e: Exception) {
                 handleException(e)
             }

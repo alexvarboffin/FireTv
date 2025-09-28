@@ -85,8 +85,8 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
         initCheck()
         val handler = Handler(Looper.getMainLooper())
         presenter = AllChannelPresenter(handler, this)
-        presenter!!.getAllFavorite(object : RepoCallback<MutableList<Channel>> {
-            override fun successResult(data: MutableList<Channel>) {
+        presenter!!.getAllFavorite(object : RepoCallback<List<Channel>> {
+            override fun successResult(data: List<Channel>) {
                 val mm = data
                 favoriteAdapter = ChannelAdapter(applicationContext, mm)
                 binding!!.rec.setAdapter(favoriteAdapter)

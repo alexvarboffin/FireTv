@@ -97,7 +97,7 @@ preference = "1.2.1"
 pulsator4droid = "1.0.3"
 push = "4.2.1"
 review = "2.0.2"
-room = "2.7.2"
+room = "2.8.0"
 runner = "1.7.0"
 swiperefreshlayout = "1.1.0"
 taptargetview = "1.15.0"
@@ -159,6 +159,9 @@ androidx-preference-ktx = { version.ref = "preference", module = "androidx.prefe
 androidx-preference-ktx-ktx = { version.ref = "preference", module = "androidx.preference:preference-ktx-ktx"}
 androidx-room-compiler = { version.ref = "room", module = "androidx.room:room-compiler"}
 androidx-room-runtime = { version.ref = "room", module = "androidx.room:room-runtime"}
+
+
+
 androidx-runner = { version.ref = "runner", module = "androidx.test:runner"}
 androidx-swiperefreshlayout = { version.ref = "swiperefreshlayout", module = "androidx.swiperefreshlayout:swiperefreshlayout"}
 androidx-test-junit = { version.ref = "androidx-test-junit", group = "androidx.test.ext", name = "junit"}

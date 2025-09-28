@@ -22,7 +22,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.Constant
 import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
 import java.util.Locale
 
-class SearchActivity : BaseActivity(), RepoCallback<MutableList<Channel>>,
+class SearchActivity : BaseActivity(), RepoCallback<List<Channel>>,
     ChannelAdapter.OnItemClickListener {
     private var binding: ActivityChannelsBinding? = null
 
@@ -33,7 +33,7 @@ class SearchActivity : BaseActivity(), RepoCallback<MutableList<Channel>>,
     //, favList;
     var channelAdapter: ChannelAdapter? = null
     var categoryName: String? = null
-    private val TAG: String = SearchActivity::class.java.getSimpleName()
+    private val TAG: String = SearchActivity::class.java.simpleName
     var adNetwork: AdNetwork? = null
     var adsPref: AdsPref? = null
 
@@ -42,7 +42,7 @@ class SearchActivity : BaseActivity(), RepoCallback<MutableList<Channel>>,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityChannelsBinding.inflate(getLayoutInflater())
+        binding = ActivityChannelsBinding.inflate(layoutInflater)
         setContentView(binding!!.getRoot())
         val handler = Handler(Looper.getMainLooper())
         presenter = AllChannelPresenter(handler, this)
@@ -57,8 +57,8 @@ class SearchActivity : BaseActivity(), RepoCallback<MutableList<Channel>>,
         setSupportActionBar(binding!!.toolbar)
         setTitle(categoryName)
 
-        getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true)
-        getSupportActionBar()!!.setDisplayShowHomeEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
 
         adsPref = AdsPref(this)
         adNetwork = AdNetwork(this)
@@ -167,12 +167,11 @@ class SearchActivity : BaseActivity(), RepoCallback<MutableList<Channel>>,
         if (prf!!.loadNightModeState()) {
             Log.d("Dark", "MODE")
         } else {
-            getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) // set status text dark
+            window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) // set status text dark
         }
     }
 
-    override fun successResult(tmp: MutableList<Channel>) {
+    override fun successResult(tmp: List<Channel>) {
         if (tmp.isEmpty()) {
             binding!!.lytNoItem.getRoot().visibility = View.VISIBLE
         }

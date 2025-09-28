@@ -21,7 +21,7 @@ import kotlin.Int
 
 class PlaylistAdapter(
     private val context: Context,
-    playlists: MutableList<PlaylistImpl>,
+    playlists: MutableList<PlaylistImpl>?,
     private val listener: OnPlaylistActionListener?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder?>(), Filterable {
     private val data: MutableList<PlaylistImpl>
@@ -191,13 +191,13 @@ class PlaylistAdapter(
     }
 
     interface OnPlaylistActionListener {
-        fun onEdit(playlist: PlaylistImpl?)
+        fun onEdit(playlist: PlaylistImpl)
 
-        fun onDelete(playlist: PlaylistImpl?, absoluteAdapterPosition: Int)
+        fun onDelete(playlist: PlaylistImpl, absoluteAdapterPosition: Int)
 
-        fun onItemClick(playlist: PlaylistImpl?, absoluteAdapterPosition: Int)
+        fun onItemClick(playlist: PlaylistImpl, absoluteAdapterPosition: Int)
 
-        fun onUpdate(playlist: PlaylistImpl?, absoluteAdapterPosition: Int)
+        fun onUpdate(playlist: PlaylistImpl, absoluteAdapterPosition: Int)
     }
 
     companion object {

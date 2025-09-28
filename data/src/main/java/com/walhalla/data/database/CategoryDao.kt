@@ -15,7 +15,7 @@ interface CategoryDao {
     fun addData(channels: Category)
 
     @Query("SELECT * from category order by name ASC")
-    fun selectAllCategories(): MutableList<Category>? //    //убыванию, от больших значений к меньшим
+    fun selectAllCategories(): List<Category> //    //убыванию, от больших значений к меньшим
     //    @Query("SELECT * from category order by name DESC")
     //    List<Category> selectAllCategories();
 }

@@ -1,58 +1,49 @@
-package tv.hdonlinetv.besttvchannels.movies.watchfree.fragment;
+package tv.hdonlinetv.besttvchannels.movies.watchfree.fragment
 
-import android.content.Context;
-import android.widget.Toast;
-
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import tv.hdonlinetv.besttvchannels.movies.watchfree.BuildConfig;
-
+import android.content.Context
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import tv.hdonlinetv.besttvchannels.movies.watchfree.BuildConfig
 
 /**
  * Created by combo on 20.04.2017.
  */
+abstract class BaseFragment : Fragment() {
+    protected var mListener: IOnFragmentInteractionListener? = null
 
-public abstract class BaseFragment extends Fragment {
-
-    protected IOnFragmentInteractionListener mListener;
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof IOnFragmentInteractionListener) {
-            mListener = (IOnFragmentInteractionListener) context;
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is IOnFragmentInteractionListener) {
+            mListener = context as IOnFragmentInteractionListener
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement IOnFragmentInteractionListener");
+            throw RuntimeException(
+                context.toString()
+                        + " must implement IOnFragmentInteractionListener"
+            )
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    override fun onResume() {
+        super.onResume()
         if (BuildConfig.DEBUG) {
-            Toast.makeText(getContext(), this.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, this.javaClass.simpleName, Toast.LENGTH_SHORT).show()
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    override fun onDetach() {
+        super.onDetach()
         //mListener = null;
     }
 
-    protected void setBadgeText(String thisclazzname, String s) {
+    protected fun setBadgeText(thisclazzname: String?, s: String?) {
         if (mListener != null) {
-            mListener.setBadgeText(thisclazzname, s);
+            mListener!!.setBadgeText(thisclazzname, s)
         }
     }
-
-//    @Override public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        ButterKnife.bind(this, view);
-//        initInstances();
-//    }
-//    protected abstract void initInstances();
+    //    @Override public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    //        super.onViewCreated(view, savedInstanceState);
+    //        ButterKnife.bind(this, view);
+    //        initInstances();
+    //    }
+    //    protected abstract void initInstances();
 }

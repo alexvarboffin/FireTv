@@ -168,7 +168,7 @@ class PlaylistXtreamActivity : BaseActivity(), NavigationView.OnNavigationItemSe
 
     fun toXtrimInput(playlist: PlaylistImpl): XtreamInput? {
         var mm: XtreamInput? = null
-        val baseUrl: HttpUrl? = playlist.fileName.toHttpUrlOrNull()
+        val baseUrl: HttpUrl? = playlist.fileName?.toHttpUrlOrNull()
         if (baseUrl != null) {
             val url = HttpUrl.Builder()
                 .scheme(baseUrl.scheme)

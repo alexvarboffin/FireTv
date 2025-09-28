@@ -23,7 +23,7 @@ class PlaylistPresenterImpl(handler: Handler, view: PlaylistManagementView, cont
     }
 
     fun loadNewPlayList(oldValue: PlaylistImpl) {
-        val playlistLink = oldValue.fileName
+        val playlistLink = oldValue.fileName?:""
         val playListName: String? = oldValue.title
 
         this.client = NetworkUtils.makeOkhttp()

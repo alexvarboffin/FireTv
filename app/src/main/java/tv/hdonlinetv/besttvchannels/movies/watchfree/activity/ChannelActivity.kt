@@ -98,13 +98,12 @@ class ChannelActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
 
     private fun fetchWallpapers(categoryName: String) {
         val handler = Handler(Looper.getMainLooper())
-
         presenter!!.getChannelsInCategory(
             categoryName,
-            object : RepoCallback<MutableList<Channel>> {
-                override fun successResult(data: MutableList<Channel>) {
+            object : RepoCallback<List<Channel>> {
+                override fun successResult(data: List<Channel>) {
                     if (data.isEmpty()) {
-                        binding!!.lytNoItem.getRoot().setVisibility(View.VISIBLE)
+                        binding!!.lytNoItem.getRoot().visibility = View.VISIBLE
                     }
                     channelAdapter!!.swapData(data)
                 }
