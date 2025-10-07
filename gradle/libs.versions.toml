@@ -102,6 +102,7 @@ runner = "1.7.0"
 swiperefreshlayout = "1.1.0"
 taptargetview = "1.15.0"
 androidx-appcompat = "1.7.0"
+workRuntime = "2.10.5"
 [libraries]
 accompanist-swiperefresh = { version.ref = "accompanistSwiperefresh", module = "com.google.accompanist:accompanist-swiperefresh"}
 analytics = { version.ref = "analytics", module = "io.appmetrica.analytics:analytics"}
@@ -138,6 +139,7 @@ androidx-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls
 androidx-media3-extractor = { module = "androidx.media3:media3-extractor", version.ref = "media3Exoplayer" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
 androidx-mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
+androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 dropbox-core-sdk = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropboxCoreSdk" }
 flexbox = { module = "com.google.android:flexbox", version.ref = "flexbox" }

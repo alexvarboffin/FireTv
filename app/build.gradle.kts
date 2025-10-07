@@ -127,10 +127,10 @@ dependencies {
 
     implementation(project(":xtream"))
     implementation(libs.androidx.media3.exoplayer.hls)
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.junit)
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    androidTestImplementation(libs.androidx.espresso.core)
 
     //firebase
     implementation(libs.google.firebase.analytics)
@@ -205,14 +205,15 @@ dependencies {
     //implementation(libs.androidx.media3.exoplayer.hls)
     implementation(libs.androidx.media3.cast)
     //0.8.4'
-    implementation("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
-    implementation("tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8")
+//    implementation("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
+//    implementation("tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8")
+//    // Other ABIs: optional
+//    implementation("tv.danmaku.ijk.media:ijkplayer-armv5:0.8.8")
+//    implementation("tv.danmaku.ijk.media:ijkplayer-arm64:0.8.8")
+//    implementation("tv.danmaku.ijk.media:ijkplayer-x86:0.8.8")
+//    implementation("tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8")
 
-    // Other ABIs: optional
-    implementation("tv.danmaku.ijk.media:ijkplayer-armv5:0.8.8")
-    implementation("tv.danmaku.ijk.media:ijkplayer-arm64:0.8.8")
-    implementation("tv.danmaku.ijk.media:ijkplayer-x86:0.8.8")
-    implementation("tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8")
+    //We use player lib frof libs/*.aar ^^
 
     implementation(libs.androidx.preference.ktx)
 
@@ -232,7 +233,7 @@ dependencies {
     implementation(libs.play.services.cast.framework)
 
 
-    implementation("androidx.work:work-runtime:2.10.4")
+    implementation(libs.androidx.work.runtime)
 }
 
 
