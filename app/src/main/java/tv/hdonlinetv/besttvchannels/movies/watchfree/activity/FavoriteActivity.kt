@@ -30,7 +30,7 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
     private var prf: PrefManager? = null
     private var adNetwork: AdNetwork? = null
     private var adsPref: AdsPref? = null
-    private val TAG: String = FavoriteActivity::class.java.getSimpleName()
+    private val TAG: String = FavoriteActivity::class.java.simpleName
     private var presenter: AllChannelPresenter? = null
 
 
@@ -38,15 +38,15 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
         super.onCreate(savedInstanceState)
 
         // Инициализируйте ViewBinding
-        binding = ActivityFavoriteBinding.inflate(getLayoutInflater())
+        binding = ActivityFavoriteBinding.inflate(layoutInflater)
         setContentView(binding!!.getRoot())
 
 
         // Настройка тулбара
         setSupportActionBar(binding!!.toolbar)
-        setTitle("Favorite")
-        getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true)
-        getSupportActionBar()!!.setDisplayShowHomeEnabled(true)
+        title = "Favorite"
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
 
         // Инициализация других переменных
         prf = PrefManager(this)
@@ -69,12 +69,12 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
     fun showInterstitialAd() {
         adNetwork!!.showInterstitialAdNetwork(
             Constant.INTERSTITIAL_POST_LIST,
-            adsPref!!.getInterstitialAdInterval()
+            adsPref!!.interstitialAdInterval
         )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.getItemId() == R.id.home) {
+        if (item.itemId == R.id.home) {
             finish()
         }
         return super.onOptionsItemSelected(item)
@@ -93,7 +93,7 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
 
                 // Обработка кликов на элементы
                 favoriteAdapter!!.setOnItemClickListener(this@FavoriteActivity)
-                binding!!.noFavorite.setVisibility(if (mm.isEmpty()) View.VISIBLE else View.GONE)
+                binding!!.noFavorite.visibility = if (mm.isEmpty()) View.VISIBLE else View.GONE
                 d("@@@@")
             }
 
@@ -106,8 +106,7 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
         if (prf!!.loadNightModeState()) {
             Log.d("Dark", "MODE")
         } else {
-            getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) // set status text dark
+            window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) // set status text dark
         }
     }
 

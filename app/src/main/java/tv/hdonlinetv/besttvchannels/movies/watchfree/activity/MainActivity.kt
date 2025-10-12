@@ -55,7 +55,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener,
     IOnFragmentInteractionListener {
-    private var binding: ActivityMainBinding? = null
+    private lateinit var binding: ActivityMainBinding
 
     //private LocalDatabaseRepo favoriteDatabase;
     var actionBarDrawerToggle: ActionBarDrawerToggle? = null
@@ -223,7 +223,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fragmentList!!.add(FavoritesFragment())
         tabAdapter = ViewPagerAdapter(
             this,
-            supportFragmentManager, fragmentList
+            supportFragmentManager, fragmentList!!
         )
         binding!!.viewPager.adapter = tabAdapter
     }
@@ -237,7 +237,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //        fragmentList.add(new FavoritesFragment());
         tabAdapter = ViewPagerAdapter(
             this,
-            supportFragmentManager, fragmentList
+            supportFragmentManager, fragmentList!!
         )
         binding!!.viewPager.adapter = tabAdapter
     }
@@ -304,8 +304,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        binding!!.drawerLayout.closeDrawer(GravityCompat.START)
-        //        if (menuItem.getItemId() == R.id.nav_unlock_premium) {
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+//        if (menuItem.getItemId() == R.id.nav_unlock_premium) {
 //            startActivity(new Intent(MainActivity.this,PrimeActivity.class));
 //        } else
         if (menuItem.itemId == R.id.nav_home) {

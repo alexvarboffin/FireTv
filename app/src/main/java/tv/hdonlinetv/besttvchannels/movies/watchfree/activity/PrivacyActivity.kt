@@ -1,57 +1,48 @@
-package tv.hdonlinetv.besttvchannels.movies.watchfree.activity;
+package tv.hdonlinetv.besttvchannels.movies.watchfree.activity
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.webkit.WebView;
+import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
+import android.view.View
+import android.webkit.WebView
+import tv.hdonlinetv.besttvchannels.movies.watchfree.R
+import tv.hdonlinetv.besttvchannels.movies.watchfree.databinding.ActivityPrivacyPolicyBinding
+import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
 
-import tv.hdonlinetv.besttvchannels.movies.watchfree.R;
-import tv.hdonlinetv.besttvchannels.movies.watchfree.databinding.ActivityPrivacyPolicyBinding;
-import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager;
+class PrivacyActivity : BaseActivity() {
+    private var binding: ActivityPrivacyPolicyBinding? = null
+    private var prefManager: PrefManager? = null
+    private val TAG: String = PrivacyActivity::class.java.simpleName
 
-
-public class PrivacyActivity extends BaseActivity {
-
-    public static final String EXTRA_HTML_URL0 = "html_url";
-    public static final String EXTRA_TITLE = "title";  // Add title key
-
-
-    private ActivityPrivacyPolicyBinding binding;
-    private PrefManager prefManager;
-    private final String TAG = PrivacyActivity.class.getSimpleName();
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityPrivacyPolicyBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
+        setContentView(binding!!.getRoot())
 
 
 
-        prefManager = new PrefManager(this);
-        binding.layoutLoadMore.setVisibility(View.VISIBLE);
-        getPrivacyPolicy(binding.webView);
-        initCheck();
+        prefManager = PrefManager(this)
+        binding!!.layoutLoadMore.visibility = View.VISIBLE
+        getPrivacyPolicy(binding!!.webView)
+        initCheck()
     }
 
-    private void getPrivacyPolicy(WebView webView) {
+    private fun getPrivacyPolicy(webView: WebView) {
+        val htmlUrl = intent.getStringExtra(EXTRA_HTML_URL0)
+        val title = intent.getStringExtra(EXTRA_TITLE)
 
-        String htmlUrl = getIntent().getStringExtra(EXTRA_HTML_URL0);
-        String title = getIntent().getStringExtra(EXTRA_TITLE);
-
-        setSupportActionBar(binding.toolbar);
-        setTitle((title == null) ? getString(R.string.policy_privacy) : title);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setSupportActionBar(binding!!.toolbar)
+        setTitle(if (title == null) getString(R.string.policy_privacy) else title)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
 
         // Enable JavaScript for the WebView
-        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true)
         if (htmlUrl != null) {
-            webView.loadUrl(htmlUrl);
+            webView.loadUrl(htmlUrl)
         }
 
-//        DatabaseReference policyReference = FirebaseDatabase.getInstance().getReference("policy");
+        //        DatabaseReference policyReference = FirebaseDatabase.getInstance().getReference("policy");
 //        policyReference.addListenerForSingleValueEvent(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -71,19 +62,23 @@ public class PrivacyActivity extends BaseActivity {
 //        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
-    private void initCheck() {
-        if (prefManager.loadNightModeState()) {
-            Log.d("Dark", "MODE");
+    private fun initCheck() {
+        if (prefManager!!.loadNightModeState()) {
+            Log.d("Dark", "MODE")
         } else {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
         }
+    }
+
+    companion object {
+        const val EXTRA_HTML_URL0: String = "html_url"
+        const val EXTRA_TITLE: String = "title" // Add title key
     }
 }

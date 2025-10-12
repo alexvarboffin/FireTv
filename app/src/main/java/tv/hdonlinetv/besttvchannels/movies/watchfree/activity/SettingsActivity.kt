@@ -41,9 +41,9 @@ class SettingsActivity : BaseActivity() {
         binding = ActivitySettingsBinding.inflate(
             layoutInflater
         )
-        setContentView(binding!!.root)
+        setContentView(binding.root)
 
-        setSupportActionBar(binding!!.toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
@@ -60,12 +60,12 @@ class SettingsActivity : BaseActivity() {
             getString(R.string.option_player_activity)
         )
 
-        binding!!.tvCurrentVersion.text = BuildConfig.VERSION_NAME
-        binding!!.tvSaveLocation.text =
+        binding.tvCurrentVersion.text = BuildConfig.VERSION_NAME
+        binding.tvSaveLocation.text =
             resources.getString(R.string.storagelocation) + resources.getString(
                 R.string.app_name
             )
-        binding!!.tvCacheValue.text = resources.getString(R.string.label_cache) + readableFileSize(
+        binding.tvCacheValue.text = resources.getString(R.string.label_cache) + readableFileSize(
             getDirSize(
                 cacheDir
             ) + getDirSize(

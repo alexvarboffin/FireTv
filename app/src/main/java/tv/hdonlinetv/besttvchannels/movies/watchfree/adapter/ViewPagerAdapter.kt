@@ -1,59 +1,47 @@
-package tv.hdonlinetv.besttvchannels.movies.watchfree.adapter;
+package tv.hdonlinetv.besttvchannels.movies.watchfree.adapter
 
-import android.content.Context;
+import android.content.Context
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
+class ViewPagerAdapter(context: FragmentActivity, fm: FragmentManager?, fragments: List<Fragment>
+) : FragmentStateAdapter(context) {
+    var context: Context?
+    private val fragmentList: List<Fragment>
 
-
-import java.util.List;
-
-
-public class ViewPagerAdapter extends FragmentStateAdapter {
-
-    Context context;
-    private final List<Fragment> fragmentList;
-
-    public ViewPagerAdapter(FragmentActivity context, FragmentManager fm, List<Fragment> fragments) {
-        super(context);
-        this.context = context;
-        this.fragmentList = fragments;
+    init {
+        this.context = context
+        this.fragmentList = fragments
     }
 
-    @Override
-    public int getItemCount() {
-        return fragmentList.size();
+    override fun getItemCount(): Int {
+        return fragmentList.size
     }
 
-//    @NonNull
-//    @Override
-//    public Fragment getItem(int position) {
-//        if (position == 0) {
-//            return new ALatestFragment();
-//        } else if (position == 1) {
-//            return new CategoryFragment();
-//        } else if (position == 2) {
-//            return new FavoritesFragment();
-//        }
-//        return new Fragment();
-//    }
 
-
-    @NonNull
-    @Override
-    public Fragment createFragment(int position) {
-        return fragmentList.get(position);
+    //    @NonNull
+    //    @Override
+    //    public Fragment getItem(int position) {
+    //        if (position == 0) {
+    //            return new ALatestFragment();
+    //        } else if (position == 1) {
+    //            return new CategoryFragment();
+    //        } else if (position == 2) {
+    //            return new FavoritesFragment();
+    //        }
+    //        return new Fragment();
+    //    }
+    override fun createFragment(position: Int): Fragment {
+        return fragmentList[position]
     }
 
-    public Fragment getItem(int i) {
-        return fragmentList.get(i);
+    fun getItem(i: Int): Fragment? {
+        return fragmentList[i]
     }
-
-//    @Override
-//    public int getCount() {
-//        return totalTabs;
-//    }
+    //    @Override
+    //    public int getCount() {
+    //        return totalTabs;
+    //    }
 }

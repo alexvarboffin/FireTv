@@ -129,7 +129,7 @@ class CategoryAdapter(private val context: Context, categoryList: MutableList<Ca
         override fun onClick(view: View) {
             val position = getAdapterPosition()
             if (mOnItemClickListener != null && position != RecyclerView.NO_POSITION) {
-                mOnItemClickListener!!.onItemClick(view, searchList.get(position), position)
+                mOnItemClickListener!!.onItemClick(view, searchList[position], position)
             }
         }
     }

@@ -502,8 +502,8 @@ class SerialInfoActivity : BaseActivity(), NavigationView.OnNavigationItemSelect
     }
 
     private fun getFragmentIndex(fragmentName: String): Int {
-        for (i in fragmentList!!.indices) {
-            val fragment = fragmentList!![i]
+        for (i in fragmentList.indices) {
+            val fragment = fragmentList[i]
             if (fragment.javaClass.simpleName == fragmentName) {
                 return i
             }
