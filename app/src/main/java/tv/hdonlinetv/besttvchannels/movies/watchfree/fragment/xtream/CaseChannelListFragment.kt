@@ -1,26 +1,17 @@
-package tv.hdonlinetv.besttvchannels.movies.watchfree.fragment.xtream;
+package tv.hdonlinetv.besttvchannels.movies.watchfree.fragment.xtream
 
-import android.os.Bundle;
+import android.os.Bundle
+import com.walhalla.data.model.Channel
+import com.walhalla.data.repository.RepoCallback
+import tv.hdonlinetv.besttvchannels.movies.watchfree.adapter.ChannelAdapter
+import tv.hdonlinetv.besttvchannels.movies.watchfree.fragment.BaseFragment
 
-import androidx.annotation.Nullable;
+abstract class CaseChannelListFragment : BaseFragment(), RepoCallback<List<Channel>>, ChannelAdapter.OnItemClickListener {
+    @JvmField
+    protected var channelAdapter: ChannelAdapter? = null
 
-import com.walhalla.data.model.Channel;
-import com.walhalla.data.repository.RepoCallback;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import tv.hdonlinetv.besttvchannels.movies.watchfree.adapter.ChannelAdapter;
-import tv.hdonlinetv.besttvchannels.movies.watchfree.fragment.BaseFragment;
-
-public abstract class CaseChannelListFragment
-        extends BaseFragment implements RepoCallback<List<Channel>>, ChannelAdapter.OnItemClickListener {
-
-    protected ChannelAdapter channelAdapter;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        channelAdapter = new ChannelAdapter(getContext(), new ArrayList<>());
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        channelAdapter = ChannelAdapter(requireContext(), ArrayList())
     }
 }

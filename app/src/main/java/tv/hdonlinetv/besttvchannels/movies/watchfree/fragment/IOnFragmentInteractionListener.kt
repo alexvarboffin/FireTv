@@ -1,5 +1,5 @@
-package tv.hdonlinetv.besttvchannels.movies.watchfree.fragment;
+package tv.hdonlinetv.besttvchannels.movies.watchfree.fragment
 
-public interface IOnFragmentInteractionListener {
-    void setBadgeText(String position, String msg);
+interface IOnFragmentInteractionListener {
+    fun setBadgeText(position: String, msg: String)
 }

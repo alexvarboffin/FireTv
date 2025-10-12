@@ -54,7 +54,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
     //            getSeriesStreams(playlistId, callback);
     //        }
     //    }
-    fun getSeriesStreams(input: XtreamInput, callback: RepoCallback<MutableList<Channel>>) {
+    fun getSeriesStreams(input: XtreamInput, callback: RepoCallback<List<Channel>>) {
         executeInBackground(Runnable {
 //            try {
 //                List<Channel> channels = db_repo.getFavorite(playlistId);
@@ -138,7 +138,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
         })
     }
 
-    fun getLiveStreams(input: XtreamInput, callback: RepoCallback<MutableList<Channel>>) {
+    fun getLiveStreams(input: XtreamInput, callback: RepoCallback<List<Channel>>) {
         executeInBackground(Runnable {
 //            try {
 //                List<Channel> channels = db_repo.getFavorite(input);
@@ -208,15 +208,15 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
                     }
                 })
             } catch (e: Exception) {
-                postToMainThread(Runnable { callback.errorResult(e.message!!) })
+                postToMainThread { callback.errorResult(e.message!!) }
             }
         })
     }
 
     //https://iptv.icsnleb.com:25463/player_api.php?username=12&password=12&xtream_type=vod
-    fun getVodStreams(input: XtreamInput, callback: RepoCallback<MutableList<Channel>>) {
+    fun getVodStreams(input: XtreamInput, callback: RepoCallback<List<Channel>>) {
         executeInBackground(Runnable {
-            //            try {
+//            try {
 //                List<Channel> channels = db_repo.getFavorite(playlistId);
 //                postToMainThread(() -> callback.successResult(channels));
 //            } catch (Exception e) {
@@ -234,9 +234,9 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
                 liveCall.enqueue(object : Callback<MutableList<XtreamVod>> {
                     override fun onResponse(call: Call<MutableList<XtreamVod>>, response: Response<MutableList<XtreamVod>>
                     ) {
-                        val channels: MutableList<Channel> = ArrayList<Channel>()
+                        val channels: MutableList<Channel> = ArrayList()
 
-                        if (response.isSuccessful()) {
+                        if (response.isSuccessful) {
                             val liveStreams = response.body()
                             // Обработка списка потоков
                             for (stream in liveStreams!!) {

@@ -53,8 +53,8 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val handler = Handler(Looper.getMainLooper())
-        presenter = AllChannelInPlaylistPresenter(handler, getContext())
-        if (getArguments() != null) {
+        presenter = AllChannelInPlaylistPresenter(handler, context)
+        if (arguments != null) {
             playlistId = requireArguments().getLong(ARG_PLAYLIST_ID, -1)
         }
     }
@@ -66,11 +66,11 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view: View = binding!!.getRoot()
 
-        adsPref = AdsPref(getActivity())
-        adNetwork = AdNetwork(getActivity())
+        adsPref = AdsPref(activity)
+        adNetwork = AdNetwork(activity)
         adNetwork!!.loadInterstitialAdNetwork(Constant.INTERSTITIAL_POST_LIST)
 
-        prefManager = PrefManager(getActivity())
+        prefManager = PrefManager(activity)
         showRefresh(true)
 
         //@@@@@@@@@@@binding.swipeRefreshLayout.setOnRefreshListener(() -> refreshData());
@@ -104,7 +104,7 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
     }
 
     fun createAlertDialog(context: Context, prf: PrefManager) {
-        val values = getResources().getStringArray(R.array.layout_options)
+        val values = resources.getStringArray(R.array.layout_options)
 
 
         val checkeditem = prf.getChannelDisplayItemTypeIndex()
@@ -141,7 +141,7 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
 
     private fun resumeAdapter(m: Int, type: String?) {
         d("@@@" + type + "@@@" + m)
-        val tmp = channelAdapter.items
+        val tmp = channelAdapter?.items?:emptyList()
         binding!!.recyclerView.setAdapter(null)
         binding!!.recyclerView.setLayoutManager(null)
         channelAdapter = null
@@ -150,8 +150,8 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
         lm = GridLayoutManager(context, m)
         binding!!.recyclerView.setLayoutManager(lm)
         binding!!.recyclerView.setAdapter(channelAdapter)
-        channelAdapter.setOnItemClickListener(this)
-        channelAdapter.notifyDataSetChanged()
+        channelAdapter?.setOnItemClickListener(this)
+        channelAdapter?.notifyDataSetChanged()
     }
 
     override fun onDestroy() {
@@ -172,21 +172,20 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
         //binding.recyclerView.setHasFixedSize(true);
 
         val m = prefManager!!.getInt(Const.KEY_CHANNEL_COLUMNS)
-        lm = GridLayoutManager(getContext(), m)
+        lm = GridLayoutManager(context, m)
         binding!!.recyclerView.setLayoutManager(lm)
         binding!!.recyclerView.setAdapter(channelAdapter)
 
 
         //wallpaperReference = FirebaseDatabase.getInstance().getReference("Channels");
         fetchWallpapers()
-
-        channelAdapter.setOnItemClickListener(this)
+        channelAdapter?.setOnItemClickListener(this)
     }
 
     fun showInterstitialAd() {
         adNetwork!!.showInterstitialAdNetwork(
             Constant.INTERSTITIAL_POST_LIST,
-            adsPref!!.getInterstitialAdInterval()
+            adsPref!!.interstitialAdInterval
         )
     }
 
@@ -251,25 +250,25 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
         binding = null
     }
 
-    override fun successResult(data: MutableList<Channel>) {
+    override fun successResult(data: List<Channel>) {
         showRefresh(false)
         //binding.noFavorite.setVisibility(tmp.isEmpty() ? View.VISIBLE : View.GONE);
         this@AllChannelInPlaylistFragment.setBadgeText(THISCLAZZNAME, data.size.toString())
-        channelAdapter.swapData(data)
+        channelAdapter?.swapData(data)
     }
 
     override fun errorResult(err: String) {
     }
 
-    override fun onItemClick(view: View, channel: Channel, position: Int) {
+    override fun onItemClick(view: View, obj: Channel, position: Int) {
         val isDetailsMode = prefManager!!.isDetailsMode
         if (isDetailsMode) {
-            val channelId = channel._id
+            val channelId = obj._id
             val intent = DetailsActivity.newInstance(requireContext(), channelId)
             startActivity(intent)
             showInterstitialAd()
         } else {
-            val intents = playerIntent(context, channel)
+            val intents = playerIntent(context, obj)
             startActivity(intents)
         }
     }

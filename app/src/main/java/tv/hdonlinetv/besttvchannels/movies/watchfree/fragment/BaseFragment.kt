@@ -35,7 +35,7 @@ abstract class BaseFragment : Fragment() {
         //mListener = null;
     }
 
-    protected fun setBadgeText(thisclazzname: String?, s: String?) {
+    protected fun setBadgeText(thisclazzname: String, s: String) {
         if (mListener != null) {
             mListener!!.setBadgeText(thisclazzname, s)
         }

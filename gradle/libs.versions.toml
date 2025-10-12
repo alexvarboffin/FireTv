@@ -33,6 +33,7 @@ compose-bom = "2025.09.00"
 compose-compiler = "1.5.8"
 compose-multiplatform = "1.7.0"
 constraintlayout = "2.2.0"
+converterGson = "3.0.0"
 core = "1.17.0"
 core-ktx = "1.17.0"
 coreSplashscreen = "1.0.1"
@@ -63,6 +64,7 @@ kotlin = "2.2.20"
 kotlinGradlePlugin = "2.1.0"
 kotlinStdlibJdk7 = "2.1.21"
 kotlinx-coroutines = "1.10.2"
+kotlinxSerializationJson = "1.9.0"
 ksp = "2.1.0-1.0.29"
 ktor = "3.0.3"
 ktorClientCore = "3.3.0"
@@ -96,6 +98,8 @@ precompose = "1.7.0-alpha03"
 preference = "1.2.1"
 pulsator4droid = "1.0.3"
 push = "4.2.1"
+retrofit = "3.0.0"
+retrofit2KotlinxSerializationConverter = "1.0.0"
 review = "2.0.2"
 room = "2.8.0"
 runner = "1.7.0"
@@ -141,11 +145,13 @@ androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "medi
 androidx-mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 dropbox-core-sdk = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropboxCoreSdk" }
 flexbox = { module = "com.google.android:flexbox", version.ref = "flexbox" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlinStdlibJdk7" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientOkhttp" }
 ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktorClientSerialization" }
@@ -208,6 +214,8 @@ precompose-koin = { version.ref = "precompose", module = "moe.tlaster:precompose
 precompose-viewmodel = { version.ref = "precompose", module = "moe.tlaster:precompose-viewmodel"}
 pulsator4droid = { version.ref = "pulsator4droid", module = "pl.bclogic:pulsator4droid"}
 push = { version.ref = "push", module = "io.appmetrica.analytics:push"}
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 review = { version.ref = "review", module = "com.google.android.play:review"}
 review-ktx = { version.ref = "review", module = "com.google.android.play:review-ktx"}
 room-ktx = { version.ref = "room", module = "androidx.room:room-ktx"}

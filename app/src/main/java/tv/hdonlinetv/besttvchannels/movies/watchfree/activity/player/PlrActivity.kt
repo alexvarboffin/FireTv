@@ -46,6 +46,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.activity.BaseActivity
 import tv.hdonlinetv.besttvchannels.movies.watchfree.activity.ChannelViewModel
 import tv.hdonlinetv.besttvchannels.movies.watchfree.databinding.ActivityPlayerBinding
 import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
+import androidx.core.view.get
 
 class PlrActivity : BaseActivity() {
     private var castContext: CastContext? = null
@@ -419,7 +420,7 @@ class PlrActivity : BaseActivity() {
     }
 
     private fun setMenuIcon(b: Boolean) {
-        mMenuItem!!.getItem(0).setIcon(
+        mMenuItem!![0].setIcon(
             if (b) R.drawable.ic_favorite_fill_red else R.drawable.ic_favorite_border_red
         )
     }

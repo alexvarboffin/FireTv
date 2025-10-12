@@ -30,10 +30,10 @@ class FavoritesFragment : CaseChannelListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val handler = Handler(Looper.getMainLooper())
-        presenter = FavoritePresenter(handler, getContext())
-        prf = PrefManager(getContext())
+        presenter = FavoritePresenter(handler, context)
+        prf = PrefManager(context)
         if (getArguments() != null) {
-            playlistId = getArguments()!!.getLong(ARG_PLAYLIST_ID, -1)
+            playlistId = requireArguments().getLong(ARG_PLAYLIST_ID, -1)
         }
     }
 
@@ -45,9 +45,9 @@ class FavoritesFragment : CaseChannelListFragment() {
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         //binding.recyclerView.setHasFixedSize(true);
         val gridLayoutManager =
-            GridLayoutManager(getContext(), prf!!.getInt(Const.KEY_CHANNEL_COLUMNS))
+            GridLayoutManager(context, prf!!.getInt(Const.KEY_CHANNEL_COLUMNS))
         binding!!.recyclerView.setLayoutManager(gridLayoutManager)
-        channelAdapter.setOnItemClickListener(this)
+        channelAdapter?.setOnItemClickListener(this)
         binding!!.recyclerView.setAdapter(channelAdapter)
         return binding!!.getRoot()
     }
@@ -75,7 +75,7 @@ class FavoritesFragment : CaseChannelListFragment() {
     }
 
     override fun onItemClick(view: View, channel: Channel, position: Int) {
-        val isDetailsMode = prf!!.isDetailsMode()
+        val isDetailsMode = prf!!.isDetailsMode
         if (isDetailsMode) {
             val channelId = channel._id
             val intent = DetailsActivity.newInstance(requireContext(), channelId)
@@ -87,10 +87,10 @@ class FavoritesFragment : CaseChannelListFragment() {
         }
     }
 
-    override fun successResult(tmp: MutableList<Channel>) {
-        binding!!.noFavorite.setVisibility(if (tmp.isEmpty()) View.VISIBLE else View.GONE)
+    override fun successResult(tmp: List<Channel>) {
+        binding!!.noFavorite.visibility = if (tmp.isEmpty()) View.VISIBLE else View.GONE
         this@FavoritesFragment.setBadgeText(THISCLAZZNAME, tmp.size.toString())
-        channelAdapter.swapData(tmp)
+        channelAdapter?.swapData(tmp)
     }
 
     override fun errorResult(err: String) {

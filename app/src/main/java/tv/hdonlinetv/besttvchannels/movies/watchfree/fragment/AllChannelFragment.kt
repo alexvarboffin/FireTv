@@ -61,11 +61,11 @@ class AllChannelFragment : CaseChannelListFragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view: View = binding!!.getRoot()
 
-        adsPref = AdsPref(getActivity())
-        adNetwork = AdNetwork(getActivity())
+        adsPref = AdsPref(activity)
+        adNetwork = AdNetwork(activity)
         adNetwork!!.loadInterstitialAdNetwork(Constant.INTERSTITIAL_POST_LIST)
 
-        prefManager = PrefManager(getActivity())
+        prefManager = PrefManager(activity)
         showRefresh(true)
 
         //@@@@@@@@@@@binding.swipeRefreshLayout.setOnRefreshListener(() -> refreshData());
@@ -99,7 +99,7 @@ class AllChannelFragment : CaseChannelListFragment() {
     }
 
     fun createAlertDialog(context: Context, prf: PrefManager) {
-        val values = getResources().getStringArray(R.array.layout_options)
+        val values = resources.getStringArray(R.array.layout_options)
 
 
         val checkeditem = prf.getChannelDisplayItemTypeIndex()
@@ -136,17 +136,17 @@ class AllChannelFragment : CaseChannelListFragment() {
 
     private fun resumeAdapter(m: Int, type: String) {
         d("@@@" + type + "@@@" + m)
-        val tmp: MutableList<Channel> = channelAdapter.items
+        val tmp: List<Channel> = channelAdapter?.items?:emptyList()
         binding!!.recyclerView.setAdapter(null)
         binding!!.recyclerView.setLayoutManager(null)
         channelAdapter = null
 
         channelAdapter = ChannelAdapter(requireContext(), tmp)
-        lm = GridLayoutManager(getContext(), m)
+        lm = GridLayoutManager(context, m)
         binding!!.recyclerView.setLayoutManager(lm)
         binding!!.recyclerView.setAdapter(channelAdapter)
-        channelAdapter.setOnItemClickListener(this)
-        channelAdapter.notifyDataSetChanged()
+        channelAdapter?.setOnItemClickListener(this)
+        channelAdapter?.notifyDataSetChanged()
     }
 
     override fun onDestroy() {
@@ -166,24 +166,24 @@ class AllChannelFragment : CaseChannelListFragment() {
         //binding.recyclerView.setHasFixedSize(true);
 
         val m = prefManager!!.getInt(Const.KEY_CHANNEL_COLUMNS)
-        lm = GridLayoutManager(getContext(), m)
+        lm = GridLayoutManager(context, m)
         binding!!.recyclerView.setLayoutManager(lm)
         binding!!.recyclerView.setAdapter(channelAdapter)
 
         //wallpaperReference = FirebaseDatabase.getInstance().getReference("Channels");
         //fetchWallpapers();
-        channelAdapter.setOnItemClickListener(this)
+        channelAdapter?.setOnItemClickListener(this)
     }
 
     fun showInterstitialAd() {
         adNetwork!!.showInterstitialAdNetwork(
             Constant.INTERSTITIAL_POST_LIST,
-            adsPref!!.getInterstitialAdInterval()
+            adsPref!!.interstitialAdInterval
         )
     }
 
     private fun fetchWallpapers() {
-        val sortOption = prefManager!!.getSortOption()
+        val sortOption = prefManager!!.sortOption
         presenter!!.getAllChannels(sortOption, this)
     }
 
@@ -243,10 +243,10 @@ class AllChannelFragment : CaseChannelListFragment() {
         binding = null
     }
 
-    override fun successResult(data: MutableList<Channel>) {
+    override fun successResult(data: List<Channel>) {
         showRefresh(false)
         this@AllChannelFragment.setBadgeText(THISCLAZZNAME, data.size.toString())
-        channelAdapter.swapData(data)
+        channelAdapter?.swapData(data)
     }
 
     override fun errorResult(err: String) {

@@ -213,7 +213,7 @@ dependencies {
 //    implementation("tv.danmaku.ijk.media:ijkplayer-x86:0.8.8")
 //    implementation("tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8")
 
-    //We use player lib frof libs/*.aar ^^
+    //We use player lib from libs/*.aar ^^
 
     implementation(libs.androidx.preference.ktx)
 
