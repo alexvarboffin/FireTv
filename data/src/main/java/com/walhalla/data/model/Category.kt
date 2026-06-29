@@ -15,15 +15,15 @@ class Category {
         this.thumb = thumb
     }
 
-    @JvmField
+    
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
     var _id: Long = 0
 
-    @JvmField
+    
     var name: String? = null
-    @JvmField
+    
     var desc: String? = null
-    @JvmField
+    
     var thumb: String? = null
 }

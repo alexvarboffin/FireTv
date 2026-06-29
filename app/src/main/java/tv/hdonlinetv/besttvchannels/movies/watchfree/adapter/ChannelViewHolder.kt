@@ -13,7 +13,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.R
 
 class ChannelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val geolock: ImageView
-    @JvmField
+    
     var imageView: ImageView?
     var textView: TextView
     var mainCategory: TextView

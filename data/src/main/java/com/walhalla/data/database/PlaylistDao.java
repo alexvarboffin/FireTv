@@ -12,6 +12,8 @@ import com.walhalla.data.model.PlaylistChannelJoin;
 
 import java.util.List;
 
+import kotlinx.coroutines.flow.Flow;
+
 @Dao
 public interface PlaylistDao {
 
@@ -32,6 +34,9 @@ public interface PlaylistDao {
 
     @Query("SELECT * FROM playlists")
     List<PlaylistImpl> selectAll();
+
+    @Query("SELECT * FROM playlists")
+    Flow<List<PlaylistImpl>> observeAll();
 
     @Query("SELECT * FROM playlists WHERE _id = :playlistId LIMIT 1")
     PlaylistImpl getPlaylistById(long playlistId);

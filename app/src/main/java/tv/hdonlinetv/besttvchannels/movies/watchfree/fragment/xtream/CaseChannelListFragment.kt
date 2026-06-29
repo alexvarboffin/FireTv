@@ -7,7 +7,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.adapter.ChannelAdapter
 import tv.hdonlinetv.besttvchannels.movies.watchfree.fragment.BaseFragment
 
 abstract class CaseChannelListFragment : BaseFragment(), RepoCallback<List<Channel>>, ChannelAdapter.OnItemClickListener {
-    @JvmField
+    
     protected var channelAdapter: ChannelAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

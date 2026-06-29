@@ -1,0 +1,5 @@
+-keep class cn.jzvd.JZMediaSystem { *; }
+-keep class cn.jzvd.demo.CustomMedia.JZMediaSystemSafe { *; }
+-keep class cn.jzvd.demo.CustomMedia.** { *; }
+-keep class org.videolan.libvlc.** { *; }
+-dontwarn org.videolan.libvlc.**

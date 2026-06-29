@@ -22,15 +22,15 @@ class PlaylistImpl(
     //    public Playlist(String name) {
     //        this.name = name;
     //    }
-    @JvmField @field:ColumnInfo(name = "title") var title: String, //private final String info;
+     @field:ColumnInfo(name = "title") var title: String, //private final String info;
     @field:ColumnInfo(name = "file_name") var fileName: String, @field:ColumnInfo(
         name = "import_date"
     ) var importDate: Long,
     @field:ColumnInfo(name = "count") var count: Int,
     @field:ColumnInfo(name = "auto_update") var autoUpdate: Boolean,
-    @JvmField @field:ColumnInfo(name = "type") var type: Int
+     @field:ColumnInfo(name = "type") var type: Int
 ) {
-    @JvmField
+    
     @PrimaryKey(autoGenerate = true)
     var _id: Long = 0
 

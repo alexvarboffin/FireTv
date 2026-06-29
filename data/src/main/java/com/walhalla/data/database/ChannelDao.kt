@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.walhalla.data.model.Channel
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -13,12 +14,22 @@ interface ChannelDao {
     @get:Query("select * from channel WHERE liked>0")
     val favoriteData: List<Channel>
 
+    @Query("select * from channel WHERE liked>0")
+    fun observeFavorites(): Flow<List<Channel>>
+
     @Query(
         ("SELECT channel.* FROM channel " +
                 "JOIN playlist_channel_join ON playlist_channel_join.channelId = channel._id " +
                 "WHERE playlist_channel_join.playlistId = :playlistId AND channel.liked > 0")
     )
     fun getFavoriteChannelsForPlaylist(playlistId: Long): List<Channel>
+
+    @Query(
+        ("SELECT channel.* FROM channel " +
+                "JOIN playlist_channel_join ON playlist_channel_join.channelId = channel._id " +
+                "WHERE playlist_channel_join.playlistId = :playlistId AND channel.liked > 0")
+    )
+    fun observeFavoriteChannelsForPlaylist(playlistId: Long): Flow<List<Channel>>
 
 
     //    @Query("SELECT EXISTS (SELECT 1 FROM favorite WHERE _id=:id)")
@@ -54,6 +65,9 @@ interface ChannelDao {
 
     @Query("SELECT * from channel order by _id DESC")
     fun selectAllChannelsByIdDESC(): List<Channel> //heght to low
+
+    @Query("SELECT * from channel")
+    fun observeAllChannels(): Flow<List<Channel>>
 
 
     //========================================================================================

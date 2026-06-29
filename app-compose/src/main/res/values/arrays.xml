@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category_colors">
+        <item>#FF0000</item>
+        <item>#1A1A1A</item>
+        <item>#0066CC</item>
+        <item>#D7141A</item>
+        <item>#FFCC00</item>
+        <item>#0056A4</item>
+        <item>#E50914</item>
+        <item>#FC9A24</item>
+        <item>#6A1B9A</item>
+        <item>#0A74DA</item>
+        <item>#FFA500</item>
+        <item>#008000</item>
+        <item>#F4511E</item>
+        <item>#0078D4</item>
+        <item>#00A4E4</item>
+        <item>#0072C6</item>
+        <item>#B71C1C</item>
+        <item>#4A148C</item>
+        <item>#1B5E20</item>
+        <item>#E65100</item>
+        <item>#263238</item>
+        <item>#880E4F</item>
+        <item>#33691E</item>
+        <item>#01579B</item>
+    </string-array>
+
+    <string-array name="faq_questions">
+        <item>@string/faq_question_1</item>
+        <item>@string/faq_question_3</item>
+    </string-array>
+
+    <string-array name="playlist_types">
+        <item>M3U</item>
+        <item>Xtream</item>
+    </string-array>
+
+    <string-array name="tab_titles_xtream">
+        <item>@string/tab_xtream_live</item>
+        <item>@string/tab_xtream_vod</item>
+        <item>@string/tab_xtream_series</item>
+    </string-array>
+
+    <string-array name="tab_titles_xtream_serial">
+        <item>@string/tab_stream_info</item>
+        <item>@string/tab_stream_seasons</item>
+        <item>@string/tab_stream_episodes</item>
+    </string-array>
+</resources>

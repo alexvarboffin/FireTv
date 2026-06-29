@@ -5,10 +5,10 @@ import android.os.Handler
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-abstract class BasePresenter(protected val handler: Handler, @JvmField protected val context: Context) {
+abstract class BasePresenter(protected val handler: Handler,  protected val context: Context) {
     protected val executor: ExecutorService
-    @JvmField
-    protected val db_repo: LocalDatabaseRepo
+    
+    public val db_repo: LocalDatabaseRepo
 
 
     init {

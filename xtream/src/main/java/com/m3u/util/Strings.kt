@@ -1,8 +1,6 @@
 @file:Suppress("unused")
 
-package com.m3u.core.util.basic
-
-import java.util.Locale
+package com.m3u.util
 
 
 //fun String.title(): String {

@@ -86,6 +86,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 
     buildFeatures {
         viewBinding = true
@@ -150,7 +153,7 @@ dependencies {
 
     //implementation 'cn.jzvd:jiaozivideoplayer:7.0.5'
 
-    implementation("cn.jzvd:jiaozivideoplayer:7.7.2.3300")
+    implementation(libs.jiaozivideoplayer)
 
     //Ad network
 //    implementation 'com.applovin:applovin-sdk:10.3.3'
@@ -178,6 +181,9 @@ dependencies {
 
     implementation(project(":features:ui"))
     implementation(project(":data"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:data-bridge"))
+    implementation(libs.kotlinx.coroutines.android)
 
     // define a BOM and its version
     implementation(platform("com.squareup.okhttp3:okhttp-bom:5.1.0"))
@@ -225,8 +231,8 @@ dependencies {
     }
 
     //Splash Anim
-    implementation("com.daimajia.easing:library:2.4@aar")
-    implementation("com.daimajia.androidanimations:library:2.4@aar")
+    implementation(libs.library)
+    implementation(libs.androidanimations.library)
 
     //CHROMECAST или Smart TV
     implementation(libs.androidx.mediarouter)

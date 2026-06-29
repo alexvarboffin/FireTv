@@ -24,16 +24,21 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.model.CategoryUI
 import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
 import java.util.Locale
 
+
+fun interface OnCategoryItemClickListener {
+    fun onItemClick(view: View, obj: CategoryUI, position: Int)
+}
+
 class CategoryAdapter(private val context: Context, categoryList: MutableList<CategoryUI>) :
     RecyclerView.Adapter<CategoryViewHolder?>(), Filterable {
     private val mColors: Array<String?>
 
     private val data: MutableList<CategoryUI>
-    private var searchList: MutableList<CategoryUI>
+    private var searchList: List<CategoryUI>
     private val prf: PrefManager?
-    private var mOnItemClickListener: OnItemClickListener? = null
+    private var mOnItemClickListener: OnCategoryItemClickListener? = null
 
-    fun swapData(newCategories: MutableList<CategoryUI>) {
+    fun swapData(newCategories: List<CategoryUI>) {
         this.data.clear()
         this.data.addAll(newCategories)
         // Обновляем searchList только при изменении данных
@@ -41,11 +46,9 @@ class CategoryAdapter(private val context: Context, categoryList: MutableList<Ca
         notifyDataSetChanged()
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(view: View, obj: CategoryUI?, position: Int)
-    }
 
-    fun setOnItemClickListener(mItemOverflowClickListener: OnItemClickListener?) {
+
+    fun setOnItemClickListener(mItemOverflowClickListener: OnCategoryItemClickListener?) {
         this.mOnItemClickListener = mItemOverflowClickListener
     }
 

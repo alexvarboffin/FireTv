@@ -53,7 +53,7 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val handler = Handler(Looper.getMainLooper())
-        presenter = AllChannelInPlaylistPresenter(handler, context)
+        presenter = AllChannelInPlaylistPresenter(handler, requireContext())
         if (arguments != null) {
             playlistId = requireArguments().getLong(ARG_PLAYLIST_ID, -1)
         }
@@ -191,7 +191,7 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
 
 
     private fun fetchWallpapers() {
-        val sortOption = prefManager!!.getSortOption()
+        val sortOption = prefManager!!.sortOption
         presenter!!.getChannelsInPlaylist(playlistId, sortOption, this)
     }
 

@@ -344,7 +344,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
             .addPathSegment("series")
             .addPathSegment(input.username)
             .addPathSegment(input.password)
-            .addPathSegment(episode.id + "." + episode.getContainerExtension())
+            .addPathSegment(episode.id + "." + episode.containerExtension)
             .build()
         return url.toString()
     }
@@ -353,10 +353,10 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
         val url = buildEpisodeStreamUrl(xtreamInput, episode)
         val channel = Channel(
             url, "",
-            episode.getTitle(),
+            episode.title?:"",
             null,
             url,
-            episode.getId()
+            episode.id
         )
         val intents = playerIntent(context, channel)
         context.startActivity(intents)
@@ -469,11 +469,11 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
     }
 
     object Action {
-        @JvmField
+        
         var get_series: String = "get_series"
-        @JvmField
+        
         var get_live_streams: String = "get_live_streams"
-        @JvmField
+        
         var get_vod_streams: String = "get_vod_streams"
 
 

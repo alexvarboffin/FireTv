@@ -19,6 +19,8 @@ import com.walhalla.ui.DLog.handleException
 import java.util.Locale
 import java.util.TreeSet
 import kotlin.math.min
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class LocalDatabaseRepo private constructor(private val context: Context) {
     private val db: FavoriteDatabase
@@ -305,6 +307,28 @@ class LocalDatabaseRepo private constructor(private val context: Context) {
         }
         return tmp
     }
+
+    fun observeAllChannels(sortOption: Int): Flow<List<Channel>> =
+        db.channelDao().observeAllChannels().map { channels -> sortChannels(channels, sortOption) }
+
+    fun observeAllCategories(): Flow<List<Category>> = db.categoryDao().observeAllCategories()
+
+    fun observeAllPlaylists(): Flow<List<PlaylistImpl>> = db.playlistDao().observeAll()
+
+    fun observeFavorites(playlistId: Long): Flow<List<Channel>> =
+        if (playlistId > 0) {
+            db.channelDao().observeFavoriteChannelsForPlaylist(playlistId)
+        } else {
+            db.channelDao().observeFavorites()
+        }
+
+    private fun sortChannels(channels: List<Channel>, sortOption: Int): List<Channel> =
+        when (sortOption) {
+            1 -> channels.sortedByDescending { it.name?.lowercase(Locale.getDefault()) }
+            2 -> channels.sortedBy { it._id }
+            3 -> channels.sortedByDescending { it._id }
+            else -> channels.sortedBy { it.name?.lowercase(Locale.getDefault()) }
+        }
 
     val allCategories: List<Category>
         get() {

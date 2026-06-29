@@ -3,6 +3,8 @@
 /data/build
 /*/build
 /simplesearchview/build
+/app-compose/build
+/core/**/build
 .gradle
 error*.log
 *.iml
@@ -18,3 +20,6 @@ error*.log
 .externalNativeBuild
 .cxx
 local.properties
+
+# Reference clones (cinemakmp etc.)
+Documentation/reference/

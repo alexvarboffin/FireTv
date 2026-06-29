@@ -1,5 +1,6 @@
 package tv.hdonlinetv.besttvchannels.movies.watchfree.activity.player
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -53,8 +54,7 @@ class PlrActivity : BaseActivity() {
     private var castSession: CastSession? = null
     private var remoteMediaClient: RemoteMediaClient? = null
 
-    private val sessionManagerListener: SessionManagerListener<CastSession> =
-        object : MySessionManagerListener() {
+    private val sessionManagerListener: SessionManagerListener<CastSession> = object : MySessionManagerListener() {
             override fun onSessionEnded(session: CastSession, error: Int) {
                 remoteMediaClient = null
                 if (BuildConfig.DEBUG) {
@@ -425,6 +425,7 @@ class PlrActivity : BaseActivity() {
         )
     }
 
+    @SuppressLint("GestureBackNavigation")
     override fun onBackPressed() {
         if (Jzvd.backPress()) {
             return

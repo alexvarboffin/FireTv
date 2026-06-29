@@ -30,9 +30,9 @@ class FavoritesFragment : CaseChannelListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val handler = Handler(Looper.getMainLooper())
-        presenter = FavoritePresenter(handler, context)
+        presenter = FavoritePresenter(handler, requireContext())
         prf = PrefManager(context)
-        if (getArguments() != null) {
+        if (arguments != null) {
             playlistId = requireArguments().getLong(ARG_PLAYLIST_ID, -1)
         }
     }

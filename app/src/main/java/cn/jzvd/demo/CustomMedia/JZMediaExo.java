@@ -174,7 +174,7 @@ public class JZMediaExo extends JZMediaInterface implements Player.Listener {
                 //userAgent = Util.getUserAgent(context, context.getResources().getString(R.string.app_name));
                 //YourApplicationName/1.4.240821.DEMO (Linux;Android 9) ExoPlayerLib/2.19.1
                 //StreamHub1724256501396/1.4.240821.DEMO (Linux;Android 9) ExoPlayerLib/2.19.1
-                userAgent = Util.getUserAgent(MyApp.getInstance(), "StreamHub-" + System.currentTimeMillis());
+                userAgent = Util.getUserAgent(context, "StreamHub-" + System.currentTimeMillis());
             }
             if (!TextUtils.isEmpty(referer)) {
                 //@@ ;

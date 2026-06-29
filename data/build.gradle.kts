@@ -47,5 +47,6 @@ dependencies {
     implementation(libs.androidx.room.runtime) // Библиотека "Room"
     kapt("androidx.room:room-compiler:2.8.0") // Кодогенератор
     implementation(libs.room.ktx) // Дополнительно для Kotlin Coroutines, Kotlin Flows
+    implementation(libs.kotlinx.coroutines.android)
 
 }

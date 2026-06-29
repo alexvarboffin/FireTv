@@ -49,7 +49,7 @@ class SeasonAdapter(
         fun bind(season: Season) {
             binding.tvName.setText(season.name)
             binding.tvAirDate.setText(season.airDate)
-            binding.tvEpisodeCount.setText("Episodes: " + season.getEpisodeCount())
+            binding.tvEpisodeCount.setText("Episodes: " + season.episodeCount)
             binding.tvOverview.text = season.overview
             val m = season.cover
             if (TextUtils.isEmpty(m)) {
