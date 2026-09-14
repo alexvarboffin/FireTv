@@ -252,14 +252,8 @@ class SettingsActivity : BaseActivity() {
         builder.setSingleChoiceItems(values, checkeditem) { dialog: DialogInterface?, item: Int ->
             when (item) {
                 0 -> {
-                    prf.setString(
-                        Const.KEY_COL_COUNT,
-                        PrefManager.TYPE_GRID
-                    )
-                    prf.setInt(
-                        Const.KEY_CHANNEL_COLUMNS,
-                        3
-                    )
+                    prf.setString(Const.KEY_COL_COUNT, PrefManager.TYPE_GRID)
+                    prf.setInt(Const.KEY_CHANNEL_COLUMNS, 3)
                     onResume()
                     startActivity(
                         Intent(context, MainActivity::class.java)
@@ -360,8 +354,7 @@ class SettingsActivity : BaseActivity() {
         if (prefManager!!.loadNightModeState()) {
             Log.d("Dark", "MODE")
         } else {
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // set status text dark
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // set status text dark
         }
     }
 
