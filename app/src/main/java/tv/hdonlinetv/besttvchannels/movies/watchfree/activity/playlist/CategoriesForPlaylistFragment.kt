@@ -57,7 +57,7 @@ class CategoriesForPlaylistFragment : BaseFragment(), RepoCallback<List<Category
         val view: View = binding!!.getRoot()
         prefManager = PrefManager(getActivity())
         adsPref = AdsPref(getActivity())
-        adNetwork = AdNetwork(getActivity())
+        adNetwork = AdNetwork(requireActivity())
         adNetwork!!.loadInterstitialAdNetwork(Constant.INTERSTITIAL_POST_LIST)
 
         //        showRefresh(true);
@@ -69,7 +69,7 @@ class CategoriesForPlaylistFragment : BaseFragment(), RepoCallback<List<Category
         categoriesAdapter = CategoryAdapter(requireContext(), ArrayList<CategoryUI>())
         binding!!.recyclerView.setAdapter(categoriesAdapter)
         categoriesAdapter!!.setOnItemClickListener(OnCategoryItemClickListener { view0: View?, obj: CategoryUI?, position: Int ->
-            val intent = Intent(getContext(), ChannelActivity::class.java)
+            val intent = Intent(context, ChannelActivity::class.java)
             intent.putExtra(Const.KEY_CATEGOTY_NAME, obj!!.getName())
             startActivity(intent)
             showInterstitialAd()

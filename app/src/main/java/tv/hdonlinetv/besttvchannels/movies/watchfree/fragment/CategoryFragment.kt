@@ -24,7 +24,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.Constant
 import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
 
 class CategoryFragment : BaseFragment(), RepoCallback<List<Category>> {
-    private val THISCLAZZNAME: String = javaClass.getSimpleName()
+    private val THISCLAZZNAME: String = javaClass.simpleName
     private var prefManager: PrefManager? = null
     private var binding: FragmentHomeBinding? = null // Replace with your actual binding class
 
@@ -49,7 +49,7 @@ class CategoryFragment : BaseFragment(), RepoCallback<List<Category>> {
         val view: View = binding!!.getRoot()
         prefManager = PrefManager(activity)
         adsPref = AdsPref(activity)
-        adNetwork = AdNetwork(activity)
+        adNetwork = AdNetwork(requireActivity())
         adNetwork!!.loadInterstitialAdNetwork(Constant.INTERSTITIAL_POST_LIST)
 
         //        showRefresh(true);

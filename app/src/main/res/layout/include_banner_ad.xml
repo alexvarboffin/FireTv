@@ -4,11 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-<<<<<<< HEAD
-    android:visibility="gone">
-=======
+    android:visibility="gone"
     android:animationCache="true">
->>>>>>> 1705fa145c4844d284895589a295d3ca77504239
 
     <FrameLayout
         android:id="@+id/admob_banner_view_container"

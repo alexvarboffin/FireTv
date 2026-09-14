@@ -62,7 +62,7 @@ class AllChannelFragment : CaseChannelListFragment() {
         val view: View = binding!!.getRoot()
 
         adsPref = AdsPref(activity)
-        adNetwork = AdNetwork(activity)
+        adNetwork = AdNetwork(requireActivity())
         adNetwork!!.loadInterstitialAdNetwork(Constant.INTERSTITIAL_POST_LIST)
 
         prefManager = PrefManager(activity)

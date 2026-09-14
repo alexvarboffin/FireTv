@@ -19,7 +19,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.R
 class AdNetwork(context: Activity) {
     private val mContext: Activity
     var sharedPref: SharedPref?
-    var adsPref: AdsPref?
+    var adsPref: AdsPref
 
     //Banner
     private var adContainerView: FrameLayout? = null
@@ -53,26 +53,26 @@ class AdNetwork(context: Activity) {
                     if (adContainerView == null) {
                         return
                     }
-                    adContainerView.setVisibility(View.GONE)
-                    adContainerView.post({
+                    adContainerView?.setVisibility(View.GONE)
+                    adContainerView?.post({
                         adView = AdView(mContext)
-                        adView.setAdUnitId(adsPref.getAdMobBannerId())
-                        adContainerView.removeAllViews()
-                        adContainerView.addView(adView)
-                        adView.setAdSize(Tools.getAdSize(mContext))
-                        adView.loadAd(Tools.getAdRequest(mContext))
-                        adView.setAdListener(object : AdListener() {
+                        adView?.setAdUnitId(adsPref.getAdMobBannerId())
+                        adContainerView?.removeAllViews()
+                        adContainerView?.addView(adView)
+                        adView?.setAdSize(Tools.getAdSize(mContext))
+                        adView?.loadAd(Tools.getAdRequest(mContext))
+                        adView?.setAdListener(object : AdListener() {
                             @Override
-                            fun onAdLoaded() {
+                            override fun onAdLoaded() {
                                 // Code to be executed when an ad finishes loading.
-                                adContainerView.setVisibility(View.VISIBLE)
+                                adContainerView?.setVisibility(View.VISIBLE)
                                 if (bannerHost != null) {
                                     bannerHost.setVisibility(View.VISIBLE)
                                 }
                             }
 
                             @Override
-                            fun onAdFailedToLoad(@NonNull error: LoadAdError) {
+                            override fun onAdFailedToLoad(error: LoadAdError) {
                                 if (BuildConfig.DEBUG) {
                                     var errorReason = ""
                                     val code: Int = error.getCode()
@@ -95,8 +95,7 @@ class AdNetwork(context: Activity) {
 
                                     DLog.d(
                                         String.format(
-                                            "Ad %s failed to load with error %s.",
-                                            adView.getAdUnitId(),
+                                            "Ad %s failed to load with error %s.", adView?.getAdUnitId(),
                                             errorReason
                                         )
                                     )
@@ -109,26 +108,26 @@ class AdNetwork(context: Activity) {
                                 }
                                 // Collapse entire banner host — not only the inner AdMob container
                                 // (outer lyt_banner_ad still held bottom inset margin otherwise).
-                                adContainerView.setVisibility(View.GONE)
-                                adContainerView.removeAllViews()
+                                adContainerView?.visibility = View.GONE
+                                adContainerView?.removeAllViews()
                                 if (bannerHost != null) {
-                                    bannerHost.setVisibility(View.GONE)
+                                    bannerHost.visibility = View.GONE
                                 }
                             }
 
                             @Override
-                            fun onAdOpened() {
+                            override fun onAdOpened() {
                                 // Code to be executed when an ad opens an overlay that
                                 // covers the screen.
                             }
 
                             @Override
-                            fun onAdClicked() {
+                            override fun onAdClicked() {
                                 // Code to be executed when the user clicks on an ad.
                             }
 
                             @Override
-                            fun onAdClosed() {
+                            override fun onAdClosed() {
                                 // Code to be executed when the user is about to return
                                 // to the app after tapping on an ad.
                             }
@@ -141,24 +140,24 @@ class AdNetwork(context: Activity) {
 
     fun loadInterstitialAdNetwork(ad_placement: Int) {
         if (adsPref.getAdStatus().equals(Constant.AD_STATUS_ON) && ad_placement != 0) {
-            when (adsPref.getAdType()) {
+            when (adsPref.adType) {
                 Constant.ADMOB -> InterstitialAd.load(
                     mContext,
-                    adsPref.getAdMobInterstitialId(),
+                    adsPref.adMobInterstitialId,
                     Tools.getAdRequest(mContext),
                     object : InterstitialAdLoadCallback() {
                         @Override
-                        fun onAdLoaded(@NonNull interstitialAd: InterstitialAd?) {
+                        fun onAdLoaded(interstitialAd: InterstitialAd?) {
                             adMobInterstitialAd = interstitialAd
-                            adMobInterstitialAd.setFullScreenContentCallback(object :
+                            adMobInterstitialAd?.setFullScreenContentCallback(object :
                                 FullScreenContentCallback() {
                                 @Override
-                                fun onAdDismissedFullScreenContent() {
+                                override fun onAdDismissedFullScreenContent() {
                                     loadInterstitialAdNetwork(ad_placement)
                                 }
 
                                 @Override
-                                fun onAdFailedToShowFullScreenContent(@NonNull adError: com.google.android.gms.ads.AdError?) {
+                                override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
                                     Log.d(
                                         tv.hdonlinetv.besttvchannels.movies.watchfree.utils.AdNetwork.Companion.TAG,
                                         "The ad failed to show."
@@ -166,29 +165,29 @@ class AdNetwork(context: Activity) {
                                 }
 
                                 @Override
-                                fun onAdShowedFullScreenContent() {
+                                override fun onAdShowedFullScreenContent() {
                                     adMobInterstitialAd = null
                                     Log.d(
-                                        tv.hdonlinetv.besttvchannels.movies.watchfree.utils.AdNetwork.Companion.TAG,
+                                       TAG,
                                         "The ad was shown."
                                     )
                                 }
                             })
                             Log.i(
-                                tv.hdonlinetv.besttvchannels.movies.watchfree.utils.AdNetwork.Companion.TAG,
+                                TAG,
                                 "onAdLoaded"
                             )
                         }
 
                         @Override
-                        fun onAdFailedToLoad(@NonNull loadAdError: LoadAdError) {
+                        override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                             Log.i(
-                                tv.hdonlinetv.besttvchannels.movies.watchfree.utils.AdNetwork.Companion.TAG,
-                                loadAdError.getMessage()
+                                TAG,
+                                loadAdError.message
                             )
                             adMobInterstitialAd = null
                             Log.d(
-                                tv.hdonlinetv.besttvchannels.movies.watchfree.utils.AdNetwork.Companion.TAG,
+                                TAG,
                                 "Failed load AdMob Interstitial Ad"
                             )
                         }
@@ -203,7 +202,7 @@ class AdNetwork(context: Activity) {
             when (adsPref.getAdType()) {
                 Constant.ADMOB -> if (adMobInterstitialAd != null) {
                     if (counter == interval) {
-                        adMobInterstitialAd.show(mContext)
+                        adMobInterstitialAd?.show(mContext)
                         counter = 1
                     } else {
                         counter++
