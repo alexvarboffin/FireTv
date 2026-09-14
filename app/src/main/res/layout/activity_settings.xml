@@ -347,7 +347,7 @@
                             android:padding="2dp"
                             android:text="8888888888888"
                             android:textColor="@color/MainSecText"
-                            android:textSize="12dp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
