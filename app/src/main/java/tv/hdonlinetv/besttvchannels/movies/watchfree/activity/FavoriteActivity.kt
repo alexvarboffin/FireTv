@@ -49,8 +49,9 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
         // Инициализируйте ViewBinding
         binding = ActivityFavoriteBinding.inflate(layoutInflater)
         setContentView(binding.getRoot())
+        val m: View = binding.lytBannerAd.root
         // Sticky bottom banner: systemBars as L/B/R margins (Appextractor / Google FAB pattern).
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(m) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = insets.left
@@ -85,7 +86,10 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
     }
 
     fun showInterstitialAd() {
-        adNetwork!!.showInterstitialAdNetwork(Constant.INTERSTITIAL_POST_LIST, adsPref!!.interstitialAdInterval)
+        adNetwork!!.showInterstitialAdNetwork(
+            Constant.INTERSTITIAL_POST_LIST,
+            adsPref!!.interstitialAdInterval
+        )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
