@@ -10,7 +10,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -48,10 +53,26 @@ class DetailsActivity : BaseActivity(), RepoCallback<Channel> {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Android 15+/16: edge-to-edge enforced for targetSdk 35+.
+        // Use enableEdgeToEdge (not setDecorFitsSystemWindows). Docs:
+        // https://developer.android.com/develop/ui/views/layout/edge-to-edge
+        enableEdgeToEdge()
+
         binding = ActivityDetailsBinding.inflate(
             layoutInflater
         )
         setContentView(binding!!.root)
+        val bannerHost: View = binding!!.lytBannerAd.root
+        // Sticky bottom banner: systemBars as L/B/R margins (Appextractor / Google FAB pattern).
+        ViewCompat.setOnApplyWindowInsetsListener(bannerHost) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = insets.left
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
+            }
+            WindowInsetsCompat.CONSUMED
+        }
         setSupportActionBar(binding!!.toolbar)
 
         val handler = Handler(Looper.getMainLooper())
@@ -107,6 +128,7 @@ class DetailsActivity : BaseActivity(), RepoCallback<Channel> {
         Glide.with(this)
             .load(channelImage)
             .placeholder(R.drawable.placeholder)
+            .fitCenter()
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

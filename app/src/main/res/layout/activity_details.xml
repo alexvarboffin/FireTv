@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- fitsSystemWindows ONLY on root (edge-to-edge / Appextractor recipe). -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgMain"
+    android:fitsSystemWindows="true"
     tools:context="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.DetailsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -39,14 +41,18 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="230dp">
+                android:layout_height="230dp"
+                android:background="@color/cardBack">
 
                 <ImageView
                     android:id="@+id/channelImage"
                     android:layout_width="match_parent"
-                    android:layout_height="230dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder" />
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:padding="16dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/placeholder"
+                    tools:ignore="ContentDescription" />
 
                 <RelativeLayout
                     android:id="@+id/channelPlay"
@@ -57,18 +63,20 @@
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        android:layout_marginEnd="2dp"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/round_bg"
                         app:tint="#A17F899C"
-                        android:layout_marginEnd="2dp"
-                        android:scaleType="centerCrop"/>
+                        tools:ignore="ContentDescription" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_play_icon"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="10dp"
-                    android:scaleType="centerCrop"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_play_icon"
+                        tools:ignore="ContentDescription" />
 
                 </RelativeLayout>
 
