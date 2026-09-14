@@ -93,6 +93,7 @@ dependencies {
 
     // Legacy JiaoZi player stack (same as :app)
     implementation(libs.jiaozivideoplayer)
+    implementation(libs.aliyun.player)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.exoplayer.hls)

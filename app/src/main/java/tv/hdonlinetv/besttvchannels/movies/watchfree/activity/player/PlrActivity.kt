@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import cn.jzvd.JZDataSource
 import cn.jzvd.JZMediaSystem
 import cn.jzvd.Jzvd
+import cn.jzvd.demo.CustomMedia.JZMediaAliyun
 import cn.jzvd.demo.CustomMedia.JZMediaExo
 import cn.jzvd.demo.CustomMedia.JZMediaIjk
 import com.bumptech.glide.Glide
@@ -327,10 +328,9 @@ class PlrActivity : BaseActivity() {
 
 
     fun clickChangeToAliyun(jzDataSource: JZDataSource?, mm: Int) {
-//        Jzvd.releaseAllVideos();
-//        binding.videoPlayer.setUp(jzDataSource, mm, CustomMedia.JZMediaAliyun.class);
-//        binding.videoPlayer.startVideo();
-//        Toast.makeText(this, "Change to AliyunPlayer", Toast.LENGTH_SHORT).show();
+        Jzvd.releaseAllVideos()
+        binding!!.videoPlayer.setUp(jzDataSource, mm, JZMediaAliyun::class.java)
+        binding!!.videoPlayer.startVideo()
     }
 
     //setUp(new JZDataSource(url, title), screen, mediaInterfaceClass)

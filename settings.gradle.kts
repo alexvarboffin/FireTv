@@ -57,6 +57,8 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.aliyun.com/repository/public")
         }
+        // ApsaraVideo / AliyunPlayer SDK (official docs)
+        maven("https://maven.aliyun.com/repository/releases")
     }
 }
 

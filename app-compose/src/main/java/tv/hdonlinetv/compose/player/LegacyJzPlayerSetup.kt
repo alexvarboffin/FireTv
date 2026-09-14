@@ -3,6 +3,7 @@ package tv.hdonlinetv.compose.player
 import android.text.TextUtils
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
+import cn.jzvd.demo.CustomMedia.JZMediaAliyun
 import cn.jzvd.demo.CustomMedia.JZMediaExo
 import cn.jzvd.demo.CustomMedia.JZMediaIjk
 import cn.jzvd.demo.CustomMedia.JZMediaSystemSafe
@@ -90,7 +91,9 @@ object LegacyJzPlayerSetup {
     }
 
     private fun clickChangeToAliyun(player: JZVideoPlayerNew, jzDataSource: JZDataSource, screen: Int) {
-        // Aliyun disabled in legacy build
+        Jzvd.releaseAllVideos()
+        player.setUp(jzDataSource, screen, JZMediaAliyun::class.java)
+        player.startVideo()
     }
 
     private fun clickChangeToSystem(player: JZVideoPlayerNew, jzDataSource: JZDataSource, screen: Int) {

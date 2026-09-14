@@ -196,9 +196,9 @@ dependencies {
 
     implementation(libs.lottie)
 
-    //ext
-//    implementation 'com.aliyun.sdk.android:AliyunPlayer:4.5.0-full'
-//    implementation 'com.alivc.conan:AlivcConan:0.9.5'
+    // ApsaraVideo Player SDK (JZMediaAliyun). Docs: AliyunPlayer:7.15.0-full
+    implementation(libs.aliyun.player)
+    // Older builds also pulled Conan; not required for full AAR.
 
     //deprecated
     //implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
