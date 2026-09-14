@@ -7,6 +7,11 @@ import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.GridLayoutManager
 import com.walhalla.data.model.Channel
 import com.walhalla.data.repository.AllChannelPresenter
@@ -36,11 +41,24 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Android 15+/16: edge-to-edge enforced for targetSdk 35+.
+        // Use enableEdgeToEdge (not setDecorFitsSystemWindows). Docs:
+        // https://developer.android.com/develop/ui/views/layout/edge-to-edge
+        enableEdgeToEdge()
 
         // Инициализируйте ViewBinding
         binding = ActivityFavoriteBinding.inflate(layoutInflater)
         setContentView(binding.getRoot())
-
+        // Sticky bottom banner: systemBars as L/B/R margins (Appextractor / Google FAB pattern).
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = insets.left
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
+            }
+            WindowInsetsCompat.CONSUMED
+        }
 
         // Настройка тулбара
         setSupportActionBar(binding.toolbar)
