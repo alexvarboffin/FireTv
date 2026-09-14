@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- fitsSystemWindows ONLY on root (edge-to-edge / Appextractor recipe). -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#202020"
-    android:padding="16dp">
+    android:fitsSystemWindows="true">
+
+    <!-- Content padding lives here so fitsSystemWindows does not overwrite it. -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomActions"
+        android:padding="16dp">
 
     <TextView
         android:id="@+id/tvTitle"
@@ -168,17 +176,22 @@
         android:trackTint="@color/colorPrimaryDark"
         tools:ignore="UnusedAttribute" />
 
+    </RelativeLayout>
 
+    <!-- Sticky bottom CTAs: systemBars L/B/R margins applied in Activity. -->
     <RelativeLayout
+        android:id="@+id/bottomActions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
 
         <Button
             android:id="@+id/btnSubscribe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layout_marginTop="16dp"
             android:background="@color/colorAccent"
             android:text="@string/subscribe"

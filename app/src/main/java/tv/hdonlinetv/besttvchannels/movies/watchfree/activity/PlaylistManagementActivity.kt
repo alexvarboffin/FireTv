@@ -10,14 +10,19 @@ import android.os.Looper
 import android.provider.MediaStore
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.preference.PreferenceManager
 import com.walhalla.data.repository.PlaylistManagementPresenterImpl
 import com.walhalla.data.repository.SourceType
@@ -40,10 +45,24 @@ class PlaylistManagementActivity : AppCompatActivity(), PlaylistManagementView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Android 15+/16: edge-to-edge enforced for targetSdk 35+.
+        // Use enableEdgeToEdge (not setDecorFitsSystemWindows). Docs:
+        // https://developer.android.com/develop/ui/views/layout/edge-to-edge
+        enableEdgeToEdge()
         binding = ActivityPlaylistManagementBinding.inflate(
             layoutInflater
         )
         setContentView(binding!!.root)
+        // Sticky bottom CTAs: systemBars as L/B/R margins (Appextractor / Google FAB pattern).
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.bottomActions) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = insets.left
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
+            }
+            windowInsets
+        }
         val handler = Handler(Looper.getMainLooper())
         presenter = PlaylistManagementPresenterImpl(handler, this, this)
 
