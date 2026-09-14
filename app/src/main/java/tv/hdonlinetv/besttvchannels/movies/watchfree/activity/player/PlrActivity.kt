@@ -47,6 +47,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.activity.BaseActivity
 import tv.hdonlinetv.besttvchannels.movies.watchfree.activity.ChannelViewModel
 import tv.hdonlinetv.besttvchannels.movies.watchfree.databinding.ActivityPlayerBinding
 import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.get
 
 class PlrActivity : BaseActivity() {
@@ -119,6 +120,11 @@ class PlrActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Android 15+/16: edge-to-edge enforced for targetSdk 35+.
+        // Use enableEdgeToEdge (not setDecorFitsSystemWindows). Docs:
+        // https://developer.android.com/develop/ui/views/layout/edge-to-edge
+        enableEdgeToEdge()
+
         binding = ActivityPlayerBinding.inflate(
             layoutInflater
         )
