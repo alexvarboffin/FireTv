@@ -7,8 +7,13 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.gms.ads.MobileAds
@@ -65,10 +70,24 @@ class PlaylistActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Android 15+/16: edge-to-edge enforced for targetSdk 35+.
+        // Use enableEdgeToEdge (not setDecorFitsSystemWindows). Docs:
+        // https://developer.android.com/develop/ui/views/layout/edge-to-edge
+        enableEdgeToEdge()
         binding = ActivityPlaylistBinding.inflate(
             layoutInflater
         )
         setContentView(binding!!.root)
+        // Sticky bottom banner: systemBars L/B/R (Appextractor / Google FAB pattern).
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = insets.left
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
+            }
+            WindowInsetsCompat.CONSUMED
+        }
         prefManager = PrefManager(this)
         setSupportActionBar(binding!!.toolbar)
         handleIntent0(intent)

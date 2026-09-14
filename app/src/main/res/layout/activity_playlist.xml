@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- fitsSystemWindows ONLY on root (edge-to-edge / Appextractor recipe). -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.MainActivity">
+    android:fitsSystemWindows="true"
+    tools:context="tv.hdonlinetv.besttvchannels.movies.watchfree.activity.playlist.PlaylistActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -37,9 +39,9 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/lyt_banner_ad"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -60,34 +62,21 @@
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/lyt_banner_ad"
-                android:layout_below="@id/tabLayout"
-                android:layout_centerInParent="true" />
-
-            <include
-                android:id="@+id/lyt_banner_ad"
-                layout="@layout/include_banner_ad"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" />
+                android:layout_height="match_parent"
+                android:layout_below="@id/tabLayout" />
 
         </RelativeLayout>
 
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/add_fab"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="end"-->
-<!--            android:layout_marginEnd="16dp"-->
-<!--            android:layout_marginBottom="16dp"-->
-<!--            android:contentDescription="@null"-->
-<!--            android:src="@drawable/ic_add_black_24dp"-->
-<!--            app:fabSize="normal"-->
-<!--            app:layout_constraintBottom_toTopOf="@id/lyt_banner_ad"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent" />-->
+        <!-- Sticky bottom banner: systemBars L/B/R margins in Activity. -->
+        <include
+            android:id="@+id/lyt_banner_ad"
+            layout="@layout/include_banner_ad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
