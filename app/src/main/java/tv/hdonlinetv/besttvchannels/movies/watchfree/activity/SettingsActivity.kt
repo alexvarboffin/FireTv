@@ -84,26 +84,26 @@ class SettingsActivity : BaseActivity() {
                 externalCacheDir!!
             )
         )
-        binding!!.tvNotificationTag.text =
+        binding.tvNotificationTag.text =
             resources.getString(R.string.label_notification) + resources.getString(
                 R.string.app_name
             )
 
         if (prefManager!!.channelDisplayItemType == "") {
-            binding!!.tvColumns.setText(R.string.type_grid_layout)
+            binding.tvColumns.setText(R.string.type_grid_layout)
         } else {
-            binding!!.tvColumns.text = prefManager!!.channelDisplayItemType
+            binding.tvColumns.text = prefManager!!.channelDisplayItemType
         }
 
-        binding!!.linearLayoutClearCache.setOnClickListener { v: View? -> clearCache() }
-        binding!!.linearLayoutPolicyPrivacy.setOnClickListener { v: View? ->
+        binding.linearLayoutClearCache.setOnClickListener { v: View? -> clearCache() }
+        binding.linearLayoutPolicyPrivacy.setOnClickListener { v: View? ->
             //startActivity(new Intent(SettingsActivity.this, PrivacyPolicyActivity.class));
             openBrowser(
                 this,
                 getString(R.string.url_privacy_policy)
             )
         }
-        binding!!.linearLayoutColumes.setOnClickListener { v: View? ->
+        binding.linearLayoutColumes.setOnClickListener { v: View? ->
             createAlertDialog(
                 this,
                 prefManager!!
@@ -111,15 +111,15 @@ class SettingsActivity : BaseActivity() {
         }
 
         val checkedItem = prefManager!!.sortOption
-        binding!!.tvSort.text = sortOptions[checkedItem]
-        binding!!.linearLayoutSort.setOnClickListener { v: View? ->
+        binding.tvSort.text = sortOptions[checkedItem]
+        binding.linearLayoutSort.setOnClickListener { v: View? ->
             createAlertSortDialog(
                 this,
                 prefManager!!
             )
         }
 
-        binding!!.linearLayoutDetailsMode.setOnClickListener { v: View? ->
+        binding.linearLayoutDetailsMode.setOnClickListener { v: View? ->
             createActivityModeDialog(
                 this,
                 prefManager!!
@@ -127,7 +127,7 @@ class SettingsActivity : BaseActivity() {
         }
 
         val isDetailsMode = prefManager!!.isDetailsMode
-        binding!!.tvDetailsMode.text = modeOptions[if (isDetailsMode) 0 else 1]
+        binding.tvDetailsMode.text = modeOptions[if (isDetailsMode) 0 else 1]
 
         binding.linearSelectPlayer.visibility = View.VISIBLE
         binding.tvSelectPlayer.text = mediaPlayerLabel(prefManager!!.mediaPlayerOption)
@@ -137,7 +137,7 @@ class SettingsActivity : BaseActivity() {
 
 
         // Night Mode
-        binding!!.switchButtonAnimation.setOnCheckedChangeListener { compoundButton: CompoundButton?, isChecked: Boolean ->
+        binding.switchButtonAnimation.setOnCheckedChangeListener { compoundButton: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
                 prefManager!!.setNightModeState(true)
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -165,7 +165,7 @@ class SettingsActivity : BaseActivity() {
 
     private fun clearCache() {
         Handler().postDelayed({
-            binding!!.tvCacheValue.text =
+            binding.tvCacheValue.text =
                 resources.getString(R.string.label_cache) + readableFileSize(
                     getDirSize(
                         cacheDir
@@ -292,9 +292,10 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun mediaPlayerOptions(): Array<String> = arrayOf(
-        getString(R.string.media_player_JZMediaSystem),
+        getString(R.string.media_player_JZMediaSystem),  //default
         getString(R.string.media_player_jz_aliyun),
-        getString(R.string.media_player_jz_exo),
+        getString(R.string.media_player_jz_exo),  //getString(R.string.media_player_jz_ijk)
+
     )
 
     private fun mediaPlayerLabel(option: Int): String {
