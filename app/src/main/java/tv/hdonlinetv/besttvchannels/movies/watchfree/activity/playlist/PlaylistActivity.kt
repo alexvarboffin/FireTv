@@ -79,7 +79,7 @@ class PlaylistActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         )
         setContentView(binding!!.root)
         // Sticky bottom banner: systemBars L/B/R (Appextractor / Google FAB pattern).
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = insets.left
@@ -299,8 +299,7 @@ class PlaylistActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         if (prf!!.loadNightModeState()) {
             Log.d("Dark", "MODE")
         } else {
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // set status text dark
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // set status text dark
         }
     }
 

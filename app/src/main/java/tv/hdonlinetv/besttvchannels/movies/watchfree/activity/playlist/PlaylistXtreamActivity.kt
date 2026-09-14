@@ -85,7 +85,7 @@ class PlaylistXtreamActivity : BaseActivity(), NavigationView.OnNavigationItemSe
         )
         setContentView(binding!!.root)
         // Sticky bottom banner: systemBars L/B/R (Appextractor / Google FAB pattern).
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = insets.left
