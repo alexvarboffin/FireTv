@@ -345,9 +345,9 @@
                             android:layout_weight="1"
                             android:gravity="left|center_vertical|center_horizontal|center"
                             android:padding="2dp"
-                            android:text="8888888888888"
                             android:textColor="@color/MainSecText"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:text="JZMediaExo" />
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>

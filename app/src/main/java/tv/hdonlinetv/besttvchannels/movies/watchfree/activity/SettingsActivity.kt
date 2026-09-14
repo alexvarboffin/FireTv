@@ -129,11 +129,11 @@ class SettingsActivity : BaseActivity() {
         val isDetailsMode = prefManager!!.isDetailsMode
         binding!!.tvDetailsMode.text = modeOptions[if (isDetailsMode) 0 else 1]
 
-
-       binding.linearSelectPlayer.setVisibility(View.VISIBLE);
-        binding.linearSelectPlayer.setOnClickListener(View.OnClickListener {
+        binding.linearSelectPlayer.visibility = View.VISIBLE
+        binding.tvSelectPlayer.text = mediaPlayerLabel(prefManager!!.mediaPlayerOption)
+        binding.linearSelectPlayer.setOnClickListener {
             showMediaPlayerDialog(this, prefManager!!)
-        })
+        }
 
 
         // Night Mode
@@ -291,24 +291,29 @@ class SettingsActivity : BaseActivity() {
         dialog!!.show()
     }
 
-    private fun showMediaPlayerDialog(context: Context, prf: PrefManager) {
-        val mediaPlayerOptions = arrayOf(
-            getString(R.string.media_player_JZMediaSystem),  //default
-            getString(R.string.media_player_jz_aliyun),
-            getString(R.string.media_player_jz_exo),  //getString(R.string.media_player_jz_ijk)
-        )
+    private fun mediaPlayerOptions(): Array<String> = arrayOf(
+        getString(R.string.media_player_JZMediaSystem),
+        getString(R.string.media_player_jz_aliyun),
+        getString(R.string.media_player_jz_exo),
+    )
 
-        val checkedItem = prf.mediaPlayerOption
+    private fun mediaPlayerLabel(option: Int): String {
+        val options = mediaPlayerOptions()
+        val index = option.coerceIn(0, options.lastIndex)
+        return options[index]
+    }
+
+    private fun showMediaPlayerDialog(context: Context, prf: PrefManager) {
+        val mediaPlayerOptions = mediaPlayerOptions()
+        val checkedItem = prf.mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex)
 
         AlertDialog.Builder(this)
             .setTitle(R.string.media_player_title)
             .setSingleChoiceItems(
                 mediaPlayerOptions, checkedItem
-            ) { dialog: DialogInterface?, which: Int -> prf.saveMediaPlayer(which) }
-            .setPositiveButton(
-                android.R.string.ok
-            ) { dialog: DialogInterface?, which: Int ->
-                val m = prf.mediaPlayerOption
+            ) { _: DialogInterface?, which: Int -> prf.saveMediaPlayer(which) }
+            .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
+                binding.tvSelectPlayer.text = mediaPlayerLabel(prf.mediaPlayerOption)
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
