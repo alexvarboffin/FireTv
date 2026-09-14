@@ -107,11 +107,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding = ActivityMainBinding.inflate(
             layoutInflater
         )
-        setContentView(binding!!.root)
+        setContentView(binding.root)
         // Sticky bottom banner: systemBars L/B/R (Appextractor / Google FAB pattern).
         // Banner is sibling outside DrawerLayout so drawer cannot cover ads
         // (AdMob Site Behavior: Navigation — same as Mecca Home).
-        ViewCompat.setOnApplyWindowInsetsListener(binding!!.lytBannerAd) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.lytBannerAd.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = insets.left
@@ -121,12 +121,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             WindowInsetsCompat.CONSUMED
         }
         prefManager = PrefManager(this)
-        setSupportActionBar(binding!!.toolbar)
+        setSupportActionBar(binding.toolbar)
         var1 = RateAppModule(this)
         lifecycle.addObserver(var1!!)
 
         //favoriteDatabase = LocalDatabaseRepo.getStoreInfoDatabase(this);
-        binding!!.addFab.setOnClickListener { v: View? ->
+        binding.addFab.setOnClickListener { v: View? ->
             settingsLauncher.launch(
                 Intent(
                     this,
@@ -154,38 +154,38 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             // ...
         }
 
-        binding!!.navView.setNavigationItemSelectedListener(this)
+        binding.navView.setNavigationItemSelectedListener(this)
 
 
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
-            binding!!.drawerLayout,
-            binding!!.toolbar,
+            binding.drawerLayout,
+            binding.toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
-        binding!!.drawerLayout.addDrawerListener(actionBarDrawerToggle!!)
+        binding.drawerLayout.addDrawerListener(actionBarDrawerToggle!!)
         actionBarDrawerToggle!!.isDrawerIndicatorEnabled = true
         actionBarDrawerToggle!!.syncState()
 
-        binding!!.toolbar.setNavigationIcon(R.drawable.ic_action_action)
+        binding.toolbar.setNavigationIcon(R.drawable.ic_action_action)
 
         //main Fragment
-        makeTabs(binding!!.tabLayout)
+        makeTabs(binding.tabLayout)
 
 
-        binding!!.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
+        binding.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
         var0()
 
         //binding.viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tabLayout));
         TabLayoutMediator(
-            binding!!.tabLayout, binding!!.viewPager
+            binding.tabLayout, binding.viewPager
         ) { tab: TabLayout.Tab, position: Int -> tab.setText(tabTitles[position]) }.attach()
 
-        binding!!.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+        binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                binding!!.viewPager.currentItem = tab.position
+                binding.viewPager.currentItem = tab.position
                 invalidateFragmentMenus(tab.position)
             }
 
@@ -196,10 +196,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         })
 
-        binding!!.viewPager.offscreenPageLimit = 4
+        binding.viewPager.offscreenPageLimit = 4
 
 
-        binding!!.searchView.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
+        binding.searchView.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 Log.d("SimpleSearchView", "Submit:$query")
                 val intent = Intent(
@@ -246,7 +246,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             this,
             supportFragmentManager, fragmentList!!
         )
-        binding!!.viewPager.adapter = tabAdapter
+        binding.viewPager.adapter = tabAdapter
     }
 
     private fun var0m() {
@@ -260,7 +260,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             this,
             supportFragmentManager, fragmentList!!
         )
-        binding!!.viewPager.adapter = tabAdapter
+        binding.viewPager.adapter = tabAdapter
     }
 
     private fun invalidateFragmentMenus(position: Int) {
@@ -383,7 +383,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         inflater.inflate(R.menu.main, menu)
 
         val item = menu.findItem(R.id.action_search)
-        binding!!.searchView.setMenuItem(item)
+        binding.searchView.setMenuItem(item)
         return true
     }
 
@@ -451,10 +451,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 //            alert.show();
 //        }
 
-        if (binding!!.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding!!.drawerLayout.closeDrawer(GravityCompat.START)
-        } else if (binding!!.viewPager.currentItem != 0) {
-            binding!!.viewPager.currentItem = 0
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else if (binding.viewPager.currentItem != 0) {
+            binding.viewPager.currentItem = 0
         } else {
             //Pressed back => return to home screen
             val count = supportFragmentManager.backStackEntryCount
@@ -504,7 +504,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //View view = findViewById(R.id.cLayout);
         //View view = findViewById(android.R.id.content);
         Snackbar.make(
-            binding!!.coordinatorLayout,
+            binding.coordinatorLayout,
             R.string.press_again_to_exit,
             Snackbar.LENGTH_LONG
         ).setAction("Action", null).show()
@@ -513,7 +513,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun setBadgeText(fragmentName: String, msg: String) {
         val index = getFragmentIndex(fragmentName)
         if (index != -1) {
-            binding!!.tabLayout.setBadgeText(index, msg)
+            binding.tabLayout.setBadgeText(index, msg)
         }
     }
 
