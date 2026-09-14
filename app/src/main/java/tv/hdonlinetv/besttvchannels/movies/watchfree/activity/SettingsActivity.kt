@@ -11,13 +11,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import com.walhalla.ui.plugins.Launcher.openBrowser
 import tv.hdonlinetv.besttvchannels.movies.watchfree.BuildConfig
 import tv.hdonlinetv.besttvchannels.movies.watchfree.Const
 import tv.hdonlinetv.besttvchannels.movies.watchfree.R
-import tv.hdonlinetv.besttvchannels.movies.watchfree.activity.MainActivity
 import tv.hdonlinetv.besttvchannels.movies.watchfree.databinding.ActivitySettingsBinding
 import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
 import java.io.File
@@ -37,6 +37,10 @@ class SettingsActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Android 15+/16: edge-to-edge enforced for targetSdk 35+.
+        // Use enableEdgeToEdge (not setDecorFitsSystemWindows). Docs:
+        // https://developer.android.com/develop/ui/views/layout/edge-to-edge
+        enableEdgeToEdge()
 
         binding = ActivitySettingsBinding.inflate(
             layoutInflater
