@@ -1,6 +1,6 @@
 package tv.hdonlinetv.besttvchannels.movies.watchfree.activity
 
-import android.R
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -76,7 +76,7 @@ class ChannelActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
     fun showInterstitialAd() {
         adNetwork!!.showInterstitialAdNetwork(
             Constant.INTERSTITIAL_POST_LIST,
-            adsPref!!.getInterstitialAdInterval()
+            adsPref!!.interstitialAdInterval
         )
     }
 
@@ -88,7 +88,7 @@ class ChannelActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
         val gridLayoutManager = GridLayoutManager(this, prf!!.getInt(Const.KEY_CHANNEL_COLUMNS))
         binding!!.recyclerView.setLayoutManager(gridLayoutManager)
 
-        channelAdapter = ChannelAdapter(this, ArrayList<Channel>())
+        channelAdapter = ChannelAdapter(this, ArrayList())
         binding!!.recyclerView.setAdapter(channelAdapter)
 
 
@@ -179,7 +179,7 @@ class ChannelActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.home) {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
         return super.onOptionsItemSelected(item)
@@ -200,7 +200,7 @@ class ChannelActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(view: View, channel: Channel, position: Int) {
-        val isDetailsMode = prf!!.isDetailsMode()
+        val isDetailsMode = prf!!.isDetailsMode
         if (isDetailsMode) {
             val channelId = channel._id
             val intent = newInstance(this, channelId)

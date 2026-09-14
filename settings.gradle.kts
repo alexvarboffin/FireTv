@@ -19,10 +19,13 @@ pluginManagement {
 //            }
 //        }
         maven("https://maven.google.com")
+        // Google Maven blocked/404 locally — Aliyun Google mirror works
+        maven("https://maven.aliyun.com/repository/google")
         maven("https://dl.bintray.com/videolan/Android")
-        maven {
-            url = uri("https://maven.aliyun.com/nexus/content/repositories/releases")
-        }
+        // aliyun releases: 502 Bad Gateway breaks plugin resolution (google-services)
+        // maven {
+        //     url = uri("https://maven.aliyun.com/nexus/content/repositories/releases")
+        // }
     }
 }
 
@@ -33,6 +36,8 @@ dependencyResolutionManagement {
         flatDir {
             dirs("C:/libs")
         }
+        // Prefer Aliyun Google: dl.google.com returns 404 for androidx from this network
+        maven("https://maven.aliyun.com/repository/google")
         google()
 //        google {
 //            mavenContent {
@@ -62,9 +67,9 @@ include(":simplesearchview")
 include(":data")
 include(":xtream")
 include(":shared")
-project(":shared").projectDir = File("C:\\src\\Synced\\WalhallaUI\\shared")
+project(":shared").projectDir = File("C:\\Synced\\WalhallaUI\\shared")
 include(":features:ui")
-project(":features:ui").projectDir = file("C:\\src\\Synced\\WalhallaUI\\features\\ui")
+project(":features:ui").projectDir = file("C:\\Synced\\WalhallaUI\\features\\ui")
 include(":mylibrary")
 include(":app-compose")
 include(":core:domain")

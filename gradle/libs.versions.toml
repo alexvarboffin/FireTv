@@ -34,8 +34,8 @@ compose-compiler = "1.5.8"
 compose-multiplatform = "1.7.0"
 constraintlayout = "2.2.0"
 converterGson = "3.0.0"
-core = "1.17.0"
-core-ktx = "1.17.0"
+core = "1.16.0"
+core-ktx = "1.16.0"
 coreSplashscreen = "1.0.1"
 datastore = "1.1.7"
 dropboxCoreSdk = "3.1.5"
@@ -50,7 +50,7 @@ firebaseMessaging = "25.0.1"
 flexbox = "2.0.1"
 fragmentKtx = "1.5.6"
 glide = "5.0.5"
-google-services = "4.4.3"
+google-services = "4.4.2"
 gradle = "8.12.3"
 gson = "2.13.2"
 hilt = "2.57.1"
@@ -106,7 +106,7 @@ push = "4.2.1"
 retrofit = "3.0.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 review = "2.0.2"
-room = "2.8.0"
+room = "2.7.2"
 runner = "1.7.0"
 swiperefreshlayout = "1.1.0"
 taptargetview = "1.15.0"
@@ -187,6 +187,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest"}
 play-app-update = { version.ref = "appUpdate", module = "com.google.android.play:app-update"}
 play-app-update-ktx = { version.ref = "appUpdate", module = "com.google.android.play:app-update-ktx"}
+app-update = { version.ref = "appUpdate", module = "com.google.android.play:app-update"}
+app-update-ktx = { version.ref = "appUpdate", module = "com.google.android.play:app-update-ktx"}
 coil-compose = { version.ref = "coilCompose", module = "io.coil-kt.coil3:coil-compose"}
 coil-network-okhttp = { version.ref = "coilCompose", module = "io.coil-kt.coil3:coil-network-okhttp"}
 core = { version.ref = "core", module = "androidx.core:core"}

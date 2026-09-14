@@ -1,11 +1,12 @@
 package tv.hdonlinetv.besttvchannels.movies.watchfree.fragment
 
-import android.R
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import tv.hdonlinetv.besttvchannels.movies.watchfree.R
 import tv.hdonlinetv.besttvchannels.movies.watchfree.databinding.FragmentLoadingDialogBinding
 
 

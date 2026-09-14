@@ -1,6 +1,6 @@
 package tv.hdonlinetv.besttvchannels.movies.watchfree.activity
 
-import android.R
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,7 +23,7 @@ import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.Constant
 import tv.hdonlinetv.besttvchannels.movies.watchfree.utils.PrefManager
 
 class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
-    private var binding: ActivityFavoriteBinding? = null
+    private lateinit var binding: ActivityFavoriteBinding
     private var favoriteAdapter: ChannelAdapter? = null
 
 
@@ -39,11 +39,11 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
 
         // Инициализируйте ViewBinding
         binding = ActivityFavoriteBinding.inflate(layoutInflater)
-        setContentView(binding!!.getRoot())
+        setContentView(binding.getRoot())
 
 
         // Настройка тулбара
-        setSupportActionBar(binding!!.toolbar)
+        setSupportActionBar(binding.toolbar)
         title = "Favorite"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
@@ -57,8 +57,8 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
 
 
         // Настройка RecyclerView
-        binding!!.rec.setHasFixedSize(true)
-        binding!!.rec.setLayoutManager(
+        binding.rec.setHasFixedSize(true)
+        binding.rec.setLayoutManager(
             GridLayoutManager(
                 this,
                 prf!!.getInt(Const.KEY_CHANNEL_COLUMNS)
@@ -67,14 +67,11 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
     }
 
     fun showInterstitialAd() {
-        adNetwork!!.showInterstitialAdNetwork(
-            Constant.INTERSTITIAL_POST_LIST,
-            adsPref!!.interstitialAdInterval
-        )
+        adNetwork!!.showInterstitialAdNetwork(Constant.INTERSTITIAL_POST_LIST, adsPref!!.interstitialAdInterval)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.home) {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
         return super.onOptionsItemSelected(item)
@@ -89,11 +86,11 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
             override fun successResult(data: List<Channel>) {
                 val mm = data
                 favoriteAdapter = ChannelAdapter(applicationContext, mm)
-                binding!!.rec.setAdapter(favoriteAdapter)
+                binding.rec.setAdapter(favoriteAdapter)
 
                 // Обработка кликов на элементы
                 favoriteAdapter!!.setOnItemClickListener(this@FavoriteActivity)
-                binding!!.noFavorite.visibility = if (mm.isEmpty()) View.VISIBLE else View.GONE
+                binding.noFavorite.visibility = if (mm.isEmpty()) View.VISIBLE else View.GONE
                 d("@@@@")
             }
 

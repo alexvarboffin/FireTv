@@ -1,6 +1,6 @@
 package tv.hdonlinetv.besttvchannels.movies.watchfree.activity
 
-import android.R
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -152,7 +152,7 @@ class SearchActivity : BaseActivity(), RepoCallback<List<Channel>>,
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.getItemId() == R.id.home) {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
         return super.onOptionsItemSelected(item)
