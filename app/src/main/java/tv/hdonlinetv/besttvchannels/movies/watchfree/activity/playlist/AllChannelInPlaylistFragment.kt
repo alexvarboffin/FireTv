@@ -252,9 +252,10 @@ class AllChannelInPlaylistFragment : CaseChannelListFragment() {
 
     override fun successResult(data: List<Channel>) {
         showRefresh(false)
-        //binding.noFavorite.setVisibility(tmp.isEmpty() ? View.VISIBLE : View.GONE);
         this@AllChannelInPlaylistFragment.setBadgeText(THISCLAZZNAME, data.size.toString())
         channelAdapter?.swapData(data)
+        binding?.lytNoItem?.root?.visibility =
+            if (data.isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun errorResult(err: String) {

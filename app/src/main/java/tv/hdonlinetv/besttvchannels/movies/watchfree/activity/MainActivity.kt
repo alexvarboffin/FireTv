@@ -334,7 +334,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             startActivity(Intent(this, FavoriteActivity::class.java))
         } else if (menuItem.itemId == R.id.nav_setting) {
             startActivity(Intent(this, SettingsActivity::class.java))
-            finish()
         } else if (menuItem.itemId == R.id.nav_about) {
             DialogAbout.aboutDialog(this)
         } else if (menuItem.itemId == R.id.nav_share) {

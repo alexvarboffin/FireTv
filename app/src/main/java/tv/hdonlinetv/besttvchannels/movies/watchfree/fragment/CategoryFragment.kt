@@ -185,6 +185,8 @@ class CategoryFragment : BaseFragment(), RepoCallback<List<Category>> {
         }
         this@CategoryFragment.setBadgeText(THISCLAZZNAME, tmp0.size.toString())
         categoriesAdapter!!.swapData(tmp0)
+        binding?.lytNoItem?.root?.visibility =
+            if (tmp0.isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun errorResult(err: String) {

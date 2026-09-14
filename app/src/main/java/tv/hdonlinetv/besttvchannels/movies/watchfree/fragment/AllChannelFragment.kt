@@ -247,6 +247,8 @@ class AllChannelFragment : CaseChannelListFragment() {
         showRefresh(false)
         this@AllChannelFragment.setBadgeText(THISCLAZZNAME, data.size.toString())
         channelAdapter?.swapData(data)
+        binding?.lytNoItem?.root?.visibility =
+            if (data.isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun errorResult(err: String) {

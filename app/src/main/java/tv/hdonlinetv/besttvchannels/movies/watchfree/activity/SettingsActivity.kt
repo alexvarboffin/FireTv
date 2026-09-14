@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
@@ -46,6 +47,13 @@ class SettingsActivity : BaseActivity() {
             layoutInflater
         )
         setContentView(binding.root)
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Return to previous screen — do not start a new Main (and never leave an empty task).
+                finish()
+            }
+        })
 
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -228,7 +236,10 @@ class SettingsActivity : BaseActivity() {
         }
 
         onResume()
-        startActivity(Intent(this, MainActivity::class.java))
+        // Recreate Main so grid/list prefs apply; CLEAR_TOP keeps a single Main in the stack.
+        startActivity(
+            Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
         finish()
     }
 
@@ -250,7 +261,10 @@ class SettingsActivity : BaseActivity() {
                         3
                     )
                     onResume()
-                    startActivity(Intent(context, MainActivity::class.java))
+                    startActivity(
+                        Intent(context, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    )
                     finish()
                 }
 
@@ -264,7 +278,10 @@ class SettingsActivity : BaseActivity() {
                         1
                     )
                     onResume()
-                    startActivity(Intent(context, MainActivity::class.java))
+                    startActivity(
+                        Intent(context, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    )
                     finish()
                 }
             }
@@ -309,7 +326,8 @@ class SettingsActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // handle arrow click here
         if (item.itemId == android.R.id.home) {
-            startActivity(Intent(this@SettingsActivity, MainActivity::class.java))
+            finish()
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
@@ -339,11 +357,6 @@ class SettingsActivity : BaseActivity() {
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // set status text dark
         }
-    }
-
-    override fun onBackPressed() {
-        startActivity(Intent(this@SettingsActivity, MainActivity::class.java))
-        finish()
     }
 
     override fun onDestroy() {

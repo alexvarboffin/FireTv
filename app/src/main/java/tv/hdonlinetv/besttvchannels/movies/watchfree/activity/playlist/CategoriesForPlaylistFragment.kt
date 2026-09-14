@@ -183,6 +183,8 @@ class CategoriesForPlaylistFragment : BaseFragment(), RepoCallback<List<Category
     override fun successResult(data: List<CategoryUI>) {
         this@CategoriesForPlaylistFragment.setBadgeText(THISCLAZZNAME, data.size.toString())
         categoriesAdapter!!.swapData(data)
+        binding?.lytNoItem?.root?.visibility =
+            if (data.isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun errorResult(err: String) {

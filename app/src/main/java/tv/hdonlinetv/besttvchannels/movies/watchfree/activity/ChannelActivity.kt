@@ -102,9 +102,8 @@ class ChannelActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
             categoryName,
             object : RepoCallback<List<Channel>> {
                 override fun successResult(data: List<Channel>) {
-                    if (data.isEmpty()) {
-                        binding!!.lytNoItem.getRoot().visibility = View.VISIBLE
-                    }
+                    binding!!.lytNoItem.root.visibility =
+                        if (data.isEmpty()) View.VISIBLE else View.GONE
                     channelAdapter!!.swapData(data)
                 }
 
