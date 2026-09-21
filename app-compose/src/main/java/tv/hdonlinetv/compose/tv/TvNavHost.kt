@@ -1,5 +1,6 @@
 package tv.hdonlinetv.compose.tv
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.tv.material3.MaterialTheme
 import tv.hdonlinetv.compose.core.databridge.channel.LocalChannelRepository as ChannelRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.category.LocalCategoryRepository as CategoryRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.playlist.LocalPlaylistRepository as PlaylistRepositoryImpl
@@ -48,7 +50,7 @@ fun TvNavHost() {
     val settingsRepository = SettingsRepositoryImpl(context.applicationContext)
     val xtreamRepository = XtreamRepositoryImpl()
     val gridColumns = settingsRepository.getSettings().gridColumns
-
+    val colors = MaterialTheme.colorScheme
     CompositionLocalProvider(
         LocalTvNavController provides navController,
         LocalCategoryRepository provides categoryRepository,
@@ -58,81 +60,88 @@ fun TvNavHost() {
         LocalXtreamRepository provides xtreamRepository,
         LocalGridColumns provides gridColumns,
     ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
-                NavHost(
-                    navController = navController,
-                    startDestination = Routes.Splash.route,
-                ) {
-                    composable(Routes.Splash.route) { SplashScreen() }
-                    composable(Routes.Onboarding.route) { OnboardingScreen() }
-                    composable(Routes.Main.route) { MainShellScreen() }
-                    composable(
-                        route = Routes.Channels.route,
-                        arguments = listOf(
-                            navArgument(Routes.Channels.ARG_CATEGORY_NAME) {
-                                type = NavType.StringType
-                            },
-                        ),
-                    ) { ChannelListScreen() }
-                    composable(
-                        route = Routes.Details.route,
-                        arguments = listOf(
-                            navArgument(Routes.Details.ARG_CHANNEL_ID) { type = NavType.LongType },
-                        ),
-                    ) { DetailsScreen() }
-                    composable(
-                        route = Routes.Player.route,
-                        arguments = listOf(
-                            navArgument(Routes.Player.ARG_CHANNEL_ID) { type = NavType.LongType },
-                            navArgument(Routes.Player.ARG_STREAM_URL) {
-                                type = NavType.StringType
-                                defaultValue = ""
-                            },
-                            navArgument(Routes.Player.ARG_STREAM_TITLE) {
-                                type = NavType.StringType
-                                defaultValue = ""
-                            },
-                        ),
-                    ) { PlayerScreen() }
-                    composable(Routes.Search.route) { SearchScreen() }
-                    composable(Routes.Settings.route) { SettingsScreen() }
-                    composable(Routes.PlaylistManage.route) { PlaylistManageScreen() }
-                    composable(
-                        route = Routes.PlaylistChannels.route,
-                        arguments = listOf(
-                            navArgument(Routes.PlaylistChannels.ARG_PLAYLIST_ID) {
-                                type = NavType.LongType
-                            },
-                            navArgument(Routes.PlaylistChannels.ARG_PLAYLIST_TITLE) {
-                                type = NavType.StringType
-                            },
-                        ),
-                    ) { PlaylistChannelsScreen() }
-                    composable(
-                        route = Routes.XtreamBrowser.route,
-                        arguments = listOf(
-                            navArgument(Routes.XtreamBrowser.ARG_PLAYLIST_ID) {
-                                type = NavType.LongType
-                            },
-                        ),
-                    ) { XtreamBrowserScreen() }
-                    composable(
-                        route = Routes.SerialDetail.route,
-                        arguments = listOf(
-                            navArgument(Routes.SerialDetail.ARG_PLAYLIST_ID) {
-                                type = NavType.LongType
-                            },
-                            navArgument(Routes.SerialDetail.ARG_SERIES_ID) {
-                                type = NavType.IntType
-                            },
-                            navArgument(Routes.SerialDetail.ARG_SERIES_TITLE) {
-                                type = NavType.StringType
-                            },
-                        ),
-                    ) { SerialDetailScreen() }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colors.background),
+        ) {
+            Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = Routes.Splash.route,
+                    ) {
+                        composable(Routes.Splash.route) { SplashScreen() }
+                        composable(Routes.Onboarding.route) { OnboardingScreen() }
+                        composable(Routes.Main.route) { MainShellScreen() }
+                        composable(
+                            route = Routes.Channels.route,
+                            arguments = listOf(
+                                navArgument(Routes.Channels.ARG_CATEGORY_NAME) {
+                                    type = NavType.StringType
+                                },
+                            ),
+                        ) { ChannelListScreen() }
+                        composable(
+                            route = Routes.Details.route,
+                            arguments = listOf(
+                                navArgument(Routes.Details.ARG_CHANNEL_ID) { type = NavType.LongType },
+                            ),
+                        ) { DetailsScreen() }
+                        composable(
+                            route = Routes.Player.route,
+                            arguments = listOf(
+                                navArgument(Routes.Player.ARG_CHANNEL_ID) { type = NavType.LongType },
+                                navArgument(Routes.Player.ARG_STREAM_URL) {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                },
+                                navArgument(Routes.Player.ARG_STREAM_TITLE) {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                },
+                            ),
+                        ) { PlayerScreen() }
+                        composable(Routes.Search.route) { SearchScreen() }
+                        composable(Routes.Settings.route) { SettingsScreen() }
+                        composable(Routes.PlaylistManage.route) { PlaylistManageScreen() }
+                        composable(
+                            route = Routes.PlaylistChannels.route,
+                            arguments = listOf(
+                                navArgument(Routes.PlaylistChannels.ARG_PLAYLIST_ID) {
+                                    type = NavType.LongType
+                                },
+                                navArgument(Routes.PlaylistChannels.ARG_PLAYLIST_TITLE) {
+                                    type = NavType.StringType
+                                },
+                            ),
+                        ) { PlaylistChannelsScreen() }
+                        composable(
+                            route = Routes.XtreamBrowser.route,
+                            arguments = listOf(
+                                navArgument(Routes.XtreamBrowser.ARG_PLAYLIST_ID) {
+                                    type = NavType.LongType
+                                },
+                            ),
+                        ) { XtreamBrowserScreen() }
+                        composable(
+                            route = Routes.SerialDetail.route,
+                            arguments = listOf(
+                                navArgument(Routes.SerialDetail.ARG_PLAYLIST_ID) {
+                                    type = NavType.LongType
+                                },
+                                navArgument(Routes.SerialDetail.ARG_SERIES_ID) {
+                                    type = NavType.IntType
+                                },
+                                navArgument(Routes.SerialDetail.ARG_SERIES_TITLE) {
+                                    type = NavType.StringType
+                                },
+                            ),
+                        ) { SerialDetailScreen() }
+                    }
                 }
             }
         }
+
     }
 }
