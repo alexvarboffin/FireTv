@@ -29,6 +29,8 @@ import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.phone.LocalXtreamRepository
 import tv.hdonlinetv.compose.ui.tv.channel.ChannelListScreen
 import tv.hdonlinetv.compose.ui.tv.details.DetailsScreen
+import tv.hdonlinetv.compose.ui.tv.info.InfoWebScreen
+import tv.hdonlinetv.compose.ui.tv.info.TutorialScreen
 import tv.hdonlinetv.compose.ui.tv.main.MainShellScreen
 import tv.hdonlinetv.compose.ui.tv.onboarding.OnboardingScreen
 import tv.hdonlinetv.compose.ui.tv.player.PlayerScreen
@@ -106,6 +108,17 @@ fun TvNavHost() {
                         composable(Routes.Search.route) { SearchScreen() }
                         composable(Routes.Settings.route) { SettingsScreen() }
                         composable(Routes.PlaylistManage.route) { PlaylistManageScreen() }
+                        composable(Routes.Tutorial.route) { TutorialScreen() }
+                        composable(
+                            route = Routes.InfoWeb.route,
+                            arguments = listOf(
+                                navArgument(Routes.InfoWeb.ARG_URL) { type = NavType.StringType },
+                                navArgument(Routes.InfoWeb.ARG_TITLE) {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                },
+                            ),
+                        ) { InfoWebScreen() }
                         composable(
                             route = Routes.PlaylistChannels.route,
                             arguments = listOf(
