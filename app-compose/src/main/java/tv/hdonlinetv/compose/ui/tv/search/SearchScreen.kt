@@ -3,19 +3,13 @@ package tv.hdonlinetv.compose.ui.tv.search
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -30,6 +24,7 @@ import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.ChannelGridBody
+import tv.hdonlinetv.compose.ui.tv.components.TvEditableField
 
 @Composable
 fun SearchScreen() {
@@ -75,25 +70,11 @@ fun SearchScreenBody(
             text = stringResource(R.string.search_hint),
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
         )
-        BasicTextField(
+        TvEditableField(
             value = query,
             onValueChange = onQueryChange,
-            singleLine = true,
-            cursorBrush = SolidColor(colors.primary),
-            textStyle = TextStyle(color = colors.onSurface, fontSize = 18.sp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colors.surface, RoundedCornerShape(8.dp))
-                .padding(16.dp),
-            decorationBox = { inner ->
-                if (query.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.search_hint),
-                        color = colors.onSurface.copy(alpha = 0.5f),
-                    )
-                }
-                inner()
-            },
+            hint = stringResource(R.string.search_hint),
+            modifier = Modifier.padding(bottom = 12.dp),
         )
         ChannelGridBody(
             channels = results,

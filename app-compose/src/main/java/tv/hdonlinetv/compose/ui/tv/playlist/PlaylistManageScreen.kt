@@ -13,21 +13,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -39,6 +34,7 @@ import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModelFactory
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvNavController
+import tv.hdonlinetv.compose.ui.tv.components.TvEditableField
 
 @Composable
 fun PlaylistManageScreen() {
@@ -137,7 +133,7 @@ fun PlaylistManageScreenBody(
             Text(text = label)
         }
 
-        TvFormField(
+        TvEditableField(
             value = title,
             onValueChange = onTitleChange,
             hint = stringResource(R.string.playlist_name),
@@ -152,7 +148,7 @@ fun PlaylistManageScreenBody(
                 Text(text = stringResource(R.string.playlist_select_file))
             }
         } else {
-            TvFormField(
+            TvEditableField(
                 value = url,
                 onValueChange = onUrlChange,
                 hint = stringResource(R.string.playlist_link),
@@ -161,13 +157,13 @@ fun PlaylistManageScreenBody(
         }
 
         if (type == PlaylistManageType.XTREAM) {
-            TvFormField(
+            TvEditableField(
                 value = username,
                 onValueChange = onUsernameChange,
                 hint = stringResource(R.string.username_hint),
                 isError = usernameError,
             )
-            TvFormField(
+            TvEditableField(
                 value = password,
                 onValueChange = onPasswordChange,
                 hint = stringResource(R.string.password_hint),
@@ -205,37 +201,6 @@ fun PlaylistManageScreenBody(
             }
         }
     }
-}
-
-@OptIn(ExperimentalTvMaterial3Api::class)
-@Composable
-private fun TvFormField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    hint: String,
-    isError: Boolean = false,
-) {
-    val colors = MaterialTheme.colorScheme
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        cursorBrush = SolidColor(colors.primary),
-        textStyle = TextStyle(color = colors.onSurface, fontSize = 16.sp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                if (isError) colors.primary.copy(alpha = 0.25f) else colors.surface,
-                RoundedCornerShape(8.dp),
-            )
-            .padding(16.dp),
-        decorationBox = { inner ->
-            if (value.isEmpty()) {
-                Text(text = hint, color = colors.onSurface.copy(alpha = 0.5f))
-            }
-            inner()
-        },
-    )
 }
 
 private fun readClipboard(context: Context): String? {
