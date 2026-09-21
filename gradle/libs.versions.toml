@@ -62,16 +62,16 @@ jsoup = "1.21.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 koinAndroid = "4.1.1"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 # cinema notKmp: 3.6.5; 3.7.0+ — 16 KB ELF alignment для Play (Android 15+)
 library = "2.4"
 libraryVersion = "2.4"
 libvlcAll = "3.7.0"
-kotlinGradlePlugin = "2.1.0"
+kotlinGradlePlugin = "2.2.21"
 kotlinStdlibJdk7 = "2.1.21"
 kotlinx-coroutines = "1.10.2"
 kotlinxSerializationJson = "1.9.0"
-ksp = "2.1.0-1.0.29"
+ksp = "2.2.21-2.0.4"
 ktor = "3.0.3"
 ktorClientCore = "3.3.0"
 ktorClientOkhttp = "3.3.0"
@@ -215,6 +215,7 @@ kotlin-test = { version.ref = "kotlin", module = "org.jetbrains.kotlin:kotlin-te
 kotlin-test-junit = { version.ref = "kotlin", module = "org.jetbrains.kotlin:kotlin-test-junit"}
 kotlinx-coroutines-swing = { version.ref = "kotlinx-coroutines", group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing"}
 kotlinx-coroutines-android = { version.ref = "kotlinx-coroutines", group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android"}
+kotlinx-coroutines-core = { version.ref = "kotlinx-coroutines", module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
 ktor-server-core = { version.ref = "ktor", module = "io.ktor:ktor-server-core-jvm"}
 ktor-server-netty = { version.ref = "ktor", module = "io.ktor:ktor-server-netty-jvm"}
 ktor-server-test-host = { version.ref = "ktor", module = "io.ktor:ktor-server-test-host"}

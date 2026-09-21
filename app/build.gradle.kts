@@ -142,7 +142,12 @@ dependencies {
 
     //images
     implementation(libs.glide)
+    annotationProcessor(libs.glide)
     annotationProcessor(libs.compiler)
+    annotationProcessor("com.google.guava:guava:33.3.1-jre")
+    annotationProcessor("com.squareup:javapoet:1.13.0")
+    implementation("com.google.guava:guava:33.3.1-android")
+
     implementation("com.github.bumptech.glide:okhttp3-integration:5.0.5") {
         exclude(group = "glide-parent")
     }
@@ -242,5 +247,19 @@ dependencies {
     implementation(libs.androidx.work.runtime)
 }
 
+// R8 fails on kotlinx-serialization-core 1.7.3 with Kotlin 2.2 — force catalog version.
+configurations.configureEach {
+    resolutionStrategy {
+        force("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0")
+        force("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.9.0")
+        force("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+        force("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.9.0")
+    }
+}
 
 apply(plugin = "com.google.gms.google-services")
+
+// OneSignal 5.1.x wants firebase-messaging in [21, 23.4.99]; app uses 25.x — skip strict check.
+googleServices {
+    disableVersionCheck = true
+}

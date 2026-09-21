@@ -50,12 +50,12 @@ class FavoriteActivity : BaseActivity(), ChannelAdapter.OnItemClickListener {
         binding = ActivityFavoriteBinding.inflate(layoutInflater)
         setContentView(binding.getRoot())
         val m: View = binding.lytBannerAd.root
-        // Sticky bottom banner: systemBars as L/B/R margins (Appextractor / Google FAB pattern).
+        // L/R only — root fitsSystemWindows already pads bottom (avoid double gap).
         ViewCompat.setOnApplyWindowInsetsListener(m) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = insets.left
-                bottomMargin = insets.bottom
+                bottomMargin = 0
                 rightMargin = insets.right
             }
             WindowInsetsCompat.CONSUMED

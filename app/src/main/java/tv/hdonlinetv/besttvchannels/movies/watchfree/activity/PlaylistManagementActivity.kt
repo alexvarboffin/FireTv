@@ -53,12 +53,12 @@ class PlaylistManagementActivity : AppCompatActivity(), PlaylistManagementView {
             layoutInflater
         )
         setContentView(binding!!.root)
-        // Sticky bottom CTAs: systemBars as L/B/R margins (Appextractor / Google FAB pattern).
+        // Sticky bottom CTAs: L/R only — root fitsSystemWindows already pads bottom.
         ViewCompat.setOnApplyWindowInsetsListener(binding!!.bottomActions) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = insets.left
-                bottomMargin = insets.bottom
+                bottomMargin = 0
                 rightMargin = insets.right
             }
             windowInsets

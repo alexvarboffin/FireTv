@@ -108,14 +108,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             layoutInflater
         )
         setContentView(binding.root)
-        // Sticky bottom banner: systemBars L/B/R (Appextractor / Google FAB pattern).
-        // Banner is sibling outside DrawerLayout so drawer cannot cover ads
-        // (AdMob Site Behavior: Navigation — same as Mecca Home).
+        // Sticky bottom banner: L/R only. Root fitsSystemWindows already pads bottom —
+        // adding systemBars.bottomMargin here doubles the gap (~banner height empty strip).
         ViewCompat.setOnApplyWindowInsetsListener(binding.lytBannerAd.root) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = insets.left
-                bottomMargin = insets.bottom
+                bottomMargin = 0
                 rightMargin = insets.right
             }
             WindowInsetsCompat.CONSUMED
