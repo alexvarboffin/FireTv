@@ -17,7 +17,8 @@
     <string name="menu_tutorial">Tutorial &amp; FAQ</string>
     <string name="menu_privacy">Privacy Policy</string>
     <string name="play">Play</string>
-    <string name="loading">Loading…</string>
+    <string name="loading">LOADING</string>
+    <string name="msg_please_wait">Please Wait…</string>
     <string name="compose_phone_title">FireTv Phone</string>
     <string name="compose_tv_title">FireTv TV</string>
     <string name="app_name_legacy">Ultimate.TV</string>
@@ -84,6 +85,8 @@
     <string name="error_playlist_username">Please enter a profile UserName</string>
     <string name="error_playlist_password">Please enter a profile Password</string>
     <string name="xtream_success_saved">Profile saved successfully!</string>
+    <string name="download_successful">Playlist downloaded successfully</string>
+    <string name="error_download_failed">Failed to download playlist</string>
     <string name="tab_xtream_live">Live</string>
     <string name="tab_xtream_vod">Movies</string>
     <string name="tab_xtream_series">Series</string>

@@ -86,6 +86,10 @@ class PlaylistManageViewModel(
         saveInternal(fileUri = null, clipboardContent = content)
     }
 
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
+    }
+
     private fun saveInternal(fileUri: Uri?, clipboardContent: String?) {
         val state = _uiState.value
         viewModelScope.launch {
@@ -104,7 +108,13 @@ class PlaylistManageViewModel(
                     }
                     fileUri != null -> {
                         if (state.title.isBlank() && fileUri.lastPathSegment.isNullOrBlank()) {
-                            _uiState.update { it.copy(titleError = true, isSaving = false) }
+                            _uiState.update {
+                                it.copy(
+                                    titleError = true,
+                                    isSaving = false,
+                                    error = UiError.Validation,
+                                )
+                            }
                             return@launch
                         }
                         repository.addFromFile(state.title.trim(), fileUri)
@@ -129,7 +139,13 @@ class PlaylistManageViewModel(
 
     private fun validateM3uUrl(state: PlaylistManageUiState): Boolean {
         val urlError = state.url.isBlank()
-        _uiState.update { it.copy(urlError = urlError, isSaving = false) }
+        _uiState.update {
+            it.copy(
+                urlError = urlError,
+                isSaving = false,
+                error = if (urlError) UiError.Validation else null,
+            )
+        }
         return !urlError
     }
 
@@ -137,15 +153,17 @@ class PlaylistManageViewModel(
         val urlError = state.url.isBlank()
         val usernameError = state.username.isBlank()
         val passwordError = state.password.isBlank()
+        val invalid = urlError || usernameError || passwordError
         _uiState.update {
             it.copy(
                 urlError = urlError,
                 usernameError = usernameError,
                 passwordError = passwordError,
                 isSaving = false,
+                error = if (invalid) UiError.Validation else null,
             )
         }
-        return !urlError && !usernameError && !passwordError
+        return !invalid
     }
 }
 

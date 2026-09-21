@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
@@ -32,6 +33,9 @@ import tv.hdonlinetv.compose.ui.tv.details.DetailsScreen
 import tv.hdonlinetv.compose.ui.tv.info.InfoWebScreen
 import tv.hdonlinetv.compose.ui.tv.info.TutorialScreen
 import tv.hdonlinetv.compose.ui.tv.main.MainShellScreen
+import tv.hdonlinetv.compose.ui.tv.notifications.LocalTvNotificationManager
+import tv.hdonlinetv.compose.ui.tv.notifications.NotificationManager
+import tv.hdonlinetv.compose.ui.tv.notifications.NotificationOverlay
 import tv.hdonlinetv.compose.ui.tv.onboarding.OnboardingScreen
 import tv.hdonlinetv.compose.ui.tv.player.PlayerScreen
 import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistChannelsScreen
@@ -46,6 +50,7 @@ import tv.hdonlinetv.compose.ui.tv.splash.SplashScreen
 fun TvNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
+    val notificationManager = remember { NotificationManager() }
     val categoryRepository = CategoryRepositoryImpl(context.applicationContext)
     val channelRepository = ChannelRepositoryImpl(context.applicationContext)
     val playlistRepository = PlaylistRepositoryImpl(context.applicationContext)
@@ -55,6 +60,7 @@ fun TvNavHost() {
     val colors = MaterialTheme.colorScheme
     CompositionLocalProvider(
         LocalTvNavController provides navController,
+        LocalTvNotificationManager provides notificationManager,
         LocalCategoryRepository provides categoryRepository,
         LocalChannelRepository provides channelRepository,
         LocalPlaylistRepository provides playlistRepository,
@@ -67,7 +73,6 @@ fun TvNavHost() {
                 .fillMaxSize()
                 .background(colors.background),
         ) {
-
             Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
                 Box(modifier = Modifier.background(colors.background).padding(paddingValues)) {
                     NavHost(
@@ -155,7 +160,10 @@ fun TvNavHost() {
                     }
                 }
             }
+            NotificationOverlay(
+                notifications = notificationManager.notifications,
+                onDismiss = notificationManager::remove,
+            )
         }
-
     }
 }

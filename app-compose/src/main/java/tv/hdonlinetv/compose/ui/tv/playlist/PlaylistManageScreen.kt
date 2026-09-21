@@ -29,24 +29,63 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
+import tv.hdonlinetv.compose.core.presentation.error.UiError
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageType
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModelFactory
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.TvEditableField
+import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
+import tv.hdonlinetv.compose.ui.tv.notifications.LocalTvNotificationManager
+import tv.hdonlinetv.compose.ui.tv.notifications.NotificationType
 
 @Composable
 fun PlaylistManageScreen() {
     val navController = LocalTvNavController.current
+    val context = LocalContext.current
+    val notifications = LocalTvNotificationManager.current
     val repository = LocalPlaylistRepository.current
     val viewModel: PlaylistManageViewModel = viewModel(
         factory = PlaylistManageViewModelFactory(repository),
     )
     val state by viewModel.uiState.collectAsState()
-    LaunchedEffect(state.saved) {
-        if (state.saved) navController.popBackStack()
+
+    LaunchedEffect(state.error, state.titleError, state.urlError, state.usernameError, state.passwordError) {
+        val error = state.error ?: return@LaunchedEffect
+        val messageRes = when (error) {
+            UiError.Validation -> when {
+                state.titleError -> R.string.error_playlist_name
+                state.urlError -> R.string.error_playlist_link
+                state.usernameError -> R.string.error_playlist_username
+                state.passwordError -> R.string.error_playlist_password
+                else -> R.string.error_download_failed
+            }
+            UiError.Network, UiError.Unknown -> R.string.error_download_failed
+        }
+        notifications.show(
+            title = context.getString(R.string.playlist_management),
+            message = context.getString(messageRes),
+            type = NotificationType.ERROR,
+        )
+        viewModel.clearError()
     }
+
+    LaunchedEffect(state.saved) {
+        if (!state.saved) return@LaunchedEffect
+        val messageRes = if (state.type == PlaylistManageType.XTREAM) {
+            R.string.xtream_success_saved
+        } else {
+            R.string.download_successful
+        }
+        notifications.show(
+            title = context.getString(R.string.playlist_management),
+            message = context.getString(messageRes),
+            type = NotificationType.SUCCESS,
+        )
+        navController.popBackStack()
+    }
+
     PlaylistManageScreenBody(
         type = state.type,
         title = state.title,
@@ -70,6 +109,8 @@ fun PlaylistManageScreen() {
         onParseClipboard = viewModel::saveFromClipboard,
         onBack = { navController.popBackStack() },
     )
+
+    TvLoadingOverlay(visible = state.isSaving)
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
