@@ -5,12 +5,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,34 +82,41 @@ fun LegacyTabRow(
     }
 }
 
+/**
+ * Material3 [TopAppBar] wrapper — status-bar / cutout insets come from
+ * [TopAppBarDefaults.windowInsets] (works with Scaffold edge-to-edge).
+ */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LegacyTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     navigationIcon: @Composable () -> Unit,
-    actions: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
     backgroundColor: Color = colorResource(R.color.colorPrimaryDark),
     titleColor: Color = colorResource(R.color.black),
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-            .padding(horizontal = 4.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        navigationIcon()
-        Text(
-            text = title,
-            color = titleColor,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp),
-        )
-        actions()
-    }
+    TopAppBar(
+        modifier = modifier,
+        title = {
+            Text(
+                text = title,
+                color = titleColor,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        navigationIcon = navigationIcon,
+        actions = actions,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = backgroundColor,
+            titleContentColor = titleColor,
+            navigationIconContentColor = titleColor,
+            actionIconContentColor = titleColor,
+            scrolledContainerColor = backgroundColor,
+        ),
+        windowInsets = TopAppBarDefaults.windowInsets,
+    )
 }

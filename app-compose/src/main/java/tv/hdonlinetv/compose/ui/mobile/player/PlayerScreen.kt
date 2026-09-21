@@ -4,14 +4,9 @@ import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -205,9 +199,7 @@ fun PlayerScreenBody(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.black)),
+        modifier = Modifier.fillMaxSize().background(colorResource(R.color.black)),
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -215,58 +207,46 @@ fun PlayerScreenBody(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             topBar = {
                 if (!isFullscreen) {
-                    val statusBarTop = WindowInsets.statusBars
-                        .asPaddingValues()
-                        .calculateTopPadding()
-                    Column(Modifier.fillMaxWidth()) {
-                        if (statusBarTop > 0.dp) {
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .height(statusBarTop)
-                                    .background(colorResource(R.color.black)),
-                            )
-                        }
-                        LegacyTopAppBar(
-                            title = channel?.name.orEmpty(),
-                            backgroundColor = Color.Transparent,//colorResource(R.color.playerToolbar)
-                            titleColor = colorResource(R.color.white),
-                            navigationIcon = {
-                                IconButton(onClick = exitPlayer) {
+                    // Insets from Material3 TopAppBar — no manual status spacer (avoids double gap).
+                    LegacyTopAppBar(
+                        title = channel?.name.orEmpty(),
+                        backgroundColor = Color.Transparent,
+                        titleColor = colorResource(R.color.white),
+                        navigationIcon = {
+                            IconButton(onClick = exitPlayer) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_baseline_arrow_white),
+                                    contentDescription = null,
+                                    tint = colorResource(R.color.white),
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { showMediaPlayerSheet = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_actions_settings),
+                                    contentDescription = stringResource(R.string.media_player_title),
+                                    tint = colorResource(R.color.white),
+                                )
+                            }
+                            if (channel != null && channel.id > 0) {
+                                IconButton(onClick = onToggleFavorite) {
                                     Icon(
-                                        painter = painterResource(R.drawable.ic_baseline_arrow_white),
+                                        painter = painterResource(
+                                            if (channel.isFavorite) {
+                                                R.drawable.ic_favorite_fill_red
+                                            } else {
+                                                R.drawable.ic_favorite_border_red
+                                            },
+                                        ),
                                         contentDescription = null,
                                         tint = colorResource(R.color.white),
                                     )
                                 }
-                            },
-                            actions = {
-                                IconButton(onClick = { showMediaPlayerSheet = true }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_actions_settings),
-                                        contentDescription = stringResource(R.string.media_player_title),
-                                        tint = colorResource(R.color.white),
-                                    )
-                                }
-                                if (channel != null && channel.id > 0) {
-                                    IconButton(onClick = onToggleFavorite) {
-                                        Icon(
-                                            painter = painterResource(
-                                                if (channel.isFavorite) {
-                                                    R.drawable.ic_favorite_fill_red
-                                                } else {
-                                                    R.drawable.ic_favorite_border_red
-                                                },
-                                            ),
-                                            contentDescription = null,
-                                            tint = colorResource(R.color.white),
-                                        )
-                                    }
-                                }
-                                CastMediaRouteButton()
-                            },
-                        )
-                    }
+                            }
+                            CastMediaRouteButton()
+                        },
+                    )
                 } else null
             },
         ) { padding ->
