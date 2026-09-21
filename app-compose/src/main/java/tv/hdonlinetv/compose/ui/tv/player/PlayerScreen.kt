@@ -23,10 +23,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.PauseCircleOutline
+import androidx.compose.material.icons.rounded.PlayCircleOutline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -47,11 +51,11 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -177,12 +181,15 @@ fun PlayerScreenBody(
     var positionMs by remember { mutableLongStateOf(0L) }
     var durationMs by remember { mutableLongStateOf(0L) }
     var scrubProgress by remember { mutableStateOf<Float?>(null) }
+    var jzState by remember { mutableIntStateOf(Jzvd.STATE_IDLE) }
+    var isJzFullscreen by remember { mutableStateOf(false) }
     val rootFocus = remember { FocusRequester() }
-    val (frFavorite, frClose, frRefresh, frProgress, frSettings) = remember {
+    val (frFavorite, frClose, frPlay, frProgress, frSettings, frFullscreen) = remember {
         FocusRequester.createRefs()
     }
-    // DEBUG: keep JZ XML chrome visible to verify native seek/replay still work.
-    val hideJzChrome = !BuildConfig.DEBUG
+    // DEBUG: keep JZ XML chrome visible together with Compose overlay (parity check).
+    val showJzXmlChrome = BuildConfig.DEBUG
+    val hideJzChrome = !showJzXmlChrome
 
     val displayedProgress = scrubProgress
         ?: if (durationMs > 0L) {
@@ -190,6 +197,20 @@ fun PlayerScreenBody(
         } else {
             0f
         }
+
+    // XML @id/loading — spinner while preparing.
+    val isPreparing = jzState == Jzvd.STATE_PREPARING ||
+        jzState == Jzvd.STATE_PREPARING_PLAYING ||
+        jzState == Jzvd.STATE_PREPARING_CHANGE_URL ||
+        isLoading
+
+    // Cinema PlayerOverlayPhone: PlayCircleOutline / PauseCircleOutline (64dp).
+    // Replay uses Refresh for complete/error (JZ jz_click_replay).
+    val centerControl: Pair<ImageVector, String> = when (jzState) {
+        Jzvd.STATE_PLAYING -> Icons.Rounded.PauseCircleOutline to "Pause"
+        Jzvd.STATE_AUTO_COMPLETE, Jzvd.STATE_ERROR -> Icons.Filled.Refresh to stringResource(R.string.refresh)
+        else -> Icons.Rounded.PlayCircleOutline to "Play"
+    }
 
     // Cinema TvUI_VideoLayout: any interaction restarts the auto-hide countdown.
     fun resetHideTimer() {
@@ -204,14 +225,21 @@ fun PlayerScreenBody(
         }
     }
 
-    fun refreshStream() {
+    fun onCenterControlClick() {
+        resetHideTimer()
+        playerRef?.performStartButtonAction()
+        playerRef?.let { jzState = it.state }
+    }
+
+    fun toggleFullscreen() {
         resetHideTimer()
         val player = playerRef ?: return
-        val ch = channel ?: return
-        val playerSetup = setup ?: return
-        LegacyJzPlayerSetup.apply(player, ch, playerSetup, mediaPlayerOption)
-        positionMs = 0L
-        scrubProgress = null
+        if (player.screen == Jzvd.SCREEN_FULLSCREEN) {
+            player.gotoNormalScreen()
+        } else {
+            player.gotoFullscreen()
+        }
+        isJzFullscreen = player.screen == Jzvd.SCREEN_FULLSCREEN
     }
 
     val exitPlayer = {
@@ -260,11 +288,14 @@ fun PlayerScreenBody(
         LegacyJzPlayerSetup.apply(player, ch, playerSetup, mediaPlayerOption)
     }
 
-    LaunchedEffect(controlsVisible, showMediaPlayerDialog) {
+    LaunchedEffect(controlsVisible, showMediaPlayerDialog, showJzXmlChrome, playerRef) {
+        if (showJzXmlChrome && playerRef != null) {
+            playerRef?.forceShowNativeChromeForDebug()
+        }
         if (controlsVisible && !showMediaPlayerDialog) {
             resetHideTimer()
             // Cinema: initial focus on center play/refresh control.
-            frRefresh.requestFocus()
+            frPlay.requestFocus()
         } else {
             hideControlsJob?.cancel()
             if (!controlsVisible) {
@@ -282,8 +313,8 @@ fun PlayerScreenBody(
                 // Cinema root: when chrome visible, D-pad enters center control.
                 left = FocusRequester.Cancel
                 up = FocusRequester.Cancel
-                right = if (controlsVisible) frRefresh else FocusRequester.Cancel
-                down = if (controlsVisible) frRefresh else FocusRequester.Cancel
+                right = if (controlsVisible) frPlay else FocusRequester.Cancel
+                down = if (controlsVisible) frPlay else FocusRequester.Cancel
             }
             .focusable()
             .onKeyEvent { keyEvent ->
@@ -299,10 +330,7 @@ fun PlayerScreenBody(
     ) {
         when {
             isLoading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.White,
-                )
+                // Spinner drawn below via isPreparing/isLoading overlay.
             }
             channel == null || channel.link.isNullOrBlank() || setup == null -> {
                 Text(
@@ -326,21 +354,43 @@ fun PlayerScreenBody(
                     update = { player ->
                         playerRef = player
                         player.suppressNativeChrome = hideJzChrome
+                        if (showJzXmlChrome) {
+                            player.forceShowNativeChromeForDebug()
+                        }
                         player.onPlaybackProgress = { position, duration ->
                             if (scrubProgress == null) {
                                 positionMs = position
                             }
                             durationMs = duration
                         }
+                        player.onPlaybackStateChanged = { jzState = it }
+                        player.onFullscreenChange = { fullscreen ->
+                            isJzFullscreen = fullscreen
+                        }
+                        jzState = player.state
+                        isJzFullscreen = player.screen == Jzvd.SCREEN_FULLSCREEN
                     },
                     onRelease = { player ->
                         player.onPlaybackProgress = null
+                        player.onPlaybackStateChanged = null
+                        player.onFullscreenChange = null
                         if (!isExiting) {
                             LegacyJzPlayerRelease.stopAndRelease(player)
                         }
                     },
                 )
             }
+        }
+
+        // XML @id/loading — always on top of video while buffering/preparing.
+        if (isPreparing) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(64.dp),
+                color = Color.White,
+                strokeWidth = 4.dp,
+            )
         }
 
         if (controlsVisible && !showMediaPlayerDialog) {
@@ -379,7 +429,7 @@ fun PlayerScreenBody(
                                         // Cyclic top row: Favorite ↔ Close
                                         left = frClose
                                         right = frClose
-                                        down = frRefresh
+                                        down = frPlay
                                         up = frSettings
                                     }
                                     .onFocusChanged { if (it.isFocused) resetHideTimer() },
@@ -407,7 +457,7 @@ fun PlayerScreenBody(
                                 .focusProperties {
                                     left = if (channel != null && channel.id > 0) frFavorite else frClose
                                     right = if (channel != null && channel.id > 0) frFavorite else frClose
-                                    down = frRefresh
+                                    down = frPlay
                                     up = frSettings
                                 }
                                 .onFocusChanged { if (it.isFocused) resetHideTimer() },
@@ -421,32 +471,38 @@ fun PlayerScreenBody(
                     }
                 }
 
-                TvPlayerIconButton(
-                    onClick = { refreshStream() },
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .focusRequester(frRefresh)
-                        .focusProperties {
-                            up = if (channel != null && channel.id > 0) frFavorite else frClose
-                            down = if (durationMs > 0L) frProgress else frSettings
-                            left = FocusRequester.Cancel
-                            right = FocusRequester.Cancel
-                        }
-                        .size(72.dp)
-                        .onFocusChanged { if (it.isFocused) resetHideTimer() },
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Refresh,
-                        contentDescription = stringResource(R.string.refresh),
-                        tint = Color.White,
-                        modifier = Modifier.size(40.dp),
-                    )
+                // XML @id/start — hide while loading spinner is shown.
+                if (!isPreparing) {
+                    TvPlayerIconButton(
+                        onClick = { onCenterControlClick() },
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .focusRequester(frPlay)
+                            .focusProperties {
+                                up = if (channel != null && channel.id > 0) frFavorite else frClose
+                                down = if (durationMs > 0L) frProgress else frSettings
+                                left = FocusRequester.Cancel
+                                right = FocusRequester.Cancel
+                            }
+                            // Cinema: 64dp circle play/pause.
+                            .size(64.dp)
+                            .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                    ) {
+                        Icon(
+                            imageVector = centerControl.first,
+                            contentDescription = centerControl.second,
+                            tint = Color.White,
+                            modifier = Modifier.size(64.dp),
+                        )
+                    }
                 }
 
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
+                        // Leave room for JZ XML bottom seek bar when DEBUG shows both.
+                        .padding(bottom = if (showJzXmlChrome) 52.dp else 0.dp)
                         .background(Color.Black.copy(alpha = 0.5f))
                         .padding(top = 8.dp, bottom = 16.dp),
                 ) {
@@ -467,14 +523,14 @@ fun PlayerScreenBody(
                         },
                         onUserInteraction = { resetHideTimer() },
                         focusRequester = frProgress,
-                        upFocus = frRefresh,
+                        upFocus = frPlay,
                         downFocus = frSettings,
                     )
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp),
-                        horizontalArrangement = Arrangement.End,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         TvPlayerIconButton(
@@ -485,7 +541,7 @@ fun PlayerScreenBody(
                             modifier = Modifier
                                 .focusRequester(frSettings)
                                 .focusProperties {
-                                    up = if (durationMs > 0L) frProgress else frRefresh
+                                    up = if (durationMs > 0L) frProgress else frPlay
                                     down = if (channel != null && channel.id > 0) frFavorite else frClose
                                     left = FocusRequester.Cancel
                                     right = FocusRequester.Cancel
@@ -498,7 +554,46 @@ fun PlayerScreenBody(
                                 tint = Color.White,
                             )
                         }
+                        // TV is already fullscreen (landscape + immersive).
+                        // JZ gotoFullscreen() reparents to DecorView and leaves Compose overlay behind — skip.
+                        // TvPlayerIconButton(
+                        //     onClick = { toggleFullscreen() },
+                        //     modifier = Modifier
+                        //         .focusRequester(frFullscreen)
+                        //         .focusProperties {
+                        //             up = if (durationMs > 0L) frProgress else frPlay
+                        //             down = if (channel != null && channel.id > 0) frFavorite else frClose
+                        //             left = frSettings
+                        //             right = FocusRequester.Cancel
+                        //         }
+                        //         .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                        // ) {
+                        //     Icon(
+                        //         imageVector = if (isJzFullscreen) {
+                        //             Icons.Filled.FullscreenExit
+                        //         } else {
+                        //             Icons.Filled.Fullscreen
+                        //         },
+                        //         contentDescription = if (isJzFullscreen) {
+                        //             "Exit fullscreen"
+                        //         } else {
+                        //             "Fullscreen"
+                        //         },
+                        //         tint = Color.White,
+                        //     )
+                        // }
                     }
+                }
+
+                if (showJzXmlChrome) {
+                    Text(
+                        text = "DEBUG: Compose + JZ XML",
+                        color = Color.Yellow,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(start = 12.dp, bottom = 8.dp),
+                    )
                 }
             }
         }
@@ -521,12 +616,12 @@ fun PlayerScreenBody(
 @Composable
 private fun TvPlayerIconButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(48.dp),
     content: @Composable () -> Unit,
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.size(48.dp),
+        modifier = modifier,
         shape = ClickableSurfaceDefaults.shape(shape = CircleShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = Color.Black.copy(alpha = 0.55f),

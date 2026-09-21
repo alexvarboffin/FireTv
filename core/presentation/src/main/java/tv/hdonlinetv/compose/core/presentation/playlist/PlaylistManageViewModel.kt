@@ -139,14 +139,17 @@ class PlaylistManageViewModel(
 
     private fun validateM3uUrl(state: PlaylistManageUiState): Boolean {
         val urlError = state.url.isBlank()
-        _uiState.update {
-            it.copy(
-                urlError = urlError,
-                isSaving = false,
-                error = if (urlError) UiError.Validation else null,
-            )
+        if (urlError) {
+            _uiState.update {
+                it.copy(
+                    urlError = true,
+                    isSaving = false,
+                    error = UiError.Validation,
+                )
+            }
+            return false
         }
-        return !urlError
+        return true
     }
 
     private fun validateXtream(state: PlaylistManageUiState): Boolean {
@@ -154,16 +157,19 @@ class PlaylistManageViewModel(
         val usernameError = state.username.isBlank()
         val passwordError = state.password.isBlank()
         val invalid = urlError || usernameError || passwordError
-        _uiState.update {
-            it.copy(
-                urlError = urlError,
-                usernameError = usernameError,
-                passwordError = passwordError,
-                isSaving = false,
-                error = if (invalid) UiError.Validation else null,
-            )
+        if (invalid) {
+            _uiState.update {
+                it.copy(
+                    urlError = urlError,
+                    usernameError = usernameError,
+                    passwordError = passwordError,
+                    isSaving = false,
+                    error = UiError.Validation,
+                )
+            }
+            return false
         }
-        return !invalid
+        return true
     }
 }
 

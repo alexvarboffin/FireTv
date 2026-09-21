@@ -110,7 +110,10 @@ fun PlaylistManageScreen() {
         onBack = { navController.popBackStack() },
     )
 
-    TvLoadingOverlay(visible = state.isSaving)
+    TvLoadingOverlay(
+        visible = state.isSaving,
+        message = stringResource(R.string.msg_please_wait),
+    )
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)

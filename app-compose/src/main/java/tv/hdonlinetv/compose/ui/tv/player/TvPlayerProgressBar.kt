@@ -1,19 +1,18 @@
 package tv.hdonlinetv.compose.ui.tv.player
 
-import android.view.KeyEvent
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,26 +23,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-private const val SEEK_SHORT_SECONDS = 10f
-private const val SEEK_LONG_SECONDS = 30f
-private const val LONG_PRESS_THRESHOLD_MS = 400L
-private const val LONG_PRESS_REPEAT_MS = 200L
-
 /**
- * Cinema [PlayerProgressSliderPhone] for TV:
- * - Left/Right seek while focused (short / long-press repeat)
- * - [focusProperties] left/right = Cancel so D-pad does not escape the bar horizontally
+ * Cinema [VideoPlayerSeekerTV]: Canvas track (not Material Slider),
+ * time labels on sides, thicker when focused, accelerating D-pad seek.
  */
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -57,149 +57,123 @@ fun TvPlayerProgressBar(
     upFocus: FocusRequester? = null,
     downFocus: FocusRequester? = null,
 ) {
-    val durationSeconds = (durationMs / 1000f).coerceAtLeast(0f)
-    val currentProgress by rememberUpdatedState(progress)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
     val scope = rememberCoroutineScope()
-    var leftPressed by remember { mutableStateOf(false) }
-    var rightPressed by remember { mutableStateOf(false) }
-    var leftPressStart by remember { mutableLongStateOf(0L) }
-    var rightPressStart by remember { mutableLongStateOf(0L) }
-    var leftLongPressActive by remember { mutableStateOf(false) }
-    var rightLongPressActive by remember { mutableStateOf(false) }
-    var repeatJob by remember { mutableStateOf<Job?>(null) }
     val seekable = durationMs > 0L
+    val clampedProgress = progress.coerceIn(0f, 1f)
+    val latestProgress by rememberUpdatedState(clampedProgress)
 
-    fun seekBy(deltaSeconds: Float) {
-        if (durationSeconds <= 0f) return
-        val currentSeconds = currentProgress * durationSeconds
-        val newSeconds = (currentSeconds + deltaSeconds).coerceIn(0f, durationSeconds)
-        onProgressChange(newSeconds / durationSeconds)
-    }
+    val trackColor by rememberUpdatedState(
+        if (isFocused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+    )
+    val animatedIndicatorHeight by animateDpAsState(
+        targetValue = 4.dp * (if (isFocused) 2.5f else 1f),
+        label = "seekHeight",
+    )
 
-    LaunchedEffect(leftLongPressActive, rightLongPressActive) {
-        repeatJob?.cancel()
-        if (leftLongPressActive || rightLongPressActive) {
-            repeatJob = scope.launch {
-                while (leftLongPressActive || rightLongPressActive) {
-                    if (leftLongPressActive) seekBy(-SEEK_LONG_SECONDS)
-                    if (rightLongPressActive) seekBy(SEEK_LONG_SECONDS)
-                    delay(LONG_PRESS_REPEAT_MS)
-                }
-            }
+    var seekingJob by remember { mutableStateOf<Job?>(null) }
+
+    LaunchedEffect(isFocused) {
+        if (!isFocused) {
+            seekingJob?.cancel()
+            seekingJob = null
         }
     }
-    DisposableEffect(Unit) {
-        onDispose { repeatJob?.cancel() }
+
+    val dPadEventsModifier = Modifier.onPreviewKeyEvent { event ->
+        if (!isFocused || !seekable) return@onPreviewKeyEvent false
+        if (event.key != Key.DirectionLeft && event.key != Key.DirectionRight) {
+            return@onPreviewKeyEvent false
+        }
+        onUserInteraction()
+        if (event.type == KeyEventType.KeyDown && seekingJob == null) {
+            val direction = if (event.key == Key.DirectionLeft) -1f else 1f
+            seekingJob = scope.launch {
+                val pressStartTime = System.nanoTime()
+                var fastForwardInterval = 10_000L
+                val intervalIncreaseRate = 20_000L
+                val maxInterval = 60_000L
+                while (isActive) {
+                    val elapsedMs = (System.nanoTime() - pressStartTime) / 1_000_000
+                    if (elapsedMs > 2_000) {
+                        fastForwardInterval =
+                            (fastForwardInterval + intervalIncreaseRate).coerceAtMost(maxInterval)
+                    }
+                    val seekAmount =
+                        (fastForwardInterval.toFloat() / durationMs.toFloat()) * direction
+                    onProgressChange((latestProgress + seekAmount).coerceIn(0f, 1f))
+                    delay(100)
+                }
+            }
+        } else if (event.type == KeyEventType.KeyUp) {
+            seekingJob?.cancel()
+            seekingJob = null
+        }
+        true
     }
 
-    Column(
+    Row(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 8.dp)
             .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
             .focusProperties {
-                // Cinema: trap horizontal focus — Left/Right are seek, not navigation.
                 left = FocusRequester.Cancel
                 right = FocusRequester.Cancel
                 upFocus?.let { up = it }
                 downFocus?.let { down = it }
             }
-            .focusable(enabled = seekable)
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .onKeyEvent {
-                if (!seekable) return@onKeyEvent false
-                onUserInteraction()
-                val now = System.currentTimeMillis()
-                when (it.nativeKeyEvent.keyCode) {
-                    KeyEvent.KEYCODE_DPAD_LEFT -> {
-                        when (it.nativeKeyEvent.action) {
-                            KeyEvent.ACTION_DOWN -> {
-                                leftPressed = true
-                                leftPressStart = now
-                                leftLongPressActive = false
-                                scope.launch {
-                                    delay(LONG_PRESS_THRESHOLD_MS)
-                                    if (leftPressed) leftLongPressActive = true
-                                }
-                                true
-                            }
-                            KeyEvent.ACTION_UP -> {
-                                if (!leftLongPressActive &&
-                                    now - leftPressStart < LONG_PRESS_THRESHOLD_MS
-                                ) {
-                                    seekBy(-SEEK_SHORT_SECONDS)
-                                }
-                                leftPressed = false
-                                leftLongPressActive = false
-                                true
-                            }
-                            else -> false
-                        }
-                    }
-                    KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                        when (it.nativeKeyEvent.action) {
-                            KeyEvent.ACTION_DOWN -> {
-                                rightPressed = true
-                                rightPressStart = now
-                                rightLongPressActive = false
-                                scope.launch {
-                                    delay(LONG_PRESS_THRESHOLD_MS)
-                                    if (rightPressed) rightLongPressActive = true
-                                }
-                                true
-                            }
-                            KeyEvent.ACTION_UP -> {
-                                if (!rightLongPressActive &&
-                                    now - rightPressStart < LONG_PRESS_THRESHOLD_MS
-                                ) {
-                                    seekBy(SEEK_SHORT_SECONDS)
-                                }
-                                rightPressed = false
-                                rightLongPressActive = false
-                                true
-                            }
-                            else -> false
-                        }
-                    }
-                    else -> false
-                }
-            },
-    ) {
-        // Visual only — focus lives on the Column above (Cinema key handling).
-        Slider(
-            value = progress.coerceIn(0f, 1f),
-            onValueChange = {
-                onUserInteraction()
-                onProgressChange(it)
-            },
-            enabled = seekable,
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusProperties { canFocus = false },
-            colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.primary,
-                activeTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                inactiveTrackColor = Color.White.copy(alpha = 0.3f),
-                disabledThumbColor = Color.White.copy(alpha = 0.4f),
-                disabledActiveTrackColor = Color.White.copy(alpha = 0.25f),
-                disabledInactiveTrackColor = Color.White.copy(alpha = 0.15f),
+            .then(if (seekable) dPadEventsModifier else Modifier)
+            .focusable(
+                enabled = seekable,
+                interactionSource = interactionSource,
             ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = if (seekable) {
+                formatPlayerTime((clampedProgress * durationMs).toLong())
+            } else {
+                "00:00"
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White,
+            modifier = Modifier.width(60.dp),
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Canvas(
+            modifier = Modifier
+                .weight(1f)
+                .height(animatedIndicatorHeight)
+                .padding(horizontal = 4.dp),
         ) {
-            Text(
-                text = formatPlayerTime((progress * durationMs).toLong().coerceAtLeast(0L)),
-                color = Color.White,
-                fontSize = 12.sp,
+            val yOffset = size.height / 2
+            drawLine(
+                color = trackColor.copy(alpha = 0.24f),
+                start = Offset(0f, yOffset),
+                end = Offset(size.width, yOffset),
+                strokeWidth = size.height,
+                cap = StrokeCap.Round,
             )
-            Text(
-                text = if (seekable) formatPlayerTime(durationMs) else "LIVE",
-                color = Color.White,
-                fontSize = 12.sp,
-            )
+            if (seekable) {
+                drawLine(
+                    color = trackColor,
+                    start = Offset(0f, yOffset),
+                    end = Offset(size.width * clampedProgress, yOffset),
+                    strokeWidth = size.height,
+                    cap = StrokeCap.Round,
+                )
+            }
         }
+        Text(
+            text = if (seekable) formatPlayerTime(durationMs) else "LIVE",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White,
+            textAlign = TextAlign.End,
+            modifier = Modifier
+                .width(60.dp)
+                .padding(start = 8.dp),
+        )
     }
 }
 

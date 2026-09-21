@@ -15,16 +15,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.PlaylistType
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
+import tv.hdonlinetv.compose.util.PlaylistMetaFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +45,19 @@ fun PlaylistCard(
         PlaylistType.M3U_BUFFER -> R.drawable.ic_buffer
         PlaylistType.XTREAM_URL -> R.drawable.ic_xtream
         else -> R.drawable.ic_playlist
+    }
+    val channelsFmt = stringResource(R.string.channels_format)
+    val updatedFmt = stringResource(R.string.playlist_updated_short)
+    val meta = remember(playlist, channelsFmt, updatedFmt) {
+        PlaylistMetaFormat.buildMeta(
+            playlist = playlist,
+            channelsLabel = { count ->
+                String.format(Locale.getDefault(), channelsFmt, count)
+            },
+            updatedLabel = { date ->
+                String.format(Locale.getDefault(), updatedFmt, date)
+            },
+        )
     }
     Card(
         onClick = onClick,
@@ -66,7 +83,7 @@ fun PlaylistCard(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 8.dp),
+                    .padding(start = 8.dp, end = 4.dp),
             ) {
                 Text(
                     text = playlist.title,
@@ -75,13 +92,24 @@ fun PlaylistCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Text(
-                    text = playlist.fileName,
-                    fontSize = 12.sp,
-                    color = colorResource(R.color.MainSecText),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (playlist.fileName.isNotBlank()) {
+                    Text(
+                        text = playlist.fileName,
+                        fontSize = 12.sp,
+                        color = colorResource(R.color.MainSecText),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                if (meta.isNotEmpty()) {
+                    Text(
+                        text = meta,
+                        fontSize = 11.sp,
+                        color = colorResource(R.color.MainSecText),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
             Row(horizontalArrangement = Arrangement.End) {
                 IconButton(onClick = onRefresh, modifier = Modifier.size(36.dp)) {

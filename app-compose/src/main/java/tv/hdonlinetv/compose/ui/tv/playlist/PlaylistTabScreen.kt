@@ -48,6 +48,8 @@ import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModelFactory
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
+import tv.hdonlinetv.compose.util.PlaylistMetaFormat
+import java.util.Locale
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
 
@@ -206,10 +208,29 @@ private fun PlaylistCardTv(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = "${playlist.count}",
-                modifier = Modifier.padding(top = 4.dp),
-            )
+            val channelsFmt = stringResource(R.string.channels_format)
+            val updatedFmt = stringResource(R.string.playlist_updated_short)
+            val meta = remember(playlist, channelsFmt, updatedFmt) {
+                PlaylistMetaFormat.buildMeta(
+                    playlist = playlist,
+                    channelsLabel = { count ->
+                        String.format(Locale.getDefault(), channelsFmt, count)
+                    },
+                    updatedLabel = { date ->
+                        String.format(Locale.getDefault(), updatedFmt, date)
+                    },
+                )
+            }
+            if (meta.isNotEmpty()) {
+                Text(
+                    text = meta,
+                    modifier = Modifier.padding(top = 4.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }

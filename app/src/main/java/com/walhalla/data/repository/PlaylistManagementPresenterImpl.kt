@@ -69,37 +69,49 @@ class PlaylistManagementPresenterImpl(
             }
         }
         try {
-            val inputStream = context.contentResolver.openInputStream(uri)
-            if (inputStream != null) {
-                val reader = BufferedReader(InputStreamReader(inputStream))
-                val stringBuilder = StringBuilder()
-                var line: String?
-
-                while ((reader.readLine().also { line = it }) != null) {
-                    stringBuilder.append(line).append("\n")
-                }
-
-                // Получаем содержимое файла в виде строки
-                val fileContent = stringBuilder.toString()
+            val finalName = playListName
+            val finalUri = uri
+            view.showProgressBar()
+            executeInBackground(Runnable {
                 try {
-                    val result: List<Channel> = parseM3U(context, fileContent)
-                    val playlist = PlaylistImpl(
-                        playListName,
-                        uri.getPath()!!,
-                        DateFormatUtils.importDate(),
-                        -1,
-                        true,
-                        TypeUtils.TYPE_M3U_LOCAL
-                    )
-                    executeInBackground(Runnable {
+                    val inputStream = context.contentResolver.openInputStream(finalUri)
+                    if (inputStream == null) {
+                        postToMainThread(Runnable {
+                            view.hideProgressBar()
+                            view.showToast(R.string.error_download_failed)
+                        })
+                        return@Runnable
+                    }
+                    inputStream.use { stream ->
+                        val reader = BufferedReader(InputStreamReader(stream))
+                        val stringBuilder = StringBuilder()
+                        var line: String?
+                        while ((reader.readLine().also { line = it }) != null) {
+                            stringBuilder.append(line).append("\n")
+                        }
+                        val fileContent = stringBuilder.toString()
+                        val result: List<Channel> = parseM3U(context, fileContent)
+                        val playlist = PlaylistImpl(
+                            finalName,
+                            finalUri.getPath()!!,
+                            DateFormatUtils.importDate(),
+                            -1,
+                            true,
+                            TypeUtils.TYPE_M3U_LOCAL
+                        )
                         handleResult0(result, playlist)
-                    })
+                    }
                 } catch (e: Exception) {
-                    Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show()
+                    handleException(e)
+                    postToMainThread(Runnable {
+                        view.showError0(e.localizedMessage)
+                    })
+                } finally {
+                    postToMainThread(Runnable { view.hideProgressBar() })
                 }
-                reader.close()
-            }
-        } catch (e: IOException) {
+            })
+        } catch (e: Exception) {
+            view.hideProgressBar()
             Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show()
         }
     }
@@ -388,23 +400,33 @@ class PlaylistManagementPresenterImpl(
                 val clipboardText = item.text
                 if (clipboardText != null) {
                     val raw = clipboardText.toString()
-                    val result: List<Channel> = parseM3U(context, raw)
-
-                    var playListName = ""
-                    if (raw.length > 15) {
-                        playListName = raw.substring(0, 15)
-                    }
-
-                    val playlist = PlaylistImpl(
-                        playListName,
-                        ""/*null*/,
-                        DateFormatUtils.importDate(),
-                        0,
-                        false,
-                        TypeUtils.TYPE_M3U_BUFFER
-                    )
+                    view.showProgressBar()
                     executeInBackground(Runnable {
-                        handleResult0(result, playlist)
+                        try {
+                            val result: List<Channel> = parseM3U(context, raw)
+
+                            var playListName = ""
+                            if (raw.length > 15) {
+                                playListName = raw.substring(0, 15)
+                            }
+
+                            val playlist = PlaylistImpl(
+                                playListName,
+                                ""/*null*/,
+                                DateFormatUtils.importDate(),
+                                0,
+                                false,
+                                TypeUtils.TYPE_M3U_BUFFER
+                            )
+                            handleResult0(result, playlist)
+                        } catch (e: Exception) {
+                            handleException(e)
+                            postToMainThread(Runnable {
+                                view.showError0(e.localizedMessage)
+                            })
+                        } finally {
+                            postToMainThread(Runnable { view.hideProgressBar() })
+                        }
                     })
                 } else {
                     view.showErrorToast(R.string.clipboard_contains_no_text)

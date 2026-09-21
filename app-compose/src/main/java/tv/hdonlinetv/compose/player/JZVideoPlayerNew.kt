@@ -36,6 +36,9 @@ class JZVideoPlayerNew : JzvdStd {
 
     var onPlaybackProgress: ((positionMs: Long, durationMs: Long) -> Unit)? = null
 
+    /** Mirrors JZ [state] for Compose chrome (play / pause / replay). */
+    var onPlaybackStateChanged: ((state: Int) -> Unit)? = null
+
     override fun init(context: Context?) {
         super.init(context)
         if (suppressNativeChrome) {
@@ -80,14 +83,73 @@ class JZVideoPlayerNew : JzvdStd {
         media.seekTo(target)
     }
 
-    fun restartPlayback() {
-        try {
-            mediaInterface?.seekTo(0)
-        } catch (_: Exception) {
-            // ignore — startVideo will re-prepare
+    fun forceShowNativeChromeForDebug() {
+        if (suppressNativeChrome) return
+        topContainer?.visibility = VISIBLE
+        bottomContainer?.visibility = VISIBLE
+        startButton?.visibility = VISIBLE
+        bottomProgressBar?.visibility = GONE
+        // Keep focus out of XML SeekBar so Compose D-pad still works.
+        descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+        progressBar?.isFocusable = false
+        progressBar?.isFocusableInTouchMode = false
+        startButton?.isFocusable = false
+        backButton?.isFocusable = false
+        fullscreenButton?.isFocusable = false
+    }
+
+    /** Same action as tapping XML [start] (play / pause / replay). */
+    fun performStartButtonAction() {
+        val btn = startButton
+        if (btn != null) {
+            btn.performClick()
+            return
         }
-        seekToInAdvance = 0
-        startVideo()
+        when (state) {
+            STATE_PLAYING -> {
+                mediaInterface?.pause()
+                onStatePause()
+            }
+            STATE_PAUSE -> {
+                mediaInterface?.start()
+                onStatePlaying()
+            }
+            else -> startVideo()
+        }
+    }
+
+    private fun notifyState() {
+        onPlaybackStateChanged?.invoke(state)
+    }
+
+    override fun onStatePlaying() {
+        super.onStatePlaying()
+        notifyState()
+    }
+
+    override fun onStatePause() {
+        super.onStatePause()
+        notifyState()
+    }
+
+    override fun onStateError() {
+        super.onStateError()
+        notifyState()
+    }
+
+    override fun onStateAutoComplete() {
+        super.onStateAutoComplete()
+        notifyState()
+    }
+
+    override fun onStatePreparing() {
+        super.onStatePreparing()
+        notifyState()
+    }
+
+    override fun onStateNormal() {
+        super.onStateNormal()
+        notifyState()
     }
 
     override fun gotoFullscreen() {

@@ -9,12 +9,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
@@ -49,6 +53,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageType
@@ -71,28 +77,34 @@ fun PlaylistManageScreen() {
             navController.popBackStack()
         }
     }
-    PlaylistManageScreenBody(
-        type = state.type,
-        title = state.title,
-        url = state.url,
-        username = state.username,
-        password = state.password,
-        useLocalFile = state.useLocalFile,
-        isSaving = state.isSaving,
-        titleError = state.titleError,
-        urlError = state.urlError,
-        usernameError = state.usernameError,
-        passwordError = state.passwordError,
-        onTypeChange = viewModel::onTypeChange,
-        onTitleChange = viewModel::onTitleChange,
-        onUrlChange = viewModel::onUrlChange,
-        onUsernameChange = viewModel::onUsernameChange,
-        onPasswordChange = viewModel::onPasswordChange,
-        onLocalFileToggle = viewModel::onLocalFileToggle,
-        onSave = viewModel::saveFromUrl,
-        onSaveFile = viewModel::saveFromFile,
-        onParseClipboard = viewModel::saveFromClipboard,
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        PlaylistManageScreenBody(
+            type = state.type,
+            title = state.title,
+            url = state.url,
+            username = state.username,
+            password = state.password,
+            useLocalFile = state.useLocalFile,
+            isSaving = state.isSaving,
+            titleError = state.titleError,
+            urlError = state.urlError,
+            usernameError = state.usernameError,
+            passwordError = state.passwordError,
+            onTypeChange = viewModel::onTypeChange,
+            onTitleChange = viewModel::onTitleChange,
+            onUrlChange = viewModel::onUrlChange,
+            onUsernameChange = viewModel::onUsernameChange,
+            onPasswordChange = viewModel::onPasswordChange,
+            onLocalFileToggle = viewModel::onLocalFileToggle,
+            onSave = viewModel::saveFromUrl,
+            onSaveFile = viewModel::saveFromFile,
+            onParseClipboard = viewModel::saveFromClipboard,
+        )
+        MobileLoadingOverlay(
+            visible = state.isSaving,
+            message = stringResource(R.string.msg_please_wait),
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -299,11 +311,7 @@ fun PlaylistManageScreenBody(
                     .fillMaxWidth()
                     .padding(top = 24.dp),
             ) {
-                if (isSaving) {
-                    CircularProgressIndicator()
-                } else {
-                    Text(stringResource(R.string.subscribe))
-                }
+                Text(stringResource(R.string.subscribe))
             }
 
             if (type == PlaylistManageType.M3U) {
@@ -333,6 +341,48 @@ private fun readClipboard(context: Context): String? {
         return null
     }
     return text
+}
+
+/** Legacy LoadingDialogFragment parity: non-cancelable while M3U download/parse runs. */
+@Composable
+private fun MobileLoadingOverlay(
+    visible: Boolean,
+    message: String = stringResource(R.string.loading),
+) {
+    if (!visible) return
+    Dialog(
+        onDismissRequest = {},
+        properties = DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false,
+        ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.55f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(colorResource(R.color.cardBack), RoundedCornerShape(16.dp))
+                    .padding(horizontal = 40.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(48.dp),
+                    color = colorResource(R.color.colorAccent),
+                )
+                Text(
+                    text = message,
+                    color = colorResource(R.color.MainText),
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(top = 16.dp),
+                )
+            }
+        }
+    }
 }
 
 @Composable

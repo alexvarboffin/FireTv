@@ -334,6 +334,7 @@ class PlaylistManagementActivity : AppCompatActivity(), PlaylistManagementView {
     }
 
     override fun showProgressBar() {
+        if (loadingDialog?.isAdded == true) return
         if (loadingDialog == null) {
             loadingDialog = LoadingDialogFragment()
             loadingDialog!!.isCancelable = false
@@ -342,9 +343,11 @@ class PlaylistManagementActivity : AppCompatActivity(), PlaylistManagementView {
     }
 
     override fun hideProgressBar() {
-        if (loadingDialog != null) {
-            loadingDialog!!.dismiss()
+        val dialog = loadingDialog ?: return
+        if (dialog.isAdded) {
+            dialog.dismissAllowingStateLoss()
         }
+        loadingDialog = null
     }
 
 

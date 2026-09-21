@@ -138,27 +138,24 @@ class PlaylistAdapter(
         RecyclerView.ViewHolder(itemView.getRoot())
 
     fun generatePlaylistInfo(context: Context, playlist: PlaylistImpl): kotlin.String {
-        val info = StringBuilder()
+        val parts = ArrayList<kotlin.String>(3)
+        if (TypeUtils.TYPE_XTREAM_URL != playlist.type) {
+            parts.add(context.getString(R.string.channels_format, playlist.count))
+        }
         val importDate = playlist.importDate
-        if (TypeUtils.TYPE_XTREAM_URL == playlist.type) {
-        } else {
-            info.append(context.getString(R.string.channels_format, playlist.count))
+        if (importDate > 0L) {
+            val added = DateFormatUtils.formatUpdateTime(importDate)
+            if (added.isNotEmpty()) {
+                parts.add(context.getString(R.string.added_on, added))
+            }
         }
-        info.append(" | ").append(
-            context.getString(
-                R.string.added_on,
-                DateFormatUtils.formatUpdateTime(importDate)
-            )
-        )
-        if (playlist.updateDate > 0 && playlist.updateDate != (importDate)) {
-            info.append(" | ").append(
-                context.getString(
-                    R.string.updated_on,
-                    DateFormatUtils.formatUpdateTime(playlist.updateDate)
-                )
-            )
+        if (playlist.updateDate > 0L && playlist.updateDate != importDate) {
+            val updated = DateFormatUtils.formatUpdateTime(playlist.updateDate)
+            if (updated.isNotEmpty()) {
+                parts.add(context.getString(R.string.updated_on, updated))
+            }
         }
-        return info.toString()
+        return parts.joinToString("  ·  ")
     }
 
     override fun getFilter(): Filter {

@@ -67,6 +67,10 @@
     <string name="details_category_label">Category : %1$s</string>
     <string name="whoops">Whoops</string>
     <string name="no_wallpaper_found">No TV Channels Found ! \n Please Try Again Later</string>
+    <string name="channels_format">%1$d ch</string>
+    <string name="playlist_updated_short">upd %1$s</string>
+    <string name="added_on">Added on: %1$s</string>
+    <string name="updated_on">Updated on: %1$s</string>
     <string name="playlist_management">Playlist Management</string>
     <string name="playlist_name">Playlist name</string>
     <string name="playlist_link">Playlist link</string>

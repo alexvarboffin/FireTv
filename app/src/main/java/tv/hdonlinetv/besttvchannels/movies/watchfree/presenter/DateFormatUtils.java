@@ -13,12 +13,12 @@ public class DateFormatUtils {
 
 
     public static String formatUpdateTime(long currentTimeMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM d, yyyy, HH:mm", Locale.getDefault());
+        if (currentTimeMillis <= 0L) {
+            return "";
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, HH:mm", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getDefault());
-        String formattedDate = sdf.format(new Date(currentTimeMillis));
-
-        Log.d("Formatted Date", "Current date and time: " + formattedDate);
-        return formattedDate;
+        return sdf.format(new Date(currentTimeMillis));
     }
 
     public static long importDate() {
