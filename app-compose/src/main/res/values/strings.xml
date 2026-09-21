@@ -72,6 +72,7 @@
     <string name="playlist_link">Playlist link</string>
     <string name="subscribe">Subscribe</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="local_storage">Local Storage</string>
     <string name="parse_clipboard">Parse Clipboard</string>
     <string name="username">Username</string>

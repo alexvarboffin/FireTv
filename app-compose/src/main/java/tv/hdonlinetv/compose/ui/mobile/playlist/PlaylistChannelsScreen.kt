@@ -20,6 +20,7 @@ import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.navigation.navigateToChannel
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalPhoneNavController
+import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.ui.mobile.components.ChannelGridBody
 import tv.hdonlinetv.compose.ui.mobile.components.LegacyTopAppBar
@@ -32,10 +33,12 @@ fun PlaylistChannelsScreen() {
     val playlistTitle = args?.getString(Routes.PlaylistChannels.ARG_PLAYLIST_TITLE).orEmpty()
     val channelRepository = LocalChannelRepository.current
     val settingsRepository = LocalSettingsRepository.current
+    val playlistRepository = LocalPlaylistRepository.current
     val viewModel: PlaylistChannelsViewModel = viewModel(
         factory = PlaylistChannelsViewModelFactory(
             channelRepository,
             settingsRepository,
+            playlistRepository,
             playlistId,
             playlistTitle,
         ),

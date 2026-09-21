@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.domain.repository.ChannelRepository
+import tv.hdonlinetv.compose.core.domain.repository.PlaylistRepository
 import tv.hdonlinetv.compose.core.domain.repository.SettingsRepository
 import tv.hdonlinetv.compose.core.presentation.error.UiError
 
@@ -23,6 +24,7 @@ data class PlaylistChannelsUiState(
 class PlaylistChannelsViewModel(
     private val channelRepository: ChannelRepository,
     private val settingsRepository: SettingsRepository,
+    private val playlistRepository: PlaylistRepository,
     private val playlistId: Long,
     private val playlistTitle: String,
 ) : ViewModel() {
@@ -48,11 +50,39 @@ class PlaylistChannelsViewModel(
             }
         }
     }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val playlist = playlistRepository.getPlaylistById(playlistId)
+                if (playlist != null) {
+                    playlistRepository.refreshFromUrl(playlist)
+                }
+                load()
+            } catch (_: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = UiError.Unknown) }
+            }
+        }
+    }
+
+    fun delete(onDeleted: () -> Unit) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                playlistRepository.deletePlaylist(playlistId)
+                onDeleted()
+            } catch (_: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = UiError.Unknown) }
+            }
+        }
+    }
 }
 
 class PlaylistChannelsViewModelFactory(
     private val channelRepository: ChannelRepository,
     private val settingsRepository: SettingsRepository,
+    private val playlistRepository: PlaylistRepository,
     private val playlistId: Long,
     private val playlistTitle: String,
 ) : ViewModelProvider.Factory {
@@ -63,6 +93,7 @@ class PlaylistChannelsViewModelFactory(
             return PlaylistChannelsViewModel(
                 channelRepository,
                 settingsRepository,
+                playlistRepository,
                 playlistId,
                 playlistTitle,
             ) as T
