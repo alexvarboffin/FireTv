@@ -14,6 +14,7 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.tv.LocalTvNavController
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -21,7 +22,7 @@ fun SplashScreen() {
     val navController = LocalTvNavController.current
     val settingsRepository = LocalSettingsRepository.current
     LaunchedEffect(Unit) {
-        delay(800)
+        delay(800.milliseconds)
         val destination = if (settingsRepository.getSettings().isFirstLaunch) {
             Routes.Onboarding.route
         } else {
