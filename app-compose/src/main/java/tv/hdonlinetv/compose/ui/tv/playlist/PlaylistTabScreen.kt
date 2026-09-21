@@ -22,6 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,6 +38,7 @@ import androidx.tv.material3.Card
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import kotlinx.coroutines.delay
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.PlaylistType
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
@@ -130,10 +136,59 @@ private fun PlaylistCardTv(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
+    // Cinema MovieCardTvSimple: long-press only arms a flag; invoke on KeyUp.
+    // Otherwise KeyUp after long-press lands on the dialog's focused button and fires it.
+    var isKeyDown by remember { mutableStateOf(false) }
+    var longPressTriggered by remember { mutableStateOf(false) }
+    val longPressThresholdMs = 500L
+
+    LaunchedEffect(isKeyDown) {
+        if (isKeyDown && !longPressTriggered) {
+            delay(longPressThresholdMs)
+            longPressTriggered = true
+        }
+    }
+
     Card(
-        onClick = onClick,
-        onLongClick = onLongClick,
-        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+            // Click path for pointer/mouse; D-pad handled in onPreviewKeyEvent.
+            if (!longPressTriggered) onClick()
+        },
+        onLongClick = {
+            // Pointer long-press; D-pad uses KeyUp path below.
+            onLongClick()
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .onPreviewKeyEvent { event ->
+                when (event.key) {
+                    Key.Enter, Key.DirectionCenter -> {
+                        when (event.type) {
+                            KeyEventType.KeyDown -> {
+                                if (!isKeyDown) {
+                                    isKeyDown = true
+                                    longPressTriggered = false
+                                }
+                                true
+                            }
+                            KeyEventType.KeyUp -> {
+                                if (isKeyDown) {
+                                    if (longPressTriggered) {
+                                        onLongClick()
+                                    } else {
+                                        onClick()
+                                    }
+                                }
+                                isKeyDown = false
+                                longPressTriggered = false
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                    else -> false
+                }
+            },
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
@@ -158,7 +213,10 @@ fun TvPlaylistActionsDialog(
     onDismiss: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    val firstFocus = remember { FocusRequester() }
+    val cancelFocus = remember { FocusRequester() }
+    // Ignore accidental activate for a beat after open (pointer long-press release).
+    var actionsArmed by remember { mutableStateOf(false) }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -168,7 +226,9 @@ fun TvPlaylistActionsDialog(
         ),
     ) {
         LaunchedEffect(Unit) {
-            firstFocus.requestFocus()
+            delay(320)
+            actionsArmed = true
+            cancelFocus.requestFocus()
         }
         Column(
             modifier = Modifier
@@ -179,22 +239,24 @@ fun TvPlaylistActionsDialog(
         ) {
             Text(text = playlistTitle)
             Button(
-                onClick = onRefresh,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(firstFocus),
+                onClick = { if (actionsArmed) onRefresh() },
+                enabled = actionsArmed,
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(R.string.refresh))
             }
             Button(
-                onClick = onDelete,
+                onClick = { if (actionsArmed) onDelete() },
+                enabled = actionsArmed,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(R.string.delete))
             }
             Button(
                 onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(cancelFocus),
             ) {
                 Text(text = stringResource(R.string.cancel))
             }
