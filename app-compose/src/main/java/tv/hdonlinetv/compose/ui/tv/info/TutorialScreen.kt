@@ -10,13 +10,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -115,44 +114,86 @@ fun TutorialScreenBody(
 @Composable
 private fun TutorialTabContent() {
     val context = LocalContext.current
-    Column(
+    val colors = MaterialTheme.colorScheme
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(bottom = 16.dp),
+            .background(colors.background),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(text = stringResource(R.string.how_to_add_playlist))
-        Text(text = stringResource(R.string.tutorial))
-        Text(text = stringResource(R.string.step1))
-        Text(text = stringResource(R.string.step2))
-        Image(
-            painter = painterResource(R.drawable.ic_tutor2),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 30.dp, vertical = 8.dp),
-            contentScale = ContentScale.FillWidth,
-        )
-        Text(text = stringResource(R.string.step3))
-        Image(
-            painter = painterResource(R.drawable.ic_tutor3),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 30.dp, vertical = 8.dp),
-            contentScale = ContentScale.FillWidth,
-        )
-        Button(
-            onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SEARCH_IPTV_URL)))
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-        ) {
-            Text(text = stringResource(R.string.search_button))
+        item(key = "header") {
+            TutorialFocusBlock {
+                Text(text = stringResource(R.string.how_to_add_playlist))
+                Text(
+                    text = stringResource(R.string.tutorial),
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
         }
+        item(key = "step1") {
+            TutorialFocusBlock {
+                Text(text = stringResource(R.string.step1))
+            }
+        }
+        item(key = "step2") {
+            TutorialFocusBlock {
+                Text(text = stringResource(R.string.step2))
+                Image(
+                    painter = painterResource(R.drawable.ic_tutor2),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp, vertical = 8.dp),
+                    contentScale = ContentScale.FillWidth,
+                )
+            }
+        }
+        item(key = "step3") {
+            TutorialFocusBlock {
+                Text(text = stringResource(R.string.step3))
+                Image(
+                    painter = painterResource(R.drawable.ic_tutor3),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp, vertical = 8.dp),
+                    contentScale = ContentScale.FillWidth,
+                )
+            }
+        }
+        item(key = "search") {
+            Button(
+                onClick = {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SEARCH_IPTV_URL)))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 16.dp),
+            ) {
+                Text(text = stringResource(R.string.search_button))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun TutorialFocusBlock(content: @Composable ColumnScope.() -> Unit) {
+    val colors = MaterialTheme.colorScheme
+    Surface(
+        onClick = {},
+        modifier = Modifier.fillMaxWidth(),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = colors.surface,
+            contentColor = colors.onSurface,
+            focusedContainerColor = colors.primary,
+            focusedContentColor = colors.onPrimary,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            content = content,
+        )
     }
 }
 
