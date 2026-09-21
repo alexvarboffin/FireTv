@@ -1,15 +1,44 @@
 package tv.hdonlinetv.compose.ui.tv.playlist
 
+import android.content.ClipboardManager
+import android.content.Context
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.tv.material3.Button
+import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Text
+import tv.hdonlinetv.compose.R
+import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageType
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModelFactory
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvNavController
-import tv.hdonlinetv.compose.ui.mobile.playlist.PlaylistManageScreenBody
 
 @Composable
 fun PlaylistManageScreen() {
@@ -43,5 +72,178 @@ fun PlaylistManageScreen() {
         onSave = viewModel::saveFromUrl,
         onSaveFile = viewModel::saveFromFile,
         onParseClipboard = viewModel::saveFromClipboard,
+        onBack = { navController.popBackStack() },
     )
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+fun PlaylistManageScreenBody(
+    type: PlaylistManageType,
+    title: String,
+    url: String,
+    username: String,
+    password: String,
+    useLocalFile: Boolean,
+    isSaving: Boolean,
+    titleError: Boolean,
+    urlError: Boolean,
+    usernameError: Boolean,
+    passwordError: Boolean,
+    onTypeChange: (PlaylistManageType) -> Unit,
+    onTitleChange: (String) -> Unit,
+    onUrlChange: (String) -> Unit,
+    onUsernameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLocalFileToggle: (Boolean) -> Unit,
+    onSave: () -> Unit,
+    onSaveFile: (Uri) -> Unit,
+    onParseClipboard: (String) -> Unit,
+    onBack: () -> Unit,
+) {
+    val context = LocalContext.current
+    val colors = MaterialTheme.colorScheme
+    val playlistTypes = stringArrayResource(R.array.playlist_types)
+    val filePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        if (uri != null) onSaveFile(uri)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.background)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 48.dp, vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Button(onClick = onBack) {
+            Text(text = stringResource(R.string.ok))
+        }
+        Text(text = stringResource(R.string.playlist_management))
+
+        Text(text = stringResource(R.string.playlist_name))
+        Button(
+            onClick = {
+                onTypeChange(
+                    if (type == PlaylistManageType.M3U) PlaylistManageType.XTREAM
+                    else PlaylistManageType.M3U,
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            val label = playlistTypes[if (type == PlaylistManageType.M3U) 0 else 1]
+            Text(text = label)
+        }
+
+        TvFormField(
+            value = title,
+            onValueChange = onTitleChange,
+            hint = stringResource(R.string.playlist_name),
+            isError = titleError,
+        )
+
+        if (type == PlaylistManageType.M3U && useLocalFile) {
+            Button(
+                onClick = { filePicker.launch(arrayOf("*/*")) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = stringResource(R.string.playlist_select_file))
+            }
+        } else {
+            TvFormField(
+                value = url,
+                onValueChange = onUrlChange,
+                hint = stringResource(R.string.playlist_link),
+                isError = urlError,
+            )
+        }
+
+        if (type == PlaylistManageType.XTREAM) {
+            TvFormField(
+                value = username,
+                onValueChange = onUsernameChange,
+                hint = stringResource(R.string.username_hint),
+                isError = usernameError,
+            )
+            TvFormField(
+                value = password,
+                onValueChange = onPasswordChange,
+                hint = stringResource(R.string.password_hint),
+                isError = passwordError,
+            )
+        }
+
+        if (type == PlaylistManageType.M3U) {
+            Button(
+                onClick = { onLocalFileToggle(!useLocalFile) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = stringResource(R.string.local_storage) +
+                        if (useLocalFile) ": ON" else ": OFF",
+                )
+            }
+        }
+
+        Button(
+            onClick = onSave,
+            enabled = !isSaving,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(text = stringResource(R.string.subscribe))
+        }
+
+        if (type == PlaylistManageType.M3U) {
+            Button(
+                onClick = { readClipboard(context)?.let(onParseClipboard) },
+                enabled = !isSaving,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = stringResource(R.string.parse_clipboard))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun TvFormField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String,
+    isError: Boolean = false,
+) {
+    val colors = MaterialTheme.colorScheme
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        cursorBrush = SolidColor(colors.primary),
+        textStyle = TextStyle(color = colors.onSurface, fontSize = 16.sp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                if (isError) colors.primary.copy(alpha = 0.25f) else colors.surface,
+                RoundedCornerShape(8.dp),
+            )
+            .padding(16.dp),
+        decorationBox = { inner ->
+            if (value.isEmpty()) {
+                Text(text = hint, color = colors.onSurface.copy(alpha = 0.5f))
+            }
+            inner()
+        },
+    )
+}
+
+private fun readClipboard(context: Context): String? {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+    val text = clipboard?.primaryClip?.getItemAt(0)?.text?.toString()
+    if (text.isNullOrBlank()) {
+        Toast.makeText(context, R.string.clipboard_unavailable, Toast.LENGTH_SHORT).show()
+        return null
+    }
+    return text
 }
