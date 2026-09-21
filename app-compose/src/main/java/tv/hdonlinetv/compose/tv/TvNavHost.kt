@@ -65,8 +65,9 @@ fun TvNavHost() {
                 .fillMaxSize()
                 .background(colors.background),
         ) {
+
             Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-                Box(modifier = Modifier.padding(paddingValues)) {
+                Box(modifier = Modifier.background(colors.background).padding(paddingValues)) {
                     NavHost(
                         navController = navController,
                         startDestination = Routes.Splash.route,
