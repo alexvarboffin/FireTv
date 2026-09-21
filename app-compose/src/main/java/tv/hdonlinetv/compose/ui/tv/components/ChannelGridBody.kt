@@ -11,12 +11,14 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -27,6 +29,7 @@ fun ChannelGridBody(
     modifier: Modifier = Modifier,
     onChannelClick: (ChannelUi) -> Unit,
 ) {
+    val drawerFocus = LocalTvDrawerFocusRequester.current
     Box(modifier = modifier.fillMaxSize()) {
         when {
             isLoading -> {
@@ -48,10 +51,15 @@ fun ChannelGridBody(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    itemsIndexed(channels, key = { _, ch -> ch.id }) { _, channel ->
+                    itemsIndexed(channels, key = { _, ch -> ch.id }) { index, channel ->
                         ChannelCard(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
+                            modifier = if (drawerFocus != null && index % columns == 0) {
+                                Modifier.focusProperties { left = drawerFocus }
+                            } else {
+                                Modifier
+                            },
                         )
                     }
                 }

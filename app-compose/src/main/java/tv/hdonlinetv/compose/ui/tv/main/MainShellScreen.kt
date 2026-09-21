@@ -14,9 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -66,6 +67,7 @@ import tv.hdonlinetv.compose.phone.LocalCategoryRepository
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.category.CategoryScreen
 import tv.hdonlinetv.compose.ui.tv.channel.AllChannelsScreen
@@ -182,68 +184,83 @@ fun MainShellScreen() {
 
     val screenFallback = remember { FocusRequester() }
     val tabRowFallback = remember { FocusRequester() }
+    val drawerGroupFocus = remember { FocusRequester() }
+    val drawerFallback = remember { FocusRequester() }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.background),
     ) {
-        NavigationDrawer(
-            drawerState = drawerState,
-            modifier = Modifier.fillMaxSize(),
-            drawerContent = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .background(colors.surface)
-                        .selectableGroup(),
-                    contentPadding = PaddingValues(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    items(drawerItems, key = { it.titleRes }) { item ->
-                        NavigationDrawerItem(
-                            selected = false,
-                            onClick = item.onClick,
-                            leadingContent = {
-                                Icon(
-                                    painter = painterResource(item.iconRes),
-                                    contentDescription = null,
-                                    tint = iconTint,
-                                )
-                            },
-                        ) {
-                            Text(text = stringResource(item.titleRes), maxLines = 1)
+        CompositionLocalProvider(LocalTvDrawerFocusRequester provides drawerGroupFocus) {
+            NavigationDrawer(
+                drawerState = drawerState,
+                modifier = Modifier.fillMaxSize(),
+                drawerContent = {
+                    // focusRestorer remembers the drawer item we left from;
+                    // content leftmost Left → drawerGroupFocus restores that child.
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .background(colors.surface)
+                            .focusRequester(drawerGroupFocus)
+                            .focusRestorer(drawerFallback)
+                            .focusGroup()
+                            .selectableGroup(),
+                        contentPadding = PaddingValues(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        itemsIndexed(drawerItems, key = { _, item -> item.titleRes }) { index, item ->
+                            NavigationDrawerItem(
+                                selected = false,
+                                onClick = item.onClick,
+                                modifier = if (index == 0) {
+                                    Modifier.focusRequester(drawerFallback)
+                                } else {
+                                    Modifier
+                                },
+                                leadingContent = {
+                                    Icon(
+                                        painter = painterResource(item.iconRes),
+                                        contentDescription = null,
+                                        tint = iconTint,
+                                    )
+                                },
+                            ) {
+                                Text(text = stringResource(item.titleRes), maxLines = 1)
+                            }
                         }
                     }
-                }
-            },
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(colors.background)
-                    .focusRestorer(screenFallback)
-                    .focusGroup(),
+                },
             ) {
-                TvFocusTabRow(
-                    tabs = tabTitles,
-                    selectedIndex = selectedTabIndex,
-                    onSelectedIndexChange = { selectedTabIndex = it },
-                    badges = tabBadges,
-                    tabRowFallback = tabRowFallback,
-                )
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .focusRequester(screenFallback)
+                        .background(colors.background)
+                        .focusRestorer(screenFallback)
                         .focusGroup(),
                 ) {
-                    when (selectedTabIndex) {
-                        0 -> PlaylistTabScreen()
-                        1 -> AllChannelsScreen()
-                        2 -> CategoryScreen()
-                        else -> FavoritesScreen()
+                    TvFocusTabRow(
+                        tabs = tabTitles,
+                        selectedIndex = selectedTabIndex,
+                        onSelectedIndexChange = { selectedTabIndex = it },
+                        badges = tabBadges,
+                        tabRowFallback = tabRowFallback,
+                        leftFocusRequester = drawerGroupFocus,
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .focusRequester(screenFallback)
+                            .focusGroup(),
+                    ) {
+                        when (selectedTabIndex) {
+                            0 -> PlaylistTabScreen()
+                            1 -> AllChannelsScreen()
+                            2 -> CategoryScreen()
+                            else -> FavoritesScreen()
+                        }
                     }
                 }
             }

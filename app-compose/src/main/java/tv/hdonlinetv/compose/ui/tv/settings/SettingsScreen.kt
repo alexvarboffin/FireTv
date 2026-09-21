@@ -48,7 +48,7 @@ fun SettingsScreen() {
     val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModelFactory(repository))
     val state by viewModel.uiState.collectAsState()
     var choice by remember { mutableStateOf<SettingsChoice?>(null) }
-    val layoutOptions = stringArrayResource(R.array.layout_options)
+    val layoutOptions = stringArrayResource(R.array.layout_options_tv)
     val mediaPlayerOptions = listOf(
         stringResource(R.string.media_player_JZMediaSystem),
         stringResource(R.string.media_player_jz_aliyun),
@@ -78,7 +78,7 @@ fun SettingsScreen() {
                 options = layoutOptions.toList(),
                 onDismiss = { choice = null },
                 onSelect = { index ->
-                    viewModel.setGridColumns(if (index == 0) 3 else 1)
+                    viewModel.setGridColumns(if (index == 0) 4 else 1)
                     choice = null
                 },
             )

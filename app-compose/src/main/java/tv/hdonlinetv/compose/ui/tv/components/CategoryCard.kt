@@ -29,13 +29,14 @@ fun CategoryCard(
     category: CategoryUi,
     index: Int,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = stringArrayResource(R.array.category_colors)
     val bgColor = Color(android.graphics.Color.parseColor(colors[index % colors.size]))
 
     Card(
         onClick = onClick,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1.2f),
         colors = CardDefaults.colors(containerColor = bgColor),

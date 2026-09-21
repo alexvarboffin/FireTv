@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -46,6 +47,7 @@ import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModelFactory
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
 
@@ -136,6 +138,7 @@ private fun PlaylistCardTv(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
+    val drawerFocus = LocalTvDrawerFocusRequester.current
     // Cinema MovieCardTvSimple: long-press only arms a flag; invoke on KeyUp.
     // Otherwise KeyUp after long-press lands on the dialog's focused button and fires it.
     var isKeyDown by remember { mutableStateOf(false) }
@@ -160,6 +163,13 @@ private fun PlaylistCardTv(
         },
         modifier = Modifier
             .fillMaxWidth()
+            .then(
+                if (drawerFocus != null) {
+                    Modifier.focusProperties { left = drawerFocus }
+                } else {
+                    Modifier
+                },
+            )
             .onPreviewKeyEvent { event ->
                 when (event.key) {
                     Key.Enter, Key.DirectionCenter -> {

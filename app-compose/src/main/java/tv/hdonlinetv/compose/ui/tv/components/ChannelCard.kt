@@ -24,10 +24,11 @@ import tv.hdonlinetv.compose.ui.components.RemoteImage
 fun ChannelCard(
     channel: ChannelUi,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(4.dp),
     ) {

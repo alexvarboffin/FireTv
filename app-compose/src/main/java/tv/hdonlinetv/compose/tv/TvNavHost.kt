@@ -56,7 +56,9 @@ fun TvNavHost() {
     val playlistRepository = PlaylistRepositoryImpl(context.applicationContext)
     val settingsRepository = SettingsRepositoryImpl(context.applicationContext)
     val xtreamRepository = XtreamRepositoryImpl()
-    val gridColumns = settingsRepository.getSettings().gridColumns
+    val storedColumns = settingsRepository.getSettings().gridColumns
+    // TV: grid mode is always 4 columns (phone settings may still store 3).
+    val gridColumns = if (storedColumns <= 1) 1 else 4
     val colors = MaterialTheme.colorScheme
     CompositionLocalProvider(
         LocalTvNavController provides navController,

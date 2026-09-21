@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +24,7 @@ import tv.hdonlinetv.compose.core.presentation.category.CategoryViewModel
 import tv.hdonlinetv.compose.core.presentation.category.CategoryViewModelFactory
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalCategoryRepository
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.CategoryCard
 
@@ -50,6 +52,8 @@ fun CategoryScreenBody(
     isLoading: Boolean,
     onCategoryClick: (String) -> Unit,
 ) {
+    val drawerFocus = LocalTvDrawerFocusRequester.current
+    val columns = 4
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             isLoading -> {
@@ -66,7 +70,7 @@ fun CategoryScreenBody(
             }
             else -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(4),
+                    columns = GridCells.Fixed(columns),
                     contentPadding = PaddingValues(48.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -77,6 +81,11 @@ fun CategoryScreenBody(
                             category = category,
                             index = index,
                             onClick = { onCategoryClick(category.name) },
+                            modifier = if (drawerFocus != null && index % columns == 0) {
+                                Modifier.focusProperties { left = drawerFocus }
+                            } else {
+                                Modifier
+                            },
                         )
                     }
                 }
