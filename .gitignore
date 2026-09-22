@@ -23,3 +23,7 @@ local.properties
 
 # Reference clones (cinemakmp etc.)
 Documentation/reference/
+
+# Agent local smoke / unpack scratch (screenshots, aar extract, logs)
+.tmp-smoke/
+.tmp-*/
