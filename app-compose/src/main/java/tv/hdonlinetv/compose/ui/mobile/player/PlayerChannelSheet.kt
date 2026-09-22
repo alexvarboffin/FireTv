@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +59,7 @@ fun PlayerChannelSheet(
     val listState = rememberLazyListState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    LaunchedEffect(visible, currentChannelId, grouped) {
+    LaunchedEffect(visible) {
         if (!visible || grouped.isEmpty()) return@LaunchedEffect
         var flatIndex = 0
         for ((_, list) in grouped) {
@@ -128,9 +129,9 @@ private fun ChannelSheetRow(
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .background(
                 color = if (isCurrent) {
-                    colorResource(R.color.colorAccent).copy(alpha = 0.22f)
+                    colorResource(R.color.colorAccent).copy(alpha = 0.18f)
                 } else {
-                    colorResource(R.color.colorPrimaryDark).copy(alpha = 0.35f)
+                    Color(0xFFF2F2F2)
                 },
                 shape = RoundedCornerShape(10.dp),
             )
@@ -166,3 +167,4 @@ private fun ChannelSheetRow(
         }
     }
 }
+

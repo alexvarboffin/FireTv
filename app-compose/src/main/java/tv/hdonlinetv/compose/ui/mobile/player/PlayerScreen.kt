@@ -8,6 +8,11 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -103,10 +109,14 @@ fun PlayerScreen() {
     val state by viewModel.uiState.collectAsState()
     PlayerScreenBody(
         channel = state.channel,
+        siblings = state.siblings,
         isLoading = state.isLoading,
         mediaPlayerOption = mediaPlayerOption,
         onBack = { navController.popBackStack() },
         onToggleFavorite = { viewModel.toggleFavorite() },
+        onSelectChannel = viewModel::selectChannel,
+        onPreviousChannel = viewModel::previousChannel,
+        onNextChannel = viewModel::nextChannel,
         onMediaPlayerOptionChange = { option ->
             settingsRepository.setMediaPlayerOption(option)
             mediaPlayerOption = option
@@ -117,15 +127,21 @@ fun PlayerScreen() {
 @Composable
 fun PlayerScreenBody(
     channel: ChannelUi?,
+    siblings: List<ChannelUi>,
     isLoading: Boolean,
     mediaPlayerOption: Int,
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
+    onSelectChannel: (ChannelUi) -> Unit,
+    onPreviousChannel: () -> Unit,
+    onNextChannel: () -> Unit,
     onMediaPlayerOptionChange: (Int) -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var showMediaPlayerSheet by remember { mutableStateOf(false) }
+    var showChannelSheet by remember { mutableStateOf(false) }
+    val canZap = siblings.size > 1
     val mediaPlayerOptions = listOf(
         stringResource(R.string.media_player_JZMediaSystem),
         stringResource(R.string.media_player_jz_aliyun),
@@ -156,7 +172,11 @@ fun PlayerScreenBody(
     }
 
     BackHandler {
-        if (!Jzvd.backPress()) exitPlayer()
+        if (showChannelSheet) {
+            showChannelSheet = false
+        } else if (!Jzvd.backPress()) {
+            exitPlayer()
+        }
     }
 
     HandlePlayerScreenSystemUi()
@@ -232,6 +252,29 @@ fun PlayerScreenBody(
                             }
                         },
                         actions = {
+                            if (canZap) {
+                                IconButton(onClick = { showChannelSheet = true }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.List,
+                                        contentDescription = stringResource(R.string.menu_home),
+                                        tint = colorResource(R.color.white),
+                                    )
+                                }
+                                IconButton(onClick = onPreviousChannel) {
+                                    Icon(
+                                        imageVector = Icons.Filled.SkipPrevious,
+                                        contentDescription = null,
+                                        tint = colorResource(R.color.white),
+                                    )
+                                }
+                                IconButton(onClick = onNextChannel) {
+                                    Icon(
+                                        imageVector = Icons.Filled.SkipNext,
+                                        contentDescription = null,
+                                        tint = colorResource(R.color.white),
+                                    )
+                                }
+                            }
                             IconButton(onClick = { showMediaPlayerSheet = true }) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_actions_settings),
@@ -309,6 +352,54 @@ fun PlayerScreenBody(
                         )
                     }
                 }
+
+                // Fullscreen: touch CH± on the sides (top bar is hidden).
+                if (canZap && isFullscreen && channel != null && !channel.link.isNullOrBlank()) {
+                    IconButton(
+                        onClick = onPreviousChannel,
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(start = 8.dp)
+                            .size(56.dp)
+                            .background(Color.Black.copy(alpha = 0.35f)),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.SkipPrevious,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(36.dp),
+                        )
+                    }
+                    IconButton(
+                        onClick = onNextChannel,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 8.dp)
+                            .size(56.dp)
+                            .background(Color.Black.copy(alpha = 0.35f)),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.SkipNext,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(36.dp),
+                        )
+                    }
+                    IconButton(
+                        onClick = { showChannelSheet = true },
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(12.dp)
+                            .size(48.dp)
+                            .background(Color.Black.copy(alpha = 0.35f)),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.List,
+                            contentDescription = stringResource(R.string.menu_home),
+                            tint = Color.White,
+                        )
+                    }
+                }
             }
         }
     }
@@ -320,5 +411,13 @@ fun PlayerScreenBody(
         selectedIndex = mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex),
         onDismiss = { showMediaPlayerSheet = false },
         onSelect = onMediaPlayerOptionChange,
+    )
+
+    PlayerChannelSheet(
+        visible = showChannelSheet,
+        channels = siblings,
+        currentChannelId = channel?.id ?: 0L,
+        onChannelSelect = onSelectChannel,
+        onDismiss = { showChannelSheet = false },
     )
 }
