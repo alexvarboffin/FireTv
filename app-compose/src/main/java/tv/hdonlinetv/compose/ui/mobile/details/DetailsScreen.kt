@@ -39,6 +39,7 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.presentation.channel.DetailsViewModel
 import tv.hdonlinetv.compose.core.presentation.channel.DetailsViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalPhoneNavController
@@ -49,9 +50,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 @Composable
 fun DetailsScreen() {
     val navController = LocalPhoneNavController.current
-    val channelId = navController.currentBackStackEntry
-        ?.arguments
-        ?.getLong(Routes.Details.ARG_CHANNEL_ID) ?: 0L
+    val args = navController.currentBackStackEntry?.arguments
+    val channelId = args?.getLong(Routes.Details.ARG_CHANNEL_ID) ?: 0L
+    val browseScope = PlayerBrowseScope.parse(
+        type = args?.getString(Routes.Details.ARG_SCOPE),
+        key = args?.getString(Routes.Details.ARG_SCOPE_KEY),
+    )
     val repository = LocalChannelRepository.current
     val viewModel: DetailsViewModel = viewModel(
         factory = DetailsViewModelFactory(repository, channelId),
@@ -62,7 +66,7 @@ fun DetailsScreen() {
         isLoading = state.isLoading,
         onBack = { navController.popBackStack() },
         onToggleFavorite = { viewModel.toggleFavorite() },
-        onPlay = { navController.navigate(Routes.Player.build(channelId)) },
+        onPlay = { navController.navigate(Routes.Player.build(channelId, browseScope)) },
     )
 }
 

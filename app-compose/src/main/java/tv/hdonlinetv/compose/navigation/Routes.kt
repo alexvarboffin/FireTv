@@ -16,21 +16,49 @@ sealed class Routes(val route: String) {
             "channels/${Uri.encode(categoryName)}"
     }
 
-    data object Details : Routes("details/{channelId}") {
+    data object Details : Routes("details/{channelId}?scope={scope}&scopeKey={scopeKey}") {
         const val ARG_CHANNEL_ID = "channelId"
+        const val ARG_SCOPE = "scope"
+        const val ARG_SCOPE_KEY = "scopeKey"
 
-        fun build(channelId: Long): String = "details/$channelId"
+        fun build(
+            channelId: Long,
+            scope: PlayerBrowseScope = PlayerBrowseScope.InferPlaylist,
+        ): String {
+            val scopeEnc = Uri.encode(scope.typeWire())
+            val keyEnc = Uri.encode(scope.keyWire())
+            return "details/$channelId?scope=$scopeEnc&scopeKey=$keyEnc"
+        }
     }
 
-    data object Player : Routes("player/{channelId}?streamUrl={streamUrl}&streamTitle={streamTitle}") {
+    data object Player : Routes(
+        "player/{channelId}?streamUrl={streamUrl}&streamTitle={streamTitle}" +
+            "&scope={scope}&scopeKey={scopeKey}",
+    ) {
         const val ARG_CHANNEL_ID = "channelId"
         const val ARG_STREAM_URL = "streamUrl"
         const val ARG_STREAM_TITLE = "streamTitle"
+        const val ARG_SCOPE = "scope"
+        const val ARG_SCOPE_KEY = "scopeKey"
 
-        fun build(channelId: Long): String = "player/$channelId"
+        fun build(
+            channelId: Long,
+            scope: PlayerBrowseScope = PlayerBrowseScope.InferPlaylist,
+        ): String {
+            val scopeEnc = Uri.encode(scope.typeWire())
+            val keyEnc = Uri.encode(scope.keyWire())
+            return "player/$channelId?scope=$scopeEnc&scopeKey=$keyEnc"
+        }
 
-        fun buildStream(url: String, title: String): String =
-            "player/0?streamUrl=${Uri.encode(url)}&streamTitle=${Uri.encode(title)}"
+        fun buildStream(
+            url: String,
+            title: String,
+            scope: PlayerBrowseScope = PlayerBrowseScope.None,
+        ): String =
+            "player/0?streamUrl=${Uri.encode(url)}" +
+                "&streamTitle=${Uri.encode(title)}" +
+                "&scope=${Uri.encode(scope.typeWire())}" +
+                "&scopeKey=${Uri.encode(scope.keyWire())}"
     }
 
     data object Search : Routes("search")

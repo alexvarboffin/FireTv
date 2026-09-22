@@ -39,7 +39,9 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.presentation.player.PlayerViewModel
 import tv.hdonlinetv.compose.core.presentation.player.PlayerViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
+import tv.hdonlinetv.compose.navigation.toWire
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalPhoneNavController
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
@@ -80,6 +82,10 @@ fun PlayerScreen() {
     val channelId = args?.getLong(Routes.Player.ARG_CHANNEL_ID) ?: 0L
     val streamUrl = args?.getString(Routes.Player.ARG_STREAM_URL).orEmpty()
     val streamTitle = args?.getString(Routes.Player.ARG_STREAM_TITLE).orEmpty()
+    val browseScope = PlayerBrowseScope.parse(
+        type = args?.getString(Routes.Player.ARG_SCOPE),
+        key = args?.getString(Routes.Player.ARG_SCOPE_KEY),
+    )
     val repository = LocalChannelRepository.current
     val settingsRepository = LocalSettingsRepository.current
     var mediaPlayerOption by remember {
@@ -89,6 +95,7 @@ fun PlayerScreen() {
         factory = PlayerViewModelFactory(
             repository = repository,
             channelId = channelId,
+            browseScope = browseScope.toWire(),
             directStreamUrl = streamUrl.takeIf { it.isNotBlank() },
             directStreamTitle = streamTitle.takeIf { it.isNotBlank() },
         ),

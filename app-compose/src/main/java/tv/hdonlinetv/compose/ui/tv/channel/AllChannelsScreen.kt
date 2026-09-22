@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import tv.hdonlinetv.compose.core.presentation.channel.ChannelListViewModel
 import tv.hdonlinetv.compose.core.presentation.channel.ChannelListViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.navigateToChannel
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
@@ -25,6 +26,14 @@ fun AllChannelsScreen() {
     ChannelGridBody(
         channels = state.channels,
         isLoading = state.isLoading,
-        onChannelClick = { channel -> navigateToChannel(navController, channel, settings) },
+        onChannelClick = { channel ->
+            // Full library is too large for in-player sheet; no zap siblings.
+            navigateToChannel(
+                navController,
+                channel,
+                settings,
+                scope = PlayerBrowseScope.None,
+            )
+        },
     )
 }

@@ -25,6 +25,7 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.presentation.channel.SearchViewModel
 import tv.hdonlinetv.compose.core.presentation.channel.SearchViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.navigateToChannel
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalPhoneNavController
@@ -48,7 +49,14 @@ fun SearchScreen() {
         isLoading = state.isLoading,
         onQueryChange = viewModel::onQueryChange,
         onBack = { navController.popBackStack() },
-        onChannelClick = { channel -> navigateToChannel(navController, channel, settings) },
+        onChannelClick = { channel ->
+            navigateToChannel(
+                navController,
+                channel,
+                settings,
+                scope = PlayerBrowseScope.None,
+            )
+        },
     )
 }
 

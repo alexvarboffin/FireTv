@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Favorite
@@ -88,7 +89,9 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.presentation.player.PlayerViewModel
 import tv.hdonlinetv.compose.core.presentation.player.PlayerViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
+import tv.hdonlinetv.compose.navigation.toWire
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.player.JZVideoPlayerNew
@@ -125,6 +128,10 @@ fun PlayerScreen() {
     val channelId = args?.getLong(Routes.Player.ARG_CHANNEL_ID) ?: 0L
     val streamUrl = args?.getString(Routes.Player.ARG_STREAM_URL).orEmpty()
     val streamTitle = args?.getString(Routes.Player.ARG_STREAM_TITLE).orEmpty()
+    val browseScope = PlayerBrowseScope.parse(
+        type = args?.getString(Routes.Player.ARG_SCOPE),
+        key = args?.getString(Routes.Player.ARG_SCOPE_KEY),
+    )
     val repository = LocalChannelRepository.current
     val settingsRepository = LocalSettingsRepository.current
     var mediaPlayerOption by remember {
@@ -134,6 +141,7 @@ fun PlayerScreen() {
         factory = PlayerViewModelFactory(
             repository = repository,
             channelId = channelId,
+            browseScope = browseScope.toWire(),
             directStreamUrl = streamUrl.takeIf { it.isNotBlank() },
             directStreamTitle = streamTitle.takeIf { it.isNotBlank() },
         ),
@@ -141,10 +149,14 @@ fun PlayerScreen() {
     val state by viewModel.uiState.collectAsState()
     PlayerScreenBody(
         channel = state.channel,
+        siblings = state.siblings,
         isLoading = state.isLoading,
         mediaPlayerOption = mediaPlayerOption,
         onBack = { navController.popBackStack() },
         onToggleFavorite = { viewModel.toggleFavorite() },
+        onSelectChannel = viewModel::selectChannel,
+        onNextChannel = viewModel::nextChannel,
+        onPreviousChannel = viewModel::previousChannel,
         onMediaPlayerOptionChange = { option ->
             settingsRepository.setMediaPlayerOption(option)
             mediaPlayerOption = option
@@ -156,15 +168,20 @@ fun PlayerScreen() {
 @Composable
 fun PlayerScreenBody(
     channel: ChannelUi?,
+    siblings: List<ChannelUi>,
     isLoading: Boolean,
     mediaPlayerOption: Int,
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
+    onSelectChannel: (ChannelUi) -> Unit,
+    onNextChannel: () -> Unit,
+    onPreviousChannel: () -> Unit,
     onMediaPlayerOptionChange: (Int) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     var showMediaPlayerDialog by remember { mutableStateOf(false) }
+    var channelSheetVisible by remember { mutableStateOf(false) }
     var controlsVisible by remember { mutableStateOf(true) }
     var lastInteractionTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var hideControlsJob by remember { mutableStateOf<Job?>(null) }
@@ -185,7 +202,7 @@ fun PlayerScreenBody(
     var jzState by remember { mutableIntStateOf(Jzvd.STATE_IDLE) }
     var isJzFullscreen by remember { mutableStateOf(false) }
     val rootFocus = remember { FocusRequester() }
-    val (frFavorite, frClose, frPlay, frProgress, frSettings, frFullscreen) = remember {
+    val (frChannels, frFavorite, frClose, frPlay, frProgress, frSettings, frFullscreen) = remember {
         FocusRequester.createRefs()
     }
     // DEBUG: keep JZ XML chrome visible together with Compose overlay (parity check).
@@ -217,7 +234,7 @@ fun PlayerScreenBody(
     fun resetHideTimer() {
         lastInteractionTime = System.currentTimeMillis()
         hideControlsJob?.cancel()
-        if (!controlsVisible || showMediaPlayerDialog) return
+        if (!controlsVisible || showMediaPlayerDialog || channelSheetVisible) return
         hideControlsJob = scope.launch {
             delay(CONTROL_VISIBILITY_TIMEOUT_MS)
             if (System.currentTimeMillis() - lastInteractionTime >= CONTROL_VISIBILITY_TIMEOUT_MS) {
@@ -255,9 +272,7 @@ fun PlayerScreenBody(
     BackHandler {
         when {
             showMediaPlayerDialog -> showMediaPlayerDialog = false
-            // TV Compose player is its own route (always edge-to-edge). JZ often
-            // reports SCREEN_FULLSCREEN / backPress()=true without a second layer
-            // to leave — first Back must pop the route, not get stuck on chrome.
+            channelSheetVisible -> channelSheetVisible = false
             else -> exitPlayer()
         }
     }
@@ -293,7 +308,8 @@ fun PlayerScreenBody(
 
     // Only steal focus to center when chrome becomes visible — not on every
     // playerRef/state churn (retry would yank focus off Close/Settings).
-    LaunchedEffect(controlsVisible, showMediaPlayerDialog) {
+    LaunchedEffect(controlsVisible, showMediaPlayerDialog, channelSheetVisible) {
+        if (channelSheetVisible) return@LaunchedEffect
         if (controlsVisible && !showMediaPlayerDialog) {
             resetHideTimer()
             frPlay.requestFocus()
@@ -311,6 +327,12 @@ fun PlayerScreenBody(
         }
     }
 
+    fun openChannelSheet() {
+        if (siblings.isEmpty()) return
+        channelSheetVisible = true
+        controlsVisible = false
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -320,20 +342,56 @@ fun PlayerScreenBody(
                 // Cinema root: when chrome visible, D-pad enters center control.
                 left = FocusRequester.Cancel
                 up = FocusRequester.Cancel
-                right = if (controlsVisible) frPlay else FocusRequester.Cancel
-                down = if (controlsVisible) frPlay else FocusRequester.Cancel
+                right = if (controlsVisible && !channelSheetVisible) frPlay else FocusRequester.Cancel
+                down = if (controlsVisible && !channelSheetVisible) frPlay else FocusRequester.Cancel
             }
             .focusable()
             .onKeyEvent { keyEvent ->
-                if (keyEvent.type == KeyEventType.KeyDown) {
-                    // Let BackHandler / system Back exit the route — do not
-                    // swallow KEYCODE_BACK as "show chrome".
-                    if (keyEvent.key == Key.Back) return@onKeyEvent false
-                    resetHideTimer()
-                    if (!controlsVisible && !showMediaPlayerDialog) {
+                if (keyEvent.type != KeyEventType.KeyDown) return@onKeyEvent false
+                if (keyEvent.key == Key.Back) return@onKeyEvent false
+
+                // Sheet open: Home / Left / Right close it (click does not).
+                if (channelSheetVisible) {
+                    when (keyEvent.key) {
+                        Key.DirectionLeft, Key.DirectionRight,
+                        Key.Home, Key.MoveHome, Key.Escape,
+                        -> {
+                            channelSheetVisible = false
+                            return@onKeyEvent true
+                        }
+                        else -> Unit
+                    }
+                }
+
+                // Hardware CH+/CH− (and PageUp/PageDown fallbacks on some remotes).
+                when (keyEvent.key) {
+                    Key.ChannelUp, Key.PageUp -> {
+                        onNextChannel()
                         controlsVisible = true
+                        resetHideTimer()
                         return@onKeyEvent true
                     }
+                    Key.ChannelDown, Key.PageDown -> {
+                        onPreviousChannel()
+                        controlsVisible = true
+                        resetHideTimer()
+                        return@onKeyEvent true
+                    }
+                    Key.DirectionLeft, Key.Menu -> {
+                        if (!channelSheetVisible && !showMediaPlayerDialog && siblings.isNotEmpty()) {
+                            openChannelSheet()
+                            return@onKeyEvent true
+                        }
+                    }
+                    else -> Unit
+                }
+
+                if (channelSheetVisible) return@onKeyEvent false
+
+                resetHideTimer()
+                if (!controlsVisible && !showMediaPlayerDialog) {
+                    controlsVisible = true
+                    return@onKeyEvent true
                 }
                 false
             },
@@ -427,6 +485,33 @@ fun PlayerScreenBody(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        if (siblings.isNotEmpty()) {
+                            TvPlayerIconButton(
+                                onClick = {
+                                    resetHideTimer()
+                                    openChannelSheet()
+                                },
+                                modifier = Modifier
+                                    .focusRequester(frChannels)
+                                    .focusProperties {
+                                        left = frClose
+                                        right = if (channel != null && channel.id > 0) {
+                                            frFavorite
+                                        } else {
+                                            frClose
+                                        }
+                                        down = frPlay
+                                        up = frSettings
+                                    }
+                                    .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.List,
+                                    contentDescription = stringResource(R.string.menu_home),
+                                    tint = Color.White,
+                                )
+                            }
+                        }
                         if (channel != null && channel.id > 0) {
                             TvPlayerIconButton(
                                 onClick = {
@@ -436,8 +521,7 @@ fun PlayerScreenBody(
                                 modifier = Modifier
                                     .focusRequester(frFavorite)
                                     .focusProperties {
-                                        // Cyclic top row: Favorite ↔ Close
-                                        left = frClose
+                                        left = if (siblings.isNotEmpty()) frChannels else frClose
                                         right = frClose
                                         down = frPlay
                                         up = frSettings
@@ -465,8 +549,14 @@ fun PlayerScreenBody(
                             modifier = Modifier
                                 .focusRequester(frClose)
                                 .focusProperties {
-                                    left = if (channel != null && channel.id > 0) frFavorite else frClose
-                                    right = if (channel != null && channel.id > 0) frFavorite else frClose
+                                    left = when {
+                                        channel != null && channel.id > 0 -> frFavorite
+                                        siblings.isNotEmpty() -> frChannels
+                                        else -> frClose
+                                    }
+                                    right = if (siblings.isNotEmpty()) frChannels else {
+                                        if (channel != null && channel.id > 0) frFavorite else frClose
+                                    }
                                     down = frPlay
                                     up = frSettings
                                 }
@@ -606,6 +696,14 @@ fun PlayerScreenBody(
                 }
             }
         }
+
+        PlayerChannelSheet(
+            visible = channelSheetVisible,
+            channels = siblings,
+            currentChannelId = channel?.id ?: -1L,
+            onChannelSelect = onSelectChannel,
+            onDismiss = { channelSheetVisible = false },
+        )
     }
 
     if (showMediaPlayerDialog) {

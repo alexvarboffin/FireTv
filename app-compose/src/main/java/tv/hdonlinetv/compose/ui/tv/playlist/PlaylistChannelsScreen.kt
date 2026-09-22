@@ -22,6 +22,7 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistChannelsViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistChannelsViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.navigation.navigateToChannel
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
@@ -62,7 +63,14 @@ fun PlaylistChannelsScreen() {
                 navController.popBackStack()
             }
         },
-        onChannelClick = { channel -> navigateToChannel(navController, channel, settings) },
+        onChannelClick = { channel ->
+            navigateToChannel(
+                navController,
+                channel,
+                settings,
+                scope = PlayerBrowseScope.Playlist(playlistId),
+            )
+        },
     )
     TvLoadingOverlay(visible = state.isLoading)
 }

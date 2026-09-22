@@ -77,6 +77,16 @@ applicationId: `tv.hdonlinetv.besttvchannels.movies.watchfree.compose`
 
 ---
 
+## 2026-09-22 — Player browse scope (zap sheet)
+
+| # | Проблема | Решение |
+|---|----------|---------|
+| 1 | In-player channel sheet / CH± loaded siblings only by guessing playlist from `channelId` — Favorites opened full playlist | Explicit `PlayerBrowseScope` on Player/Details nav (`scope` + `scopeKey`); Favorites/Playlist/Category/None/Infer |
+| 2 | Search / All would dump huge lists into sheet | Entry points pass `None` |
+| 3 | Need durable design note | `Documentation/ARCHITECTURE/player-browse-scope.md` + index link |
+
+---
+
 ```markdown
 ## YYYY-MM-DD — Краткое название
 

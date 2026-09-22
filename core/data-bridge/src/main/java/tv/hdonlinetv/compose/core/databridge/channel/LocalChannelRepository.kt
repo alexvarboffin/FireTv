@@ -34,6 +34,31 @@ class LocalChannelRepository(
             ChannelMapper.toUiList(database.getChannelsInPlaylist(playlistId, sortOption))
         }
 
+    override suspend fun getPlaylistIdForChannel(channelId: Long): Long? = withContext(Dispatchers.IO) {
+        database.getPlaylistIdForChannel(channelId)
+    }
+
+    override suspend fun getSiblingChannels(channelId: Long, sortOption: Int): List<ChannelUi> =
+        withContext(Dispatchers.IO) {
+            val playlistId = database.getPlaylistIdForChannel(channelId)
+            if (playlistId != null && playlistId > 0) {
+                return@withContext ChannelMapper.toUiList(
+                    database.getChannelsInPlaylist(playlistId, sortOption),
+                )
+            }
+            val channel = try {
+                database.getChannelById(channelId)
+            } catch (_: Exception) {
+                null
+            }
+            val cat = channel?.cat
+            if (!cat.isNullOrBlank()) {
+                ChannelMapper.toUiList(database.getCategory(cat))
+            } else {
+                emptyList()
+            }
+        }
+
     override suspend fun getChannelById(id: Long): ChannelUi? = withContext(Dispatchers.IO) {
         try {
             ChannelMapper.toUi(database.getChannelById(id))

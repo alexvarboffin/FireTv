@@ -111,4 +111,7 @@ public interface PlaylistDao {
             "WHERE playlist_channel_join.playlistId = :playlistId " +
             "ORDER BY category.name ASC")
     List<Category> getCategoriesForPlaylist(long playlistId);
+
+    @Query("SELECT playlistId FROM playlist_channel_join WHERE channelId = :channelId LIMIT 1")
+    Long getPlaylistIdForChannel(long channelId);
 }

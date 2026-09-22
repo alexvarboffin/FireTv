@@ -25,6 +25,7 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.presentation.channel.DetailsViewModel
 import tv.hdonlinetv.compose.core.presentation.channel.DetailsViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.tv.LocalTvNavController
@@ -35,6 +36,10 @@ fun DetailsScreen() {
     val channelId = navController.currentBackStackEntry
         ?.arguments
         ?.getLong(Routes.Details.ARG_CHANNEL_ID) ?: 0L
+    val browseScope = PlayerBrowseScope.parse(
+        type = navController.currentBackStackEntry?.arguments?.getString(Routes.Details.ARG_SCOPE),
+        key = navController.currentBackStackEntry?.arguments?.getString(Routes.Details.ARG_SCOPE_KEY),
+    )
     val repository = LocalChannelRepository.current
     val viewModel: DetailsViewModel = viewModel(
         factory = DetailsViewModelFactory(repository, channelId),
@@ -43,7 +48,7 @@ fun DetailsScreen() {
     DetailsScreenBody(
         channel = state.channel,
         isLoading = state.isLoading,
-        onPlay = { navController.navigate(Routes.Player.build(channelId)) },
+        onPlay = { navController.navigate(Routes.Player.build(channelId, browseScope)) },
     )
 }
 

@@ -18,6 +18,7 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.presentation.channel.ChannelListViewModel
 import tv.hdonlinetv.compose.core.presentation.channel.ChannelListViewModelFactory
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.navigation.navigateToChannel
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
@@ -40,12 +41,19 @@ fun ChannelListScreen() {
     )
     val state by viewModel.uiState.collectAsState()
     val settings = settingsRepository.getSettings()
+    val scope = if (categoryName.isBlank()) {
+        PlayerBrowseScope.None
+    } else {
+        PlayerBrowseScope.Category(categoryName)
+    }
     ChannelListScreenBody(
         title = categoryName.ifEmpty { stringResource(R.string.tab_channel) },
         channels = state.channels,
         isLoading = state.isLoading,
         onBack = { navController.popBackStack() },
-        onChannelClick = { channel -> navigateToChannel(navController, channel, settings) },
+        onChannelClick = { channel ->
+            navigateToChannel(navController, channel, settings, scope = scope)
+        },
     )
 }
 

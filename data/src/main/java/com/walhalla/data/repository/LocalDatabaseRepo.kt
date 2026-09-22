@@ -463,6 +463,15 @@ class LocalDatabaseRepo private constructor(private val context: Context) {
         return ArrayList<PlaylistImpl>()
     }
 
+    fun getPlaylistIdForChannel(channelId: Long): Long? {
+        return try {
+            db.playlistDao().getPlaylistIdForChannel(channelId)
+        } catch (e: Exception) {
+            Log.d(TAG, "getPlaylistIdForChannel: " + e.message)
+            null
+        }
+    }
+
     fun getChannelsInPlaylist(id: Long, sortOption: Int): MutableList<Channel> {
         try {
             val playlistDao = db.playlistDao()

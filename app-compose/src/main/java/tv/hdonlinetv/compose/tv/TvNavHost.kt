@@ -21,6 +21,7 @@ import tv.hdonlinetv.compose.core.databridge.category.LocalCategoryRepository as
 import tv.hdonlinetv.compose.core.databridge.playlist.LocalPlaylistRepository as PlaylistRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.settings.LocalSettingsRepository as SettingsRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.xtream.LocalXtreamRepository as XtreamRepositoryImpl
+import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalCategoryRepository
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
@@ -96,6 +97,14 @@ fun TvNavHost() {
                             route = Routes.Details.route,
                             arguments = listOf(
                                 navArgument(Routes.Details.ARG_CHANNEL_ID) { type = NavType.LongType },
+                                navArgument(Routes.Details.ARG_SCOPE) {
+                                    type = NavType.StringType
+                                    defaultValue = PlayerBrowseScope.TYPE_INFER
+                                },
+                                navArgument(Routes.Details.ARG_SCOPE_KEY) {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                },
                             ),
                         ) { DetailsScreen() }
                         composable(
@@ -107,6 +116,14 @@ fun TvNavHost() {
                                     defaultValue = ""
                                 },
                                 navArgument(Routes.Player.ARG_STREAM_TITLE) {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                },
+                                navArgument(Routes.Player.ARG_SCOPE) {
+                                    type = NavType.StringType
+                                    defaultValue = PlayerBrowseScope.TYPE_INFER
+                                },
+                                navArgument(Routes.Player.ARG_SCOPE_KEY) {
                                     type = NavType.StringType
                                     defaultValue = ""
                                 },
