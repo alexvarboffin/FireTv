@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
@@ -31,7 +32,8 @@ import androidx.tv.material3.Text
 
 /**
  * TV text field: D-pad focus activates editing (cursor + IME) immediately;
- * Up / Down move to the next focusable; Back clears focus and hides the IME.
+ * Up / Down move to the next focusable (or [upFocus]/[downFocus] via requestFocus);
+ * Back clears focus and hides the IME.
  */
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -41,6 +43,8 @@ fun TvEditableField(
     hint: String,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
+    upFocus: FocusRequester? = null,
+    downFocus: FocusRequester? = null,
 ) {
     val colors = MaterialTheme.colorScheme
     val focusManager = LocalFocusManager.current
@@ -80,8 +84,22 @@ fun TvEditableField(
             .onPreviewKeyEvent { event ->
                 if (!focused || event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
-                    Key.DirectionUp -> focusManager.moveFocus(FocusDirection.Up)
-                    Key.DirectionDown -> focusManager.moveFocus(FocusDirection.Down)
+                    Key.DirectionUp -> {
+                        if (upFocus != null) {
+                            upFocus.requestFocus()
+                            true
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Up)
+                        }
+                    }
+                    Key.DirectionDown -> {
+                        if (downFocus != null) {
+                            downFocus.requestFocus()
+                            true
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    }
                     else -> false
                 }
             },

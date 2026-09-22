@@ -12,16 +12,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
@@ -215,6 +221,13 @@ fun PlaylistManageScreenBody(
                         .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Icon(
+                        imageVector = Icons.Filled.FolderOpen,
+                        contentDescription = null,
+                        tint = colorResource(R.color.lightGray),
+                        modifier = Modifier.size(22.dp),
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = stringResource(R.string.playlist_select_file),
                         color = colorResource(R.color.lightGray),
@@ -222,13 +235,30 @@ fun PlaylistManageScreenBody(
                     )
                 }
             } else {
-                LegacyFormField(
-                    value = url,
-                    onValueChange = onUrlChange,
-                    hint = stringResource(R.string.playlist_link),
-                    isError = urlError,
-                    modifier = Modifier.padding(top = 16.dp),
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    LegacyFormField(
+                        value = url,
+                        onValueChange = onUrlChange,
+                        hint = stringResource(R.string.playlist_link),
+                        isError = urlError,
+                        modifier = Modifier.weight(1f),
+                    )
+                    IconButton(
+                        onClick = { readClipboard(context)?.let(onUrlChange) },
+                        enabled = !isSaving,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ContentPaste,
+                            contentDescription = stringResource(R.string.parse_clipboard),
+                            tint = colorResource(R.color.lightGray),
+                        )
+                    }
+                }
             }
 
             if (type == PlaylistManageType.M3U) {
@@ -311,7 +341,10 @@ fun PlaylistManageScreenBody(
                     .fillMaxWidth()
                     .padding(top = 24.dp),
             ) {
-                Text(stringResource(R.string.subscribe))
+                MobileButtonLabel(
+                    icon = Icons.Filled.Subscriptions,
+                    text = stringResource(R.string.subscribe),
+                )
             }
 
             if (type == PlaylistManageType.M3U) {
@@ -326,11 +359,28 @@ fun PlaylistManageScreenBody(
                         .fillMaxWidth()
                         .padding(top = 8.dp),
                 ) {
-                    Text(stringResource(R.string.parse_clipboard))
+                    MobileButtonLabel(
+                        icon = Icons.Filled.ContentPaste,
+                        text = stringResource(R.string.parse_clipboard),
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun MobileButtonLabel(
+    icon: ImageVector,
+    text: String,
+) {
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        modifier = Modifier.size(20.dp),
+    )
+    Spacer(modifier = Modifier.width(8.dp))
+    Text(text)
 }
 
 private fun readClipboard(context: Context): String? {

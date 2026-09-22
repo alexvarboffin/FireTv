@@ -9,16 +9,32 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Storage
+import androidx.compose.material.icons.filled.Subscriptions
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -26,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
@@ -144,6 +161,8 @@ fun PlaylistManageScreenBody(
     val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
     val playlistTypes = stringArrayResource(R.array.playlist_types)
+    val urlFocus = remember { FocusRequester() }
+    val pasteFocus = remember { FocusRequester() }
     val filePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
@@ -159,7 +178,10 @@ fun PlaylistManageScreenBody(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Button(onClick = onBack) {
-            Text(text = stringResource(R.string.ok))
+            ManageButtonLabel(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                text = stringResource(R.string.ok),
+            )
         }
         Text(text = stringResource(R.string.playlist_management))
 
@@ -174,7 +196,7 @@ fun PlaylistManageScreenBody(
             modifier = Modifier.fillMaxWidth(),
         ) {
             val label = playlistTypes[if (type == PlaylistManageType.M3U) 0 else 1]
-            Text(text = label)
+            ManageButtonLabel(icon = Icons.Filled.SwapHoriz, text = label)
         }
 
         TvEditableField(
@@ -189,7 +211,10 @@ fun PlaylistManageScreenBody(
                 onClick = { filePicker.launch(arrayOf("*/*")) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = stringResource(R.string.playlist_select_file))
+                ManageButtonLabel(
+                    icon = Icons.Filled.FolderOpen,
+                    text = stringResource(R.string.playlist_select_file),
+                )
             }
         } else {
             TvEditableField(
@@ -197,7 +222,25 @@ fun PlaylistManageScreenBody(
                 onValueChange = onUrlChange,
                 hint = stringResource(R.string.playlist_link),
                 isError = urlError,
+                downFocus = pasteFocus,
+                modifier = Modifier.focusRequester(urlFocus),
             )
+            Button(
+                onClick = {
+                    readClipboard(context)?.let(onUrlChange)
+                },
+                enabled = !isSaving,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(pasteFocus)
+                    .focusProperties { up = urlFocus },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ContentPaste,
+                    contentDescription = stringResource(R.string.parse_clipboard),
+                    modifier = Modifier.size(28.dp),
+                )
+            }
         }
 
         if (type == PlaylistManageType.XTREAM) {
@@ -220,7 +263,8 @@ fun PlaylistManageScreenBody(
                 onClick = { onLocalFileToggle(!useLocalFile) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(
+                ManageButtonLabel(
+                    icon = Icons.Filled.Storage,
                     text = stringResource(R.string.local_storage) +
                         if (useLocalFile) ": ON" else ": OFF",
                 )
@@ -232,7 +276,10 @@ fun PlaylistManageScreenBody(
             enabled = !isSaving,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(text = stringResource(R.string.subscribe))
+            ManageButtonLabel(
+                icon = Icons.Filled.Subscriptions,
+                text = stringResource(R.string.subscribe),
+            )
         }
 
         if (type == PlaylistManageType.M3U) {
@@ -241,10 +288,28 @@ fun PlaylistManageScreenBody(
                 enabled = !isSaving,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = stringResource(R.string.parse_clipboard))
+                ManageButtonLabel(
+                    icon = Icons.Filled.ContentPaste,
+                    text = stringResource(R.string.parse_clipboard),
+                )
             }
         }
     }
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun RowScope.ManageButtonLabel(
+    icon: ImageVector,
+    text: String,
+) {
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        modifier = Modifier.size(24.dp),
+    )
+    Spacer(modifier = Modifier.width(10.dp))
+    Text(text = text)
 }
 
 private fun readClipboard(context: Context): String? {
