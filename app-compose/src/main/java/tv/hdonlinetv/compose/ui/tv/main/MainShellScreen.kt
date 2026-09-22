@@ -129,7 +129,7 @@ fun MainShellScreen() {
 
     // Mirror phone drawer + top-bar actions (Search / Tutorial) + FAB (Add playlist).
     val drawerItems = listOf(
-        DrawerNavItem(R.string.search_hint, R.drawable.ic_actions_search) {
+        DrawerNavItem(R.string.menu_search, R.drawable.ic_actions_search) {
             navController.navigate(Routes.Search.route)
         },
         DrawerNavItem(R.string.menu_home, R.drawable.ic_tv_icon) {

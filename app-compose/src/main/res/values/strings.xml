@@ -7,6 +7,7 @@
     <string name="no_item">No items found</string>
     <string name="geo_blocked">Geo-blocked</string>
     <string name="search_hint">Which channels you want?</string>
+    <string name="menu_search">Search</string>
     <string name="menu_home">Channels</string>
     <string name="menu_profile">Favorite</string>
     <string name="menu_settings">Settings</string>

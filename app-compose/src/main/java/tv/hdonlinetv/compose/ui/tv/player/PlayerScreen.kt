@@ -60,6 +60,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -254,8 +255,10 @@ fun PlayerScreenBody(
     BackHandler {
         when {
             showMediaPlayerDialog -> showMediaPlayerDialog = false
-            !Jzvd.backPress() -> exitPlayer()
-            else -> Unit
+            // TV Compose player is its own route (always edge-to-edge). JZ often
+            // reports SCREEN_FULLSCREEN / backPress()=true without a second layer
+            // to leave — first Back must pop the route, not get stuck on chrome.
+            else -> exitPlayer()
         }
     }
 
@@ -288,19 +291,23 @@ fun PlayerScreenBody(
         LegacyJzPlayerSetup.apply(player, ch, playerSetup, mediaPlayerOption)
     }
 
-    LaunchedEffect(controlsVisible, showMediaPlayerDialog, showJzXmlChrome, playerRef) {
-        if (showJzXmlChrome && playerRef != null) {
-            playerRef?.forceShowNativeChromeForDebug()
-        }
+    // Only steal focus to center when chrome becomes visible — not on every
+    // playerRef/state churn (retry would yank focus off Close/Settings).
+    LaunchedEffect(controlsVisible, showMediaPlayerDialog) {
         if (controlsVisible && !showMediaPlayerDialog) {
             resetHideTimer()
-            // Cinema: initial focus on center play/refresh control.
             frPlay.requestFocus()
         } else {
             hideControlsJob?.cancel()
             if (!controlsVisible) {
                 rootFocus.requestFocus()
             }
+        }
+    }
+
+    LaunchedEffect(showJzXmlChrome, playerRef) {
+        if (showJzXmlChrome && playerRef != null) {
+            playerRef?.forceShowNativeChromeForDebug()
         }
     }
 
@@ -319,6 +326,9 @@ fun PlayerScreenBody(
             .focusable()
             .onKeyEvent { keyEvent ->
                 if (keyEvent.type == KeyEventType.KeyDown) {
+                    // Let BackHandler / system Back exit the route — do not
+                    // swallow KEYCODE_BACK as "show chrome".
+                    if (keyEvent.key == Key.Back) return@onKeyEvent false
                     resetHideTimer()
                     if (!controlsVisible && !showMediaPlayerDialog) {
                         controlsVisible = true
@@ -475,6 +485,7 @@ fun PlayerScreenBody(
                 if (!isPreparing) {
                     TvPlayerIconButton(
                         onClick = { onCenterControlClick() },
+                        size = 64.dp,
                         modifier = Modifier
                             .align(Alignment.Center)
                             .focusRequester(frPlay)
@@ -484,8 +495,6 @@ fun PlayerScreenBody(
                                 left = FocusRequester.Cancel
                                 right = FocusRequester.Cancel
                             }
-                            // Cinema: 64dp circle play/pause.
-                            .size(64.dp)
                             .onFocusChanged { if (it.isFocused) resetHideTimer() },
                     ) {
                         Icon(
@@ -616,12 +625,13 @@ fun PlayerScreenBody(
 @Composable
 private fun TvPlayerIconButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier.size(48.dp),
+    modifier: Modifier = Modifier,
+    size: Dp = 48.dp,
     content: @Composable () -> Unit,
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.size(size),
         shape = ClickableSurfaceDefaults.shape(shape = CircleShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = Color.Black.copy(alpha = 0.55f),

@@ -98,23 +98,34 @@ class JZVideoPlayerNew : JzvdStd {
         fullscreenButton?.isFocusable = false
     }
 
-    /** Same action as tapping XML [start] (play / pause / replay). */
+    /**
+     * Same action as tapping XML start / retry.
+     * On [STATE_ERROR] JZ uses [mRetryBtn] → [clickRetryBtn], not startButton —
+     * [clickStart] ignores ERROR ("Click to try again" would do nothing).
+     */
     fun performStartButtonAction() {
-        val btn = startButton
-        if (btn != null) {
-            btn.performClick()
-            return
-        }
         when (state) {
-            STATE_PLAYING -> {
-                mediaInterface?.pause()
-                onStatePause()
+            STATE_ERROR -> clickRetryBtn()
+            STATE_PLAYING, STATE_PAUSE, STATE_AUTO_COMPLETE, STATE_NORMAL -> {
+                // Prefer XML start path (WIFI tip dialog etc.) when view exists.
+                val btn = startButton
+                if (btn != null) {
+                    btn.performClick()
+                } else {
+                    when (state) {
+                        STATE_PLAYING -> {
+                            mediaInterface?.pause()
+                            onStatePause()
+                        }
+                        STATE_PAUSE -> {
+                            mediaInterface?.start()
+                            onStatePlaying()
+                        }
+                        else -> startVideo()
+                    }
+                }
             }
-            STATE_PAUSE -> {
-                mediaInterface?.start()
-                onStatePlaying()
-            }
-            else -> startVideo()
+            else -> startButton?.performClick() ?: startVideo()
         }
     }
 
