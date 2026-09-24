@@ -55,3 +55,6 @@ See `Documentation/guidelines/00_guidelines.md` — StateFlow, sealed UiError, n
 ## After changes
 
 Update `TASKS/history/history.md` if architecture clarifications from user.
+
+After **user UX corrections**, append to  
+`Documentation/guidelines/USER_CORRECTED_CHECKLIST.md` (review checklist for another AI).

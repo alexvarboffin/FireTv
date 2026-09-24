@@ -12,6 +12,9 @@
 2. Если агент **ошибся**, но нашёл решение — записать **проблема → решение** в `TASKS/history/history.md` (кратко).
 3. MP держать **компактным**; детали — в `Roadmap.md`, `ARCHITECTURE/`, `guidelines/`.
 4. Skills: `.cursor/skills/` — читать перед сборкой и Compose-работой.
+5. После **каждого** UX/поведенческого замечания пользователя и фикса — добавить пункт в  
+   [`guidelines/USER_CORRECTED_CHECKLIST.md`](guidelines/USER_CORRECTED_CHECKLIST.md)  
+   (другой ИИ проверяет проект по этому списку). TV-кейсы — также в skill `USER_CORRECTIONS.md`.
 
 ---
 

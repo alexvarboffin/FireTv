@@ -10,7 +10,8 @@
 | [guidelines/00_guidelines.md](guidelines/00_guidelines.md) | ViewModel + StateFlow |
 | [guidelines/Compose_Refactoring.md](guidelines/Compose_Refactoring.md) | Screen/Body split, M3 |
 | [guidelines/material_surface_guideline.md](guidelines/material_surface_guideline.md) | Surface tokens |
+| [guidelines/USER_CORRECTED_CHECKLIST.md](guidelines/USER_CORRECTED_CHECKLIST.md) | **Чеклист UX-правок пользователя** — для проверки другим ИИ; агент дополняет после каждого fix |
 | [TASKS/history/history.md](TASKS/history/history.md) | Problem → solution log |
-| [reference/cinemakmp/](reference/cinemakmp/) | Референс (пока пустой) |
+| [reference/cinemakmp/](reference/cinemakmp/) | Референс (пусто в git; clone → `reference/cinemakmp-notKmp`, gitignored) |
 
 **Agent skills:** `.cursor/skills/firetv-gradle-build/`, `.cursor/skills/firetv-compose-port/`
