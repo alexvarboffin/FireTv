@@ -17,7 +17,7 @@ class LauncherActivity : Activity() {
         NightModeApplier.apply(settingsRepository.getSettings().nightMode)
         super.onCreate(savedInstanceState)
         val isTv = (resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION
-            || BuildConfig.DEBUG
+            //|| BuildConfig.DEBUG
         val target = if (isTv) TvMainActivity::class.java else PhoneMainActivity::class.java
         startActivity(Intent(this, target))
         finish()
