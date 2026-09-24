@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -255,7 +256,7 @@ fun PlayerScreenBody(
                             if (canZap) {
                                 IconButton(onClick = { showChannelSheet = true }) {
                                     Icon(
-                                        imageVector = Icons.Filled.List,
+                                        imageVector = Icons.AutoMirrored.Filled.List,
                                         contentDescription = stringResource(R.string.menu_home),
                                         tint = colorResource(R.color.white),
                                     )

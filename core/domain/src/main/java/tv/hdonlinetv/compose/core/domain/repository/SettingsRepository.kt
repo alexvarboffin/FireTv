@@ -9,5 +9,6 @@ interface SettingsRepository {
     fun setDetailsMode(detailsMode: Boolean)
     fun setNightMode(enabled: Boolean)
     fun setMediaPlayerOption(option: Int)
+    fun setCleanupEmptyCategories(enabled: Boolean)
     fun completeFirstLaunch()
 }

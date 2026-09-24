@@ -313,6 +313,28 @@ class LocalDatabaseRepo private constructor(private val context: Context) {
 
     fun observeAllCategories(): Flow<List<Category>> = db.categoryDao().observeAllCategories()
 
+    fun getChannelCountsByCategory(): Map<String, Int> {
+        return try {
+            db.channelDao().getChannelCountsByCategory()
+                .mapNotNull { row ->
+                    val name = row.cat?.trim().orEmpty()
+                    if (name.isEmpty()) null else name to row.count
+                }
+                .toMap()
+        } catch (e: Exception) {
+            Log.d(TAG, "getChannelCountsByCategory: " + e.message)
+            emptyMap()
+        }
+    }
+
+    fun observeChannelCountsByCategory(): Flow<Map<String, Int>> =
+        db.channelDao().observeChannelCountsByCategory().map { rows ->
+            rows.mapNotNull { row ->
+                val name = row.cat?.trim().orEmpty()
+                if (name.isEmpty()) null else name to row.count
+            }.toMap()
+        }
+
     fun observeAllPlaylists(): Flow<List<PlaylistImpl>> = db.playlistDao().observeAll()
 
     fun observeFavorites(playlistId: Long): Flow<List<Channel>> =
@@ -397,6 +419,62 @@ class LocalDatabaseRepo private constructor(private val context: Context) {
             Toast.makeText(context, "" + e.message, Toast.LENGTH_SHORT).show()
         }
         return 0
+    }
+
+    /**
+     * Deletes [playlist] and its exclusive channels. When [cleanupEmptyCategories] is true,
+     * categories that belonged to this playlist and now have zero channels are removed.
+     */
+    fun deletePlaylistAndRelatedChannels(
+        playlist: PlaylistImpl,
+        cleanupEmptyCategories: Boolean,
+    ): Int {
+        val playlistId = playlist._id
+        val categoryNames = if (cleanupEmptyCategories) {
+            getDistinctCategoryNamesInPlaylist(playlistId)
+        } else {
+            emptySet()
+        }
+        val deleted = deletePlaylistAndRelatedChannels(playlist)
+        if (cleanupEmptyCategories && deleted > 0) {
+            deleteCategoriesIfEmpty(categoryNames)
+        }
+        return deleted
+    }
+
+    fun getDistinctCategoryNamesInPlaylist(playlistId: Long): Set<String> {
+        return try {
+            getChannelsInPlaylist(playlistId, 0)
+                .mapNotNull { channel -> channel.cat?.trim()?.takeIf { it.isNotEmpty() } }
+                .toSet()
+        } catch (e: Exception) {
+            Log.d(TAG, "getDistinctCategoryNamesInPlaylist: " + e.message)
+            emptySet()
+        }
+    }
+
+    fun deleteCategoriesIfEmpty(categoryNames: Collection<String>) {
+        if (categoryNames.isEmpty()) return
+        try {
+            val channelDao = db.channelDao()
+            val categoryDao = db.categoryDao()
+            for (name in categoryNames) {
+                if (channelDao.countChannelsInCategoryExact(name) <= 0) {
+                    categoryDao.deleteCategoryByName(name)
+                }
+            }
+        } catch (e: Exception) {
+            Log.d(TAG, "deleteCategoriesIfEmpty: " + e.message)
+        }
+    }
+
+    fun deleteEmptyCategories(): Int {
+        return try {
+            db.categoryDao().deleteCategoriesWithNoChannels()
+        } catch (e: Exception) {
+            Log.d(TAG, "deleteEmptyCategories: " + e.message)
+            0
+        }
     }
 
     /** Clears channel links for a playlist without deleting the playlist row (keeps same _id). */

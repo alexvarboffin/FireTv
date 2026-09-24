@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.walhalla.data.model.Channel
+import com.walhalla.data.model.CategoryNameCount
 import kotlinx.coroutines.flow.Flow
 
 
@@ -76,6 +77,21 @@ interface ChannelDao {
 
     @Query("SELECT * from channel WHERE LOWER(cat) LIKE LOWER(:query) ORDER BY name ASC")
     fun getCategory(query: String): List<Channel>
+
+    @Query(
+        "SELECT cat AS cat, COUNT(_id) AS cnt FROM channel " +
+            "WHERE cat IS NOT NULL AND TRIM(cat) != '' GROUP BY cat",
+    )
+    fun getChannelCountsByCategory(): List<CategoryNameCount>
+
+    @Query(
+        "SELECT cat AS cat, COUNT(_id) AS cnt FROM channel " +
+            "WHERE cat IS NOT NULL AND TRIM(cat) != '' GROUP BY cat",
+    )
+    fun observeChannelCountsByCategory(): Flow<List<CategoryNameCount>>
+
+    @Query("SELECT COUNT(_id) FROM channel WHERE LOWER(cat) = LOWER(:categoryName)")
+    fun countChannelsInCategoryExact(categoryName: String): Int
 
     //    @Query("SELECT * from channel WHERE tvgId=:tvgId ORDER BY name ASC")
     //    Channel getChannelByTvgId(String tvgId);

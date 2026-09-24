@@ -7,4 +7,6 @@ data class AppSettingsUi(
     val isFirstLaunch: Boolean = false,
     val nightMode: Boolean = false,
     val mediaPlayerOption: Int = 2,
+    /** When true, deleting a playlist also removes categories left with zero channels. */
+    val cleanupEmptyCategories: Boolean = false,
 )

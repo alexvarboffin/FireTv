@@ -5,4 +5,5 @@ data class CategoryUi(
     val name: String,
     val thumb: String?,
     val desc: String = "",
+    val count: Int = 0,
 )

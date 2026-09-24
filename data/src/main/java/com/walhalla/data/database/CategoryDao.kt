@@ -20,6 +20,15 @@ interface CategoryDao {
 
     @Query("SELECT * from category order by name ASC")
     fun observeAllCategories(): Flow<List<Category>>
-    //    @Query("SELECT * from category order by name DESC")
-    //    List<Category> selectAllCategories();
+
+    @Query("DELETE FROM category WHERE LOWER(name) = LOWER(:name)")
+    fun deleteCategoryByName(name: String): Int
+
+    @Query(
+        "DELETE FROM category WHERE name IS NOT NULL AND TRIM(name) != '' AND NOT EXISTS (" +
+            "SELECT 1 FROM channel WHERE channel.cat IS NOT NULL AND " +
+            "LOWER(channel.cat) = LOWER(category.name)" +
+            ")",
+    )
+    fun deleteCategoriesWithNoChannels(): Int
 }

@@ -17,6 +17,7 @@ class LocalSettingsRepository(
         isFirstLaunch = prefs.getBoolean(IS_FIRST_TIME_LAUNCH, true),
         nightMode = prefs.getBoolean(KEY_NIGHT_MODE, false),
         mediaPlayerOption = prefs.getInt(KEY_MEDIA_PLAYER, DEFAULT_MEDIA_PLAYER),
+        cleanupEmptyCategories = prefs.getBoolean(KEY_CLEANUP_EMPTY_CATEGORIES, false),
     )
 
     override fun setGridColumns(columns: Int) {
@@ -42,6 +43,10 @@ class LocalSettingsRepository(
         prefs.edit().putInt(KEY_MEDIA_PLAYER, option).apply()
     }
 
+    override fun setCleanupEmptyCategories(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_CLEANUP_EMPTY_CATEGORIES, enabled).apply()
+    }
+
     override fun completeFirstLaunch() {
         prefs.edit().putBoolean(IS_FIRST_TIME_LAUNCH, false).apply()
     }
@@ -55,6 +60,7 @@ class LocalSettingsRepository(
         private const val KEY_COL_COUNT = "rw_col_count"
         private const val KEY_NIGHT_MODE = "NightMode"
         private const val KEY_MEDIA_PLAYER = "media_player_key"
+        private const val KEY_CLEANUP_EMPTY_CATEGORIES = "cleanup_empty_categories"
         private const val TYPE_GRID = "Grid"
         private const val TYPE_LIST = "List"
         private const val DEFAULT_COLUMNS = 3

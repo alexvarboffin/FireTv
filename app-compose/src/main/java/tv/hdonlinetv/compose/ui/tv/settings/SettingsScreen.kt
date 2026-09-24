@@ -38,6 +38,7 @@ import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModel
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModelFactory
+import tv.hdonlinetv.compose.phone.LocalCategoryRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
@@ -49,7 +50,10 @@ fun SettingsScreen(
     val navController = LocalTvNavController.current
     val context = LocalContext.current
     val repository = LocalSettingsRepository.current
-    val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModelFactory(repository))
+    val categoryRepository = LocalCategoryRepository.current
+    val viewModel: SettingsViewModel = viewModel(
+        factory = SettingsViewModelFactory(repository, categoryRepository),
+    )
     val state by viewModel.uiState.collectAsState()
     var choice by remember { mutableStateOf<SettingsChoice?>(null) }
     val layoutOptions = stringArrayResource(R.array.layout_options_tv)
@@ -72,10 +76,12 @@ fun SettingsScreen(
     SettingsScreenBody(
         columnsLabel = if (state.gridColumns <= 1) layoutOptions[1] else layoutOptions[0],
         nightModeLabel = if (state.nightMode) nightLabels[0] else nightLabels[1],
+        cleanupEmptyCategoriesLabel = if (state.cleanupEmptyCategories) nightLabels[0] else nightLabels[1],
         mediaPlayerLabel = mediaPlayerOptions[state.mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex)],
         onBack = exit,
         onColumnsClick = { choice = SettingsChoice.Columns },
         onNightModeClick = { choice = SettingsChoice.NightMode },
+        onCleanupEmptyCategoriesClick = { choice = SettingsChoice.CleanupEmptyCategories },
         onMediaPlayerClick = { choice = SettingsChoice.MediaPlayer },
     )
 
@@ -108,6 +114,17 @@ fun SettingsScreen(
                 },
             )
         }
+        SettingsChoice.CleanupEmptyCategories -> {
+            TvChoiceOverlay(
+                title = stringResource(R.string.settings_cleanup_empty_categories),
+                options = nightLabels,
+                onDismiss = { choice = null },
+                onSelect = { index ->
+                    viewModel.setCleanupEmptyCategories(index == 0)
+                    choice = null
+                },
+            )
+        }
         SettingsChoice.MediaPlayer -> {
             TvChoiceOverlay(
                 title = stringResource(R.string.media_player_title),
@@ -126,6 +143,7 @@ fun SettingsScreen(
 private enum class SettingsChoice {
     Columns,
     NightMode,
+    CleanupEmptyCategories,
     MediaPlayer,
 }
 
@@ -134,10 +152,12 @@ private enum class SettingsChoice {
 fun SettingsScreenBody(
     columnsLabel: String,
     nightModeLabel: String,
+    cleanupEmptyCategoriesLabel: String,
     mediaPlayerLabel: String,
     onBack: () -> Unit,
     onColumnsClick: () -> Unit,
     onNightModeClick: () -> Unit,
+    onCleanupEmptyCategoriesClick: () -> Unit,
     onMediaPlayerClick: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -172,6 +192,12 @@ fun SettingsScreenBody(
             title = stringResource(R.string.settings_night_mode),
             subtitle = nightModeLabel,
             onClick = onNightModeClick,
+            modifier = leftToDrawer,
+        )
+        SettingsRow(
+            title = stringResource(R.string.settings_cleanup_empty_categories),
+            subtitle = cleanupEmptyCategoriesLabel,
+            onClick = onCleanupEmptyCategoriesClick,
             modifier = leftToDrawer,
         )
         SettingsRow(

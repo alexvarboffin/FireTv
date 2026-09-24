@@ -17,6 +17,7 @@ import tv.hdonlinetv.compose.core.domain.model.PlaylistType
 import tv.hdonlinetv.compose.core.domain.model.PlaylistRefreshResult
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
 import tv.hdonlinetv.compose.core.domain.repository.PlaylistRepository
+import tv.hdonlinetv.compose.core.databridge.settings.LocalSettingsRepository
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -26,6 +27,7 @@ class LocalPlaylistRepository(
 
     private val appContext = context.applicationContext
     private val database = LocalDatabaseRepo.getStoreInfoDatabase(appContext)
+    private val settingsRepository = LocalSettingsRepository(appContext)
     private val httpClient = OkHttpClient()
 
     override suspend fun getAllPlaylists(): List<PlaylistUi> = withContext(Dispatchers.IO) {
@@ -46,7 +48,8 @@ class LocalPlaylistRepository(
     override suspend fun deletePlaylist(playlistId: Long): Int = withContext(Dispatchers.IO) {
         val playlist = database.selectAllPlaylist().firstOrNull { it._id == playlistId }
             ?: return@withContext 0
-        database.deletePlaylistAndRelatedChannels(playlist)
+        val cleanupEmptyCategories = settingsRepository.getSettings().cleanupEmptyCategories
+        database.deletePlaylistAndRelatedChannels(playlist, cleanupEmptyCategories)
     }
 
     override suspend fun refreshFromUrl(playlist: PlaylistUi): PlaylistRefreshResult = withContext(Dispatchers.IO) {

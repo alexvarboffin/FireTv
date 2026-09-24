@@ -26,12 +26,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import tv.hdonlinetv.compose.BuildConfig
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModel
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModelFactory
 import tv.hdonlinetv.compose.navigation.Routes
+import tv.hdonlinetv.compose.phone.LocalCategoryRepository
 import tv.hdonlinetv.compose.phone.LocalPhoneNavController
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.ui.mobile.components.LegacySettingsRow
@@ -44,13 +46,17 @@ fun SettingsScreen() {
     val navController = LocalPhoneNavController.current
     val context = LocalContext.current
     val repository = LocalSettingsRepository.current
-    val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModelFactory(repository))
+    val categoryRepository = LocalCategoryRepository.current
+    val viewModel: SettingsViewModel = viewModel(
+        factory = SettingsViewModelFactory(repository, categoryRepository),
+    )
     val state by viewModel.uiState.collectAsState()
     var showColumnsDialog by remember { mutableStateOf(false) }
     var showSortDialog by remember { mutableStateOf(false) }
     var showModeDialog by remember { mutableStateOf(false) }
     var showNightModeDialog by remember { mutableStateOf(false) }
     var showMediaPlayerDialog by remember { mutableStateOf(false) }
+    var showCleanupCategoriesDialog by remember { mutableStateOf(false) }
     val layoutOptions = stringArrayResource(R.array.layout_options)
     val mediaPlayerOptions = listOf(
         stringResource(R.string.media_player_JZMediaSystem),
@@ -79,12 +85,18 @@ fun SettingsScreen() {
         } else {
             stringResource(R.string.settings_night_mode_off)
         },
+        cleanupEmptyCategoriesLabel = if (state.cleanupEmptyCategories) {
+            stringResource(R.string.settings_night_mode_on)
+        } else {
+            stringResource(R.string.settings_night_mode_off)
+        },
         mediaPlayerLabel = mediaPlayerOptions[state.mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex)],
         onBack = { navController.popBackStack() },
         onColumnsClick = { showColumnsDialog = true },
         onSortClick = { showSortDialog = true },
         onModeClick = { showModeDialog = true },
         onNightModeClick = { showNightModeDialog = true },
+        onCleanupEmptyCategoriesClick = { showCleanupCategoriesDialog = true },
         onMediaPlayerClick = { showMediaPlayerDialog = true },
         onOpenTutorial = { navController.navigate(Routes.Tutorial.route) },
         onOpenPrivacy = {
@@ -173,6 +185,29 @@ fun SettingsScreen() {
             confirmButton = {},
         )
     }
+    if (showCleanupCategoriesDialog) {
+        AlertDialog(
+            onDismissRequest = { showCleanupCategoriesDialog = false },
+            title = { Text(stringResource(R.string.settings_cleanup_empty_categories)) },
+            text = {
+                Column {
+                    Text(
+                        text = stringResource(R.string.settings_cleanup_empty_categories_summary),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                    TextButton(onClick = {
+                        viewModel.setCleanupEmptyCategories(true)
+                        showCleanupCategoriesDialog = false
+                    }) { Text(stringResource(R.string.settings_night_mode_on)) }
+                    TextButton(onClick = {
+                        viewModel.setCleanupEmptyCategories(false)
+                        showCleanupCategoriesDialog = false
+                    }) { Text(stringResource(R.string.settings_night_mode_off)) }
+                }
+            },
+            confirmButton = {},
+        )
+    }
     if (showMediaPlayerDialog) {
         SettingsSingleChoiceBottomSheet(
             visible = showMediaPlayerDialog,
@@ -192,12 +227,14 @@ fun SettingsScreenBody(
     sortLabel: String,
     modeLabel: String,
     nightModeLabel: String,
+    cleanupEmptyCategoriesLabel: String,
     mediaPlayerLabel: String,
     onBack: () -> Unit,
     onColumnsClick: () -> Unit,
     onSortClick: () -> Unit,
     onModeClick: () -> Unit,
     onNightModeClick: () -> Unit,
+    onCleanupEmptyCategoriesClick: () -> Unit,
     onMediaPlayerClick: () -> Unit,
     onOpenTutorial: () -> Unit,
     onOpenPrivacy: () -> Unit,
@@ -250,6 +287,12 @@ fun SettingsScreenBody(
                 title = stringResource(R.string.settings_night_mode),
                 subtitle = nightModeLabel,
                 modifier = Modifier.clickable(onClick = onNightModeClick),
+            )
+            LegacySettingsRow(
+                iconRes = R.drawable.ic_tv_icon,
+                title = stringResource(R.string.settings_cleanup_empty_categories),
+                subtitle = cleanupEmptyCategoriesLabel,
+                modifier = Modifier.clickable(onClick = onCleanupEmptyCategoriesClick),
             )
             LegacySettingsRow(
                 iconRes = R.drawable.ic_tv_icon,

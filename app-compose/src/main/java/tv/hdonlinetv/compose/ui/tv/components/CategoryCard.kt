@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,9 +21,9 @@ import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
+import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.CategoryUi
 import tv.hdonlinetv.compose.ui.components.RemoteImage
-import tv.hdonlinetv.compose.R
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -56,6 +58,18 @@ fun CategoryCard(
                     .aspectRatio(1f),
                 contentScale = ContentScale.Crop,
             )
+            if (category.count > 0) {
+                Text(
+                    text = stringResource(R.string.channels_format, category.count),
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .background(Color.Black.copy(alpha = 0.65f), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                )
+            }
             Text(
                 text = category.name,
                 color = Color.White,

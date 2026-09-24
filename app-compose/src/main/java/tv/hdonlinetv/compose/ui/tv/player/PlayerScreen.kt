@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Favorite
@@ -202,7 +201,7 @@ fun PlayerScreenBody(
     var jzState by remember { mutableIntStateOf(Jzvd.STATE_IDLE) }
     var isJzFullscreen by remember { mutableStateOf(false) }
     val rootFocus = remember { FocusRequester() }
-    val (frChannels, frFavorite, frClose, frPlay, frProgress, frSettings, frFullscreen) = remember {
+    val (frFavorite, frClose, frPlay, frProgress, frSettings, frFullscreen) = remember {
         FocusRequester.createRefs()
     }
     // DEBUG: keep JZ XML chrome visible together with Compose overlay (parity check).
@@ -221,6 +220,19 @@ fun PlayerScreenBody(
         jzState == Jzvd.STATE_PREPARING_PLAYING ||
         jzState == Jzvd.STATE_PREPARING_CHANGE_URL ||
         isLoading
+
+    // Play/pause is hidden while preparing — never leave focus pointing at missing frPlay.
+    val canFavorite = channel != null && channel.id > 0
+    val chromePrimaryFocus = when {
+        isPreparing -> if (canFavorite) frFavorite else frClose
+        else -> frPlay
+    }
+    val chromeDownFromTop = if (isPreparing) {
+        if (durationMs > 0L) frProgress else frSettings
+    } else {
+        frPlay
+    }
+    val chromeUpFromBottom = if (isPreparing) chromePrimaryFocus else frPlay
 
     // Cinema PlayerOverlayPhone: PlayCircleOutline / PauseCircleOutline (64dp).
     // Replay uses Refresh for complete/error (JZ jz_click_replay).
@@ -306,13 +318,20 @@ fun PlayerScreenBody(
         LegacyJzPlayerSetup.apply(player, ch, playerSetup, mediaPlayerOption)
     }
 
-    // Only steal focus to center when chrome becomes visible — not on every
+    // Only steal focus to chrome when it becomes visible — not on every
     // playerRef/state churn (retry would yank focus off Close/Settings).
-    LaunchedEffect(controlsVisible, showMediaPlayerDialog, channelSheetVisible) {
+    // While preparing, play is not composed → focus Favorite / Channels / Close.
+    LaunchedEffect(
+        controlsVisible,
+        showMediaPlayerDialog,
+        channelSheetVisible,
+        isPreparing,
+        canFavorite,
+    ) {
         if (channelSheetVisible) return@LaunchedEffect
         if (controlsVisible && !showMediaPlayerDialog) {
             resetHideTimer()
-            frPlay.requestFocus()
+            chromePrimaryFocus.requestFocus()
         } else {
             hideControlsJob?.cancel()
             if (!controlsVisible) {
@@ -339,11 +358,19 @@ fun PlayerScreenBody(
             .background(Color.Black)
             .focusRequester(rootFocus)
             .focusProperties {
-                // Cinema root: when chrome visible, D-pad enters center control.
+                // Cinema root: when chrome visible, D-pad enters primary control.
                 left = FocusRequester.Cancel
                 up = FocusRequester.Cancel
-                right = if (controlsVisible && !channelSheetVisible) frPlay else FocusRequester.Cancel
-                down = if (controlsVisible && !channelSheetVisible) frPlay else FocusRequester.Cancel
+                right = if (controlsVisible && !channelSheetVisible) {
+                    chromePrimaryFocus
+                } else {
+                    FocusRequester.Cancel
+                }
+                down = if (controlsVisible && !channelSheetVisible) {
+                    chromePrimaryFocus
+                } else {
+                    FocusRequester.Cancel
+                }
             }
             .focusable()
             .onKeyEvent { keyEvent ->
@@ -485,34 +512,9 @@ fun PlayerScreenBody(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        if (siblings.isNotEmpty()) {
-                            TvPlayerIconButton(
-                                onClick = {
-                                    resetHideTimer()
-                                    openChannelSheet()
-                                },
-                                modifier = Modifier
-                                    .focusRequester(frChannels)
-                                    .focusProperties {
-                                        left = frClose
-                                        right = if (channel != null && channel.id > 0) {
-                                            frFavorite
-                                        } else {
-                                            frClose
-                                        }
-                                        down = frPlay
-                                        up = frSettings
-                                    }
-                                    .onFocusChanged { if (it.isFocused) resetHideTimer() },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.List,
-                                    contentDescription = stringResource(R.string.menu_home),
-                                    tint = Color.White,
-                                )
-                            }
-                        }
-                        if (channel != null && channel.id > 0) {
+                        // Channel sheet opens via Left / Menu — no redundant list icon.
+                        if (canFavorite) {
+                            val favChannel = channel!!
                             TvPlayerIconButton(
                                 onClick = {
                                     resetHideTimer()
@@ -521,21 +523,21 @@ fun PlayerScreenBody(
                                 modifier = Modifier
                                     .focusRequester(frFavorite)
                                     .focusProperties {
-                                        left = if (siblings.isNotEmpty()) frChannels else frClose
+                                        left = frClose
                                         right = frClose
-                                        down = frPlay
+                                        down = chromeDownFromTop
                                         up = frSettings
                                     }
                                     .onFocusChanged { if (it.isFocused) resetHideTimer() },
                             ) {
                                 Icon(
-                                    imageVector = if (channel.isFavorite) {
+                                    imageVector = if (favChannel.isFavorite) {
                                         Icons.Rounded.Favorite
                                     } else {
                                         Icons.Rounded.FavoriteBorder
                                     },
                                     contentDescription = stringResource(
-                                        if (channel.isFavorite) R.string.remove_fav else R.string.add_fav,
+                                        if (favChannel.isFavorite) R.string.remove_fav else R.string.add_fav,
                                     ),
                                     tint = Color.White,
                                 )
@@ -549,15 +551,9 @@ fun PlayerScreenBody(
                             modifier = Modifier
                                 .focusRequester(frClose)
                                 .focusProperties {
-                                    left = when {
-                                        channel != null && channel.id > 0 -> frFavorite
-                                        siblings.isNotEmpty() -> frChannels
-                                        else -> frClose
-                                    }
-                                    right = if (siblings.isNotEmpty()) frChannels else {
-                                        if (channel != null && channel.id > 0) frFavorite else frClose
-                                    }
-                                    down = frPlay
+                                    left = if (canFavorite) frFavorite else frClose
+                                    right = if (canFavorite) frFavorite else frClose
+                                    down = chromeDownFromTop
                                     up = frSettings
                                 }
                                 .onFocusChanged { if (it.isFocused) resetHideTimer() },
@@ -622,7 +618,7 @@ fun PlayerScreenBody(
                         },
                         onUserInteraction = { resetHideTimer() },
                         focusRequester = frProgress,
-                        upFocus = frPlay,
+                        upFocus = chromeUpFromBottom,
                         downFocus = frSettings,
                     )
                     Row(
@@ -640,8 +636,8 @@ fun PlayerScreenBody(
                             modifier = Modifier
                                 .focusRequester(frSettings)
                                 .focusProperties {
-                                    up = if (durationMs > 0L) frProgress else frPlay
-                                    down = if (channel != null && channel.id > 0) frFavorite else frClose
+                                    up = if (durationMs > 0L) frProgress else chromeUpFromBottom
+                                    down = chromePrimaryFocus
                                     left = FocusRequester.Cancel
                                     right = FocusRequester.Cancel
                                 }

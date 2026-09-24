@@ -6,4 +6,6 @@ import tv.hdonlinetv.compose.core.domain.model.CategoryUi
 interface CategoryRepository {
     suspend fun getAllCategories(): List<CategoryUi>
     fun observeAllCategories(): Flow<List<CategoryUi>>
+    /** Removes category rows that currently have zero channels. */
+    suspend fun deleteEmptyCategories(): Int
 }
