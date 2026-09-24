@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
@@ -38,10 +39,13 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModel
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModelFactory
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onBack: (() -> Unit)? = null,
+) {
     val navController = LocalTvNavController.current
     val context = LocalContext.current
     val repository = LocalSettingsRepository.current
@@ -60,12 +64,16 @@ fun SettingsScreen() {
         stringResource(R.string.settings_night_mode_on),
         stringResource(R.string.settings_night_mode_off),
     )
+    val exit: () -> Unit = onBack ?: {
+        navController.popBackStack()
+        Unit
+    }
 
     SettingsScreenBody(
         columnsLabel = if (state.gridColumns <= 1) layoutOptions[1] else layoutOptions[0],
         nightModeLabel = if (state.nightMode) nightLabels[0] else nightLabels[1],
         mediaPlayerLabel = mediaPlayerOptions[state.mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex)],
-        onBack = { navController.popBackStack() },
+        onBack = exit,
         onColumnsClick = { choice = SettingsChoice.Columns },
         onNightModeClick = { choice = SettingsChoice.NightMode },
         onMediaPlayerClick = { choice = SettingsChoice.MediaPlayer },
@@ -133,6 +141,12 @@ fun SettingsScreenBody(
     onMediaPlayerClick: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
+    val drawerFocus = LocalTvDrawerFocusRequester.current
+    val leftToDrawer = if (drawerFocus != null) {
+        Modifier.focusProperties { left = drawerFocus }
+    } else {
+        Modifier
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,7 +155,10 @@ fun SettingsScreenBody(
             .padding(horizontal = 48.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Button(onClick = onBack) {
+        Button(
+            onClick = onBack,
+            modifier = leftToDrawer,
+        ) {
             Text(text = stringResource(R.string.ok))
         }
         Text(text = stringResource(R.string.menu_settings))
@@ -149,16 +166,19 @@ fun SettingsScreenBody(
             title = stringResource(R.string.display_channel),
             subtitle = columnsLabel,
             onClick = onColumnsClick,
+            modifier = leftToDrawer,
         )
         SettingsRow(
             title = stringResource(R.string.settings_night_mode),
             subtitle = nightModeLabel,
             onClick = onNightModeClick,
+            modifier = leftToDrawer,
         )
         SettingsRow(
             title = stringResource(R.string.media_player_title),
             subtitle = mediaPlayerLabel,
             onClick = onMediaPlayerClick,
+            modifier = leftToDrawer,
         )
     }
 }
@@ -169,11 +189,12 @@ private fun SettingsRow(
     title: String,
     subtitle: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
     Surface(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = colors.surface,
             contentColor = colors.onSurface,

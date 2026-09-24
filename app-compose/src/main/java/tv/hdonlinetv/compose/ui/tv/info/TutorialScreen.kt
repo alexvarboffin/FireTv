@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -37,6 +38,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.navigation.Routes
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.TvFocusTabRow
 
@@ -61,10 +63,16 @@ private sealed interface FaqRow {
 }
 
 @Composable
-fun TutorialScreen() {
+fun TutorialScreen(
+    onBack: (() -> Unit)? = null,
+) {
     val navController = LocalTvNavController.current
+    val exit: () -> Unit = onBack ?: {
+        navController.popBackStack()
+        Unit
+    }
     TutorialScreenBody(
-        onBack = { navController.popBackStack() },
+        onBack = exit,
         onOpenInfoWeb = { url, title ->
             navController.navigate(Routes.InfoWeb.build(url = url, title = title))
         },
@@ -78,19 +86,28 @@ fun TutorialScreenBody(
     onOpenInfoWeb: (url: String, title: String) -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
+    val drawerFocus = LocalTvDrawerFocusRequester.current
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabRowFallback = remember { FocusRequester() }
     val tabs = listOf(
         stringResource(R.string.tab_tutorial),
         stringResource(R.string.tab_faqs),
     )
+    val leftToDrawer = if (drawerFocus != null) {
+        Modifier.focusProperties { left = drawerFocus }
+    } else {
+        Modifier
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.background)
             .padding(horizontal = 48.dp, vertical = 24.dp),
     ) {
-        Button(onClick = onBack) {
+        Button(
+            onClick = onBack,
+            modifier = leftToDrawer,
+        ) {
             Text(text = stringResource(R.string.ok))
         }
         Text(
@@ -102,17 +119,23 @@ fun TutorialScreenBody(
             selectedIndex = selectedTab,
             onSelectedIndexChange = { selectedTab = it },
             tabRowFallback = tabRowFallback,
+            leftFocusRequester = drawerFocus,
         )
         when (selectedTab) {
-            0 -> TutorialTabContent()
-            else -> FaqsTabContent(onOpenInfoWeb = onOpenInfoWeb)
+            0 -> TutorialTabContent(leftToDrawer = leftToDrawer)
+            else -> FaqsTabContent(
+                onOpenInfoWeb = onOpenInfoWeb,
+                leftToDrawer = leftToDrawer,
+            )
         }
     }
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-private fun TutorialTabContent() {
+private fun TutorialTabContent(
+    leftToDrawer: Modifier,
+) {
     val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
     LazyColumn(
@@ -122,7 +145,7 @@ private fun TutorialTabContent() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item(key = "header") {
-            TutorialFocusBlock {
+            TutorialFocusBlock(modifier = leftToDrawer) {
                 Text(text = stringResource(R.string.how_to_add_playlist))
                 Text(
                     text = stringResource(R.string.tutorial),
@@ -131,12 +154,12 @@ private fun TutorialTabContent() {
             }
         }
         item(key = "step1") {
-            TutorialFocusBlock {
+            TutorialFocusBlock(modifier = leftToDrawer) {
                 Text(text = stringResource(R.string.step1))
             }
         }
         item(key = "step2") {
-            TutorialFocusBlock {
+            TutorialFocusBlock(modifier = leftToDrawer) {
                 Text(text = stringResource(R.string.step2))
                 Image(
                     painter = painterResource(R.drawable.ic_tutor2),
@@ -149,7 +172,7 @@ private fun TutorialTabContent() {
             }
         }
         item(key = "step3") {
-            TutorialFocusBlock {
+            TutorialFocusBlock(modifier = leftToDrawer) {
                 Text(text = stringResource(R.string.step3))
                 Image(
                     painter = painterResource(R.drawable.ic_tutor3),
@@ -168,7 +191,8 @@ private fun TutorialTabContent() {
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 16.dp),
+                    .padding(top = 8.dp, bottom = 16.dp)
+                    .then(leftToDrawer),
             ) {
                 Text(text = stringResource(R.string.search_button))
             }
@@ -178,11 +202,14 @@ private fun TutorialTabContent() {
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-private fun TutorialFocusBlock(content: @Composable ColumnScope.() -> Unit) {
+private fun TutorialFocusBlock(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     val colors = MaterialTheme.colorScheme
     Surface(
         onClick = {},
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = colors.surface,
             contentColor = colors.onSurface,
@@ -199,7 +226,10 @@ private fun TutorialFocusBlock(content: @Composable ColumnScope.() -> Unit) {
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-private fun FaqsTabContent(onOpenInfoWeb: (url: String, title: String) -> Unit) {
+private fun FaqsTabContent(
+    onOpenInfoWeb: (url: String, title: String) -> Unit,
+    leftToDrawer: Modifier,
+) {
     val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
     val faqQuestions = stringArrayResource(R.array.faq_questions)
@@ -238,7 +268,9 @@ private fun FaqsTabContent(onOpenInfoWeb: (url: String, title: String) -> Unit) 
                 is FaqRow.Question -> {
                     Surface(
                         onClick = { onOpenInfoWeb(row.htmlAssetUrl, row.text) },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(leftToDrawer),
                         colors = ClickableSurfaceDefaults.colors(
                             containerColor = colors.surface,
                             contentColor = colors.onSurface,
@@ -255,7 +287,9 @@ private fun FaqsTabContent(onOpenInfoWeb: (url: String, title: String) -> Unit) 
                 is FaqRow.Playlist -> {
                     Surface(
                         onClick = { copyPlaylistUrl(context, row.url) },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(leftToDrawer),
                         colors = ClickableSurfaceDefaults.colors(
                             containerColor = colors.surface,
                             contentColor = colors.onSurface,

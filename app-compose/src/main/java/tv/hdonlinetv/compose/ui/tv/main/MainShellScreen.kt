@@ -73,9 +73,11 @@ import tv.hdonlinetv.compose.ui.tv.category.CategoryScreen
 import tv.hdonlinetv.compose.ui.tv.channel.AllChannelsScreen
 import tv.hdonlinetv.compose.ui.tv.components.TvFocusTabRow
 import tv.hdonlinetv.compose.ui.tv.favorites.FavoritesScreen
+import tv.hdonlinetv.compose.ui.tv.info.TutorialScreen
 import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistManageScreen
 import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistTabScreen
 import tv.hdonlinetv.compose.ui.tv.search.SearchScreen
+import tv.hdonlinetv.compose.ui.tv.settings.SettingsScreen
 
 private val tabTitleRes = listOf(
     R.string.tab_playlists,
@@ -89,6 +91,8 @@ private enum class ShellPanel {
     Tabs,
     Search,
     PlaylistManage,
+    Settings,
+    Tutorial,
 }
 
 private data class DrawerNavItem(
@@ -143,7 +147,7 @@ fun MainShellScreen() {
     }
 
     // Mirror phone drawer + top-bar actions (Search / Tutorial) + FAB (Add playlist).
-    // Search / Playlist Manage stay inside the shell so NavigationDrawer remains visible.
+    // Search / Playlist Manage / Settings stay inside the shell so NavigationDrawer remains.
     val drawerItems = listOf(
         DrawerNavItem(R.string.menu_search, R.drawable.ic_actions_search) {
             shellPanel = ShellPanel.Search
@@ -158,10 +162,10 @@ fun MainShellScreen() {
             shellPanel = ShellPanel.PlaylistManage
         },
         DrawerNavItem(R.string.menu_settings, R.drawable.ic_actions_settings) {
-            navController.navigate(Routes.Settings.route)
+            shellPanel = ShellPanel.Settings
         },
         DrawerNavItem(R.string.menu_tutorial, R.drawable.ic_info) {
-            navController.navigate(Routes.Tutorial.route)
+            shellPanel = ShellPanel.Tutorial
         },
         DrawerNavItem(R.string.menu_about, R.drawable.ic_info) {
             showAbout = true
@@ -236,6 +240,8 @@ fun MainShellScreen() {
                                 R.string.menu_search -> shellPanel == ShellPanel.Search
                                 R.string.playlist_management ->
                                     shellPanel == ShellPanel.PlaylistManage
+                                R.string.menu_settings -> shellPanel == ShellPanel.Settings
+                                R.string.menu_tutorial -> shellPanel == ShellPanel.Tutorial
                                 R.string.menu_home ->
                                     shellPanel == ShellPanel.Tabs && selectedTabIndex == 0
                                 R.string.menu_profile ->
@@ -290,6 +296,30 @@ fun MainShellScreen() {
                                     .focusGroup(),
                             ) {
                                 PlaylistManageScreen(
+                                    onBack = { shellPanel = ShellPanel.Tabs },
+                                )
+                            }
+                        }
+                        ShellPanel.Settings -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .focusRequester(screenFallback)
+                                    .focusGroup(),
+                            ) {
+                                SettingsScreen(
+                                    onBack = { shellPanel = ShellPanel.Tabs },
+                                )
+                            }
+                        }
+                        ShellPanel.Tutorial -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .focusRequester(screenFallback)
+                                    .focusGroup(),
+                            ) {
+                                TutorialScreen(
                                     onBack = { shellPanel = ShellPanel.Tabs },
                                 )
                             }
