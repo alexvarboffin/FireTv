@@ -51,6 +51,7 @@ import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageType
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistManageViewModelFactory
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.TvEditableField
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
@@ -58,7 +59,9 @@ import tv.hdonlinetv.compose.ui.tv.notifications.LocalTvNotificationManager
 import tv.hdonlinetv.compose.ui.tv.notifications.NotificationType
 
 @Composable
-fun PlaylistManageScreen() {
+fun PlaylistManageScreen(
+    onBack: (() -> Unit)? = null,
+) {
     val navController = LocalTvNavController.current
     val context = LocalContext.current
     val notifications = LocalTvNotificationManager.current
@@ -67,6 +70,10 @@ fun PlaylistManageScreen() {
         factory = PlaylistManageViewModelFactory(repository),
     )
     val state by viewModel.uiState.collectAsState()
+    val exit: () -> Unit = onBack ?: {
+        navController.popBackStack()
+        Unit
+    }
 
     LaunchedEffect(state.error, state.titleError, state.urlError, state.usernameError, state.passwordError) {
         val error = state.error ?: return@LaunchedEffect
@@ -100,7 +107,7 @@ fun PlaylistManageScreen() {
             message = context.getString(messageRes),
             type = NotificationType.SUCCESS,
         )
-        navController.popBackStack()
+        exit()
     }
 
     PlaylistManageScreenBody(
@@ -124,7 +131,7 @@ fun PlaylistManageScreen() {
         onSave = viewModel::saveFromUrl,
         onSaveFile = viewModel::saveFromFile,
         onParseClipboard = viewModel::saveFromClipboard,
-        onBack = { navController.popBackStack() },
+        onBack = exit,
     )
 
     TvLoadingOverlay(
@@ -161,12 +168,18 @@ fun PlaylistManageScreenBody(
     val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
     val playlistTypes = stringArrayResource(R.array.playlist_types)
+    val drawerFocus = LocalTvDrawerFocusRequester.current
     val urlFocus = remember { FocusRequester() }
     val pasteFocus = remember { FocusRequester() }
     val filePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
         if (uri != null) onSaveFile(uri)
+    }
+    val leftToDrawer = if (drawerFocus != null) {
+        Modifier.focusProperties { left = drawerFocus }
+    } else {
+        Modifier
     }
 
     Column(
@@ -177,7 +190,10 @@ fun PlaylistManageScreenBody(
             .padding(horizontal = 48.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Button(onClick = onBack) {
+        Button(
+            onClick = onBack,
+            modifier = leftToDrawer,
+        ) {
             ManageButtonLabel(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 text = stringResource(R.string.ok),
@@ -193,7 +209,9 @@ fun PlaylistManageScreenBody(
                     else PlaylistManageType.M3U,
                 )
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(leftToDrawer),
         ) {
             val label = playlistTypes[if (type == PlaylistManageType.M3U) 0 else 1]
             ManageButtonLabel(icon = Icons.Filled.SwapHoriz, text = label)
@@ -204,12 +222,15 @@ fun PlaylistManageScreenBody(
             onValueChange = onTitleChange,
             hint = stringResource(R.string.playlist_name),
             isError = titleError,
+            leftFocus = drawerFocus,
         )
 
         if (type == PlaylistManageType.M3U && useLocalFile) {
             Button(
                 onClick = { filePicker.launch(arrayOf("*/*")) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(leftToDrawer),
             ) {
                 ManageButtonLabel(
                     icon = Icons.Filled.FolderOpen,
@@ -223,6 +244,7 @@ fun PlaylistManageScreenBody(
                 hint = stringResource(R.string.playlist_link),
                 isError = urlError,
                 downFocus = pasteFocus,
+                leftFocus = drawerFocus,
                 modifier = Modifier.focusRequester(urlFocus),
             )
             Button(
@@ -233,7 +255,10 @@ fun PlaylistManageScreenBody(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(pasteFocus)
-                    .focusProperties { up = urlFocus },
+                    .focusProperties {
+                        up = urlFocus
+                        drawerFocus?.let { left = it }
+                    },
             ) {
                 Icon(
                     imageVector = Icons.Filled.ContentPaste,
@@ -249,19 +274,23 @@ fun PlaylistManageScreenBody(
                 onValueChange = onUsernameChange,
                 hint = stringResource(R.string.username_hint),
                 isError = usernameError,
+                leftFocus = drawerFocus,
             )
             TvEditableField(
                 value = password,
                 onValueChange = onPasswordChange,
                 hint = stringResource(R.string.password_hint),
                 isError = passwordError,
+                leftFocus = drawerFocus,
             )
         }
 
         if (type == PlaylistManageType.M3U) {
             Button(
                 onClick = { onLocalFileToggle(!useLocalFile) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(leftToDrawer),
             ) {
                 ManageButtonLabel(
                     icon = Icons.Filled.Storage,
@@ -274,7 +303,9 @@ fun PlaylistManageScreenBody(
         Button(
             onClick = onSave,
             enabled = !isSaving,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(leftToDrawer),
         ) {
             ManageButtonLabel(
                 icon = Icons.Filled.Subscriptions,
@@ -286,7 +317,9 @@ fun PlaylistManageScreenBody(
             Button(
                 onClick = { readClipboard(context)?.let(onParseClipboard) },
                 enabled = !isSaving,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(leftToDrawer),
             ) {
                 ManageButtonLabel(
                     icon = Icons.Filled.ContentPaste,

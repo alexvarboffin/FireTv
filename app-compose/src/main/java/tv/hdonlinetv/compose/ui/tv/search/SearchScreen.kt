@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,12 +24,15 @@ import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.navigateToChannel
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
+import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.ChannelGridBody
 import tv.hdonlinetv.compose.ui.tv.components.TvEditableField
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(
+    onBack: (() -> Unit)? = null,
+) {
     val navController = LocalTvNavController.current
     val repository = LocalChannelRepository.current
     val settingsRepository = LocalSettingsRepository.current
@@ -42,7 +46,10 @@ fun SearchScreen() {
         results = state.results,
         isLoading = state.isLoading,
         onQueryChange = viewModel::onQueryChange,
-        onBack = { navController.popBackStack() },
+        onBack = onBack ?: {
+            navController.popBackStack()
+            Unit
+        },
         onChannelClick = { channel ->
             navigateToChannel(
                 navController,
@@ -65,13 +72,21 @@ fun SearchScreenBody(
     onChannelClick: (ChannelUi) -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
+    val drawerFocus = LocalTvDrawerFocusRequester.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.background)
             .padding(horizontal = 48.dp, vertical = 24.dp),
     ) {
-        Button(onClick = onBack) {
+        Button(
+            onClick = onBack,
+            modifier = if (drawerFocus != null) {
+                Modifier.focusProperties { left = drawerFocus }
+            } else {
+                Modifier
+            },
+        ) {
             Text(text = stringResource(R.string.ok))
         }
         Text(
@@ -82,6 +97,7 @@ fun SearchScreenBody(
             value = query,
             onValueChange = onQueryChange,
             hint = stringResource(R.string.search_hint),
+            leftFocus = drawerFocus,
             modifier = Modifier.padding(bottom = 12.dp),
         )
         ChannelGridBody(

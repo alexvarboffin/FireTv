@@ -2,6 +2,7 @@ package tv.hdonlinetv.compose.ui.tv.main
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -73,7 +73,9 @@ import tv.hdonlinetv.compose.ui.tv.category.CategoryScreen
 import tv.hdonlinetv.compose.ui.tv.channel.AllChannelsScreen
 import tv.hdonlinetv.compose.ui.tv.components.TvFocusTabRow
 import tv.hdonlinetv.compose.ui.tv.favorites.FavoritesScreen
+import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistManageScreen
 import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistTabScreen
+import tv.hdonlinetv.compose.ui.tv.search.SearchScreen
 
 private val tabTitleRes = listOf(
     R.string.tab_playlists,
@@ -81,6 +83,13 @@ private val tabTitleRes = listOf(
     R.string.tab_category,
     R.string.tab_favorites,
 )
+
+/** In-shell destinations that keep NavigationDrawer visible. */
+private enum class ShellPanel {
+    Tabs,
+    Search,
+    PlaylistManage,
+}
 
 private data class DrawerNavItem(
     val titleRes: Int,
@@ -95,6 +104,7 @@ fun MainShellScreen() {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var shellPanel by remember { mutableStateOf(ShellPanel.Tabs) }
     var showAbout by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
     val iconTint = colors.onSurface
@@ -127,19 +137,25 @@ fun MainShellScreen() {
     )
     val tabTitles = tabTitleRes.map { stringResource(it) }
 
+    fun openTab(index: Int) {
+        shellPanel = ShellPanel.Tabs
+        selectedTabIndex = index
+    }
+
     // Mirror phone drawer + top-bar actions (Search / Tutorial) + FAB (Add playlist).
+    // Search / Playlist Manage stay inside the shell so NavigationDrawer remains visible.
     val drawerItems = listOf(
         DrawerNavItem(R.string.menu_search, R.drawable.ic_actions_search) {
-            navController.navigate(Routes.Search.route)
+            shellPanel = ShellPanel.Search
         },
         DrawerNavItem(R.string.menu_home, R.drawable.ic_tv_icon) {
-            selectedTabIndex = 0
+            openTab(0)
         },
         DrawerNavItem(R.string.menu_profile, R.drawable.ic_favorite_border) {
-            selectedTabIndex = 3
+            openTab(3)
         },
         DrawerNavItem(R.string.playlist_management, R.drawable.ic_add_black_24dp) {
-            navController.navigate(Routes.PlaylistManage.route)
+            shellPanel = ShellPanel.PlaylistManage
         },
         DrawerNavItem(R.string.menu_settings, R.drawable.ic_actions_settings) {
             navController.navigate(Routes.Settings.route)
@@ -182,6 +198,10 @@ fun MainShellScreen() {
         },
     )
 
+    BackHandler(enabled = shellPanel != ShellPanel.Tabs) {
+        shellPanel = ShellPanel.Tabs
+    }
+
     val screenFallback = remember { FocusRequester() }
     val tabRowFallback = remember { FocusRequester() }
     val drawerGroupFocus = remember { FocusRequester() }
@@ -212,8 +232,18 @@ fun MainShellScreen() {
                         horizontalAlignment = Alignment.Start,
                     ) {
                         itemsIndexed(drawerItems, key = { _, item -> item.titleRes }) { index, item ->
+                            val selected = when (item.titleRes) {
+                                R.string.menu_search -> shellPanel == ShellPanel.Search
+                                R.string.playlist_management ->
+                                    shellPanel == ShellPanel.PlaylistManage
+                                R.string.menu_home ->
+                                    shellPanel == ShellPanel.Tabs && selectedTabIndex == 0
+                                R.string.menu_profile ->
+                                    shellPanel == ShellPanel.Tabs && selectedTabIndex == 3
+                                else -> false
+                            }
                             NavigationDrawerItem(
-                                selected = false,
+                                selected = selected,
                                 onClick = item.onClick,
                                 modifier = if (index == 0) {
                                     Modifier.focusRequester(drawerFallback)
@@ -241,25 +271,51 @@ fun MainShellScreen() {
                         .focusRestorer(screenFallback)
                         .focusGroup(),
                 ) {
-                    TvFocusTabRow(
-                        tabs = tabTitles,
-                        selectedIndex = selectedTabIndex,
-                        onSelectedIndexChange = { selectedTabIndex = it },
-                        badges = tabBadges,
-                        tabRowFallback = tabRowFallback,
-                        leftFocusRequester = drawerGroupFocus,
-                    )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .focusRequester(screenFallback)
-                            .focusGroup(),
-                    ) {
-                        when (selectedTabIndex) {
-                            0 -> PlaylistTabScreen()
-                            1 -> AllChannelsScreen()
-                            2 -> CategoryScreen()
-                            else -> FavoritesScreen()
+                    when (shellPanel) {
+                        ShellPanel.Search -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .focusRequester(screenFallback)
+                                    .focusGroup(),
+                            ) {
+                                SearchScreen(onBack = { shellPanel = ShellPanel.Tabs })
+                            }
+                        }
+                        ShellPanel.PlaylistManage -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .focusRequester(screenFallback)
+                                    .focusGroup(),
+                            ) {
+                                PlaylistManageScreen(
+                                    onBack = { shellPanel = ShellPanel.Tabs },
+                                )
+                            }
+                        }
+                        ShellPanel.Tabs -> {
+                            TvFocusTabRow(
+                                tabs = tabTitles,
+                                selectedIndex = selectedTabIndex,
+                                onSelectedIndexChange = { selectedTabIndex = it },
+                                badges = tabBadges,
+                                tabRowFallback = tabRowFallback,
+                                leftFocusRequester = drawerGroupFocus,
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .focusRequester(screenFallback)
+                                    .focusGroup(),
+                            ) {
+                                when (selectedTabIndex) {
+                                    0 -> PlaylistTabScreen()
+                                    1 -> AllChannelsScreen()
+                                    2 -> CategoryScreen()
+                                    else -> FavoritesScreen()
+                                }
+                            }
                         }
                     }
                 }
