@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import com.google.android.gms.cast.framework.CastContext
 import tv.hdonlinetv.compose.R
 
@@ -43,7 +44,7 @@ fun CastMediaRouteButton(modifier: Modifier = Modifier) {
     ) {
         Icon(
             imageVector = Icons.Filled.Cast,
-            contentDescription = "Cast",
+            contentDescription = stringResource(R.string.cast_content_description),
             tint = colorResource(R.color.white),
         )
     }

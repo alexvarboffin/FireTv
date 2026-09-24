@@ -184,6 +184,7 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.onesignal)
 
+    implementation(project(":common-resources"))
     implementation(project(":features:ui"))
     implementation(project(":data"))
     implementation(project(":core:domain"))

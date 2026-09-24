@@ -31,21 +31,4 @@
         <item>@string/faq_question_1</item>
         <item>@string/faq_question_3</item>
     </string-array>
-
-    <string-array name="playlist_types">
-        <item>M3U</item>
-        <item>Xtream</item>
-    </string-array>
-
-    <string-array name="tab_titles_xtream">
-        <item>@string/tab_xtream_live</item>
-        <item>@string/tab_xtream_vod</item>
-        <item>@string/tab_xtream_series</item>
-    </string-array>
-
-    <string-array name="tab_titles_xtream_serial">
-        <item>@string/tab_stream_info</item>
-        <item>@string/tab_stream_seasons</item>
-        <item>@string/tab_stream_episodes</item>
-    </string-array>
 </resources>

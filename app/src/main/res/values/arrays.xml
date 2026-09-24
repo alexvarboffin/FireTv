@@ -147,13 +147,6 @@
 <!--        <item>@drawable/ic_weather</item>-->
 <!--    </integer-array>-->
 
-<!--    Live Streams-->
-
-    <string name="tab_xtream_live">Live</string>
-    <string name="tab_xtream_vod">Movies</string>
-    <string name="tab_xtream_series">Series</string>
-    <string name="tab_stream_info">Info</string>
-    <string name="tab_stream_seasons">Seasons</string>
-    <string name="tab_stream_episodes">Episodes</string>
+<!--    Live Streams — tab string names live in :common-resources -->
 
 </resources>

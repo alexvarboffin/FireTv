@@ -294,8 +294,10 @@ fun PlaylistManageScreenBody(
             ) {
                 ManageButtonLabel(
                     icon = Icons.Filled.Storage,
-                    text = stringResource(R.string.local_storage) +
-                        if (useLocalFile) ": ON" else ": OFF",
+                    text = stringResource(R.string.local_storage) + ": " +
+                        stringResource(
+                            if (useLocalFile) R.string.label_on else R.string.label_off,
+                        ),
                 )
             }
         }

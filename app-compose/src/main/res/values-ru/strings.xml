@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="compose_phone_title">FireTv Phone</string>
+    <string name="compose_tv_title">FireTv TV</string>
+    <string name="app_name_legacy">Ultimate.TV</string>
+    <string name="onboarding_title">Добро пожаловать в Ultimate.TV</string>
+    <string name="onboarding_body">Импортируйте M3U-плейлисты, листайте каналы и смотрите ТВ.</string>
+    <string name="get_started">Начать</string>
+
+    <string name="menu_search">Поиск</string>
+    <string name="menu_home">Каналы</string>
+    <string name="menu_profile">Избранное</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_about">О программе</string>
+    <string name="menu_rate">Оценить приложение</string>
+    <string name="menu_share">Поделиться приложением</string>
+    <string name="menu_feedback">Отзывы и ошибки</string>
+    <string name="menu_tutorial">Руководство и FAQ</string>
+    <string name="menu_privacy">Политика конфиденциальности</string>
+
+    <string-array name="layout_options">
+        <item>Сетка (3 колонки)</item>
+        <item>Список (1 колонка)</item>
+    </string-array>
+
+    <string-array name="layout_options_tv">
+        <item>Сетка (4 колонки)</item>
+        <item>Список (1 колонка)</item>
+    </string-array>
+</resources>

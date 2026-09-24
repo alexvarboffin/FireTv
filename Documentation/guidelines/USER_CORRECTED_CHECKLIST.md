@@ -85,6 +85,22 @@
 
 ---
 
+## H. Строки / i18n
+
+- [ ] H1 — Общие UI-строки (табы плейлиста/Xtream/serial, playlist manage, settings cleanup, Cast CD, On/Off…) в **`:common-resources`** (`values` + `values-ru`), зависят `:app` и `:app-compose`
+  Verify: `common-resources/src/main/res/values{,-ru}/strings.xml`; нет хардкода табов в Kotlin; `tab_titles_xtream*` arrays в common
+
+- [ ] H2 — Compose-only / TV-only строки остаются в `app-compose` (`compose_*_title`, `menu_*`, `layout_options_tv`, onboarding…)
+  Verify: `app-compose/src/main/res/values{,-ru}/strings.xml` — только form-factor; legacy overrides (`channels_format` полный текст) могут жить в `:app`
+
+- [ ] H3 — Нет программного EN/RU в UI (`": ON"`, `"Cast"`, tab titles) — только `stringResource` / `stringArrayResource`
+  Verify: grep UI на литералы; PlaylistManage local storage; CastMediaRouteButton
+
+- [ ] H4 — Phone Tutorial&FAQ: табы **по центру/fill** (как legacy TabLayout fixed+fill); иконки табов **24dp**; copy у sample playlists **32dp** (не intrinsic 42 + IconButton 48)
+  Verify: `ui/mobile/info/TutorialScreen.kt` TutorialIconTabRow weight(1f)+size(24); `TutorialFaqContent` FaqPlaylistRow size(32)
+
+---
+
 ## E. TV Player
 
 - [ ] E1 — Пока spinner / play скрыт: фокус на Favorite/Close, **не** на отсутствующий `frPlay` (Right не в пустоту)

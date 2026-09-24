@@ -48,7 +48,8 @@
     <string name="parse_clipboard">Parse Clipboard</string>
     <string name="xtream_browser">Xtream browser</string>
     <string name="playlist_updated_short">upd %1$s</string>
-    <string name="channels_count_short">%1$d ch</string>
+    <!-- Compose badge; legacy :app overrides with "Channels: %1$d" in its values/ -->
+    <string name="channels_format">%1$d ch</string>
     <string name="refresh_channels_stats">%1$d channels (was %2$d)</string>
     <string name="added_on">Added on: %1$s</string>
     <string name="updated_on">Updated on: %1$s</string>

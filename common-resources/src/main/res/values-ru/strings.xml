@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_playlists">Плейлист</string>
+    <string name="tab_channel">Канал</string>
+    <string name="tab_category">Категория</string>
+    <string name="tab_favorites">Избранное</string>
+
+    <string name="tab_xtream_live">Эфир</string>
+    <string name="tab_xtream_vod">Фильмы</string>
+    <string name="tab_xtream_series">Сериалы</string>
+
+    <string name="tab_stream_info">Инфо</string>
+    <string name="tab_stream_seasons">Сезоны</string>
+    <string name="tab_stream_episodes">Эпизоды</string>
+
+    <string name="tab_tutorial">Руководство</string>
+    <string name="tab_faqs">Часто задаваемые вопросы</string>
+
+    <string name="no_item">Ничего не найдено</string>
+    <string name="geo_blocked">Гео-блок</string>
+    <string name="search_hint">Какие каналы вы хотите?</string>
+    <string name="play">Смотреть</string>
+    <string name="loading">ЗАГРУЗКА</string>
+    <string name="msg_please_wait">Пожалуйста, подождите…</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="confirm_delete_playlist">Удалить плейлист «%1$s»?</string>
+    <string name="refresh">Обновить</string>
+    <string name="cancel">Отмена</string>
+    <string name="ok">OK</string>
+    <string name="subscribe">Подписаться</string>
+    <string name="label_on">Вкл</string>
+    <string name="label_off">Выкл</string>
+    <string name="cast_content_description">Трансляция</string>
+
+    <string name="playlist_add">Добавить плейлист</string>
+    <string name="playlist_title_hint">Название плейлиста</string>
+    <string name="playlist_url_hint">M3U URL</string>
+    <string name="playlist_management">Управление плейлистами</string>
+    <string name="playlist_name">Название плейлиста</string>
+    <string name="playlist_link">Ссылка на плейлист</string>
+    <string name="playlist_select_file">Выбрать файл плейлиста</string>
+    <string name="local_storage">Локальное хранилище</string>
+    <string name="parse_clipboard">Распознать буфер обмена</string>
+    <string name="xtream_browser">Xtream браузер</string>
+    <string name="playlist_updated_short">обн %1$s</string>
+    <string name="channels_format">%1$d кан.</string>
+    <string name="refresh_channels_stats">%1$d каналов (было %2$d)</string>
+    <string name="added_on">Добавлен: %1$s</string>
+    <string name="updated_on">Обновлен: %1$s</string>
+
+    <string name="username">Имя пользователя</string>
+    <string name="username_hint">Введите имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="password_hint">Введите пароль</string>
+    <string name="cannotfind">Не можете найти аккаунт?</string>
+    <string name="error_playlist_name">Пожалуйста, введите название плейлиста</string>
+    <string name="error_playlist_link">Пожалуйста, введите ссылку на плейлист</string>
+    <string name="error_playlist_username">Пожалуйста, введите имя пользователя</string>
+    <string name="error_playlist_password">Пожалуйста, введите пароль</string>
+    <string name="xtream_success_saved">Профиль успешно сохранён!</string>
+    <string name="download_successful">Плейлист успешно загружен</string>
+    <string name="error_download_failed">Не удалось загрузить плейлист</string>
+    <string name="no_lines_found">Строк не обнаружено</string>
+
+    <string name="version_label">Текущая версия</string>
+    <string name="display_channel">Показать каналы</string>
+    <string name="dialog_title_display_channels">Отображение списка каналов</string>
+    <string name="policy_privacy">Политика конфиденциальности</string>
+    <string name="whoops">Упс</string>
+    <string name="no_wallpaper_found">Каналы не найдены!\n Пожалуйста, попробуйте позже</string>
+    <string name="details_category_label">Категория : %1$s</string>
+    <string name="add_fav">Добавить в избранное</string>
+    <string name="remove_fav">Удалить из избранного</string>
+
+    <string name="settings_sort">Сортировка каналов</string>
+    <string name="settings_columns">Колонки сетки</string>
+    <string name="settings_open_mode">Открытие канала</string>
+    <string name="settings_night_mode">Ночной режим</string>
+    <string name="settings_night_mode_on">Вкл</string>
+    <string name="settings_night_mode_off">Выкл</string>
+    <string name="settings_cleanup_empty_categories">Очистка пустых категорий</string>
+    <string name="settings_cleanup_empty_categories_summary">После удаления плейлиста удалять категории, в которых не осталось каналов</string>
+    <string name="sort_by_name_asc">По имени (А–Я)</string>
+    <string name="sort_by_name_desc">По имени (Я–А)</string>
+    <string name="sort_by_id_asc">По ID (возр.)</string>
+    <string name="sort_by_id_desc">По ID (убыв.)</string>
+    <string name="option_details_activity">Перейти к деталям канала</string>
+    <string name="option_player_activity">Сразу воспроизвести</string>
+    <string name="media_player_title">Выберите медиаплеер</string>
+
+    <string name="how_to_add_playlist">Как добавить плейлист</string>
+    <string name="tutorial">Руководство</string>
+    <string name="step1">1. Найдите «Бесплатный популярный IPTV плейлист» в любом поисковике.</string>
+    <string name="step2">2. Скопируйте ссылку на плейлист «.m3u» или скачайте файл.</string>
+    <string name="step3">3. Вернитесь в приложение. Нажмите кнопку «Добавить плейлист», затем выберите «Импортировать URL плейлиста» и вставьте ссылку.</string>
+    <string name="search_button">Искать «Бесплатный популярный IPTV плейлист»</string>
+    <string name="frequentlyAskedQuestions">Часто задаваемые вопросы</string>
+    <string name="sample_playlist_url">Пример URL плейлиста</string>
+    <string name="playlist_uk">iptv-org | Великобритания</string>
+    <string name="playlist_country">iptv-org | Группировка по странам</string>
+    <string name="playlist_category">iptv-org | Группировка по категориям</string>
+    <string name="faq_question_1">Ищете плейлист? Вот наше предложение</string>
+    <string name="faq_question_3">Почему приложение не может воспроизвести мой плейлист или канал?</string>
+    <string name="playlist_url_copied">URL плейлиста скопирован в буфер обмена</string>
+    <string name="clipboard_unavailable">Не удалось скопировать в буфер обмена</string>
+    <string name="splash_subtitle">IPTV плеер</string>
+
+    <string name="name_label">Название:</string>
+    <string name="cast_label">В ролях:</string>
+    <string name="category_id_label">Категория:</string>
+    <string name="director_label">Режиссёр:</string>
+    <string name="episode_run_time_label">Длительность эпизода:</string>
+    <string name="genre_label">Жанр:</string>
+    <string name="last_modified_label">Изменено:</string>
+    <string name="plot_label">Сюжет:</string>
+    <string name="rating_label">Рейтинг:</string>
+    <string name="rating_5based_label">Рейтинг (из 5):</string>
+    <string name="release_date_label">Дата выхода:</string>
+    <string name="youtube_trailer_label">Трейлер YouTube:</string>
+    <string name="season_number_format">Сезон %1$d</string>
+    <string name="episode_number_format">Эпизод %1$d</string>
+    <string name="episode_count_format">%1$d эп.</string>
+</resources>

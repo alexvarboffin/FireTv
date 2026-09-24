@@ -66,6 +66,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":common-resources"))
     implementation(project(":core:presentation"))
     implementation(project(":core:domain"))
     implementation(project(":core:data-bridge"))
