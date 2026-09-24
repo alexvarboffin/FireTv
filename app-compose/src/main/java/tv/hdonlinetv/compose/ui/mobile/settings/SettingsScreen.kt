@@ -9,6 +9,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.MenuBook
+import androidx.compose.material.icons.outlined.OpenInNew
+import androidx.compose.material.icons.outlined.PrivacyTip
+import androidx.compose.material.icons.outlined.SortByAlpha
+import androidx.compose.material.icons.outlined.VideoSettings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -260,53 +269,54 @@ fun SettingsScreenBody(
                 .background(colorResource(R.color.bgMain)),
         ) {
             LegacySettingsRow(
-                iconRes = R.drawable.ic_info,
+                icon = Icons.Outlined.Info,
                 title = stringResource(R.string.version_label),
                 trailing = versionName,
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_tv_icon,
+                icon = Icons.Outlined.GridView,
                 title = stringResource(R.string.display_channel),
                 subtitle = columnsLabel,
                 modifier = Modifier.clickable(onClick = onColumnsClick),
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_tv_icon,
+                icon = Icons.Outlined.SortByAlpha,
                 title = stringResource(R.string.settings_sort),
                 subtitle = sortLabel,
                 modifier = Modifier.clickable(onClick = onSortClick),
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_actions_settings,
+                icon = Icons.Outlined.OpenInNew,
                 title = stringResource(R.string.settings_open_mode),
                 subtitle = modeLabel,
                 modifier = Modifier.clickable(onClick = onModeClick),
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_nightmode,
+                icon = Icons.Outlined.DarkMode,
                 title = stringResource(R.string.settings_night_mode),
                 subtitle = nightModeLabel,
                 modifier = Modifier.clickable(onClick = onNightModeClick),
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_tv_icon,
+                icon = Icons.Outlined.DeleteSweep,
                 title = stringResource(R.string.settings_cleanup_empty_categories),
-                subtitle = cleanupEmptyCategoriesLabel,
+                subtitle = stringResource(R.string.settings_cleanup_empty_categories_summary),
+                trailing = cleanupEmptyCategoriesLabel,
                 modifier = Modifier.clickable(onClick = onCleanupEmptyCategoriesClick),
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_tv_icon,
+                icon = Icons.Outlined.VideoSettings,
                 title = stringResource(R.string.media_player_title),
                 subtitle = mediaPlayerLabel,
                 modifier = Modifier.clickable(onClick = onMediaPlayerClick),
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_info,
+                icon = Icons.Outlined.MenuBook,
                 title = stringResource(R.string.menu_tutorial),
                 modifier = Modifier.clickable(onClick = onOpenTutorial),
             )
             LegacySettingsRow(
-                iconRes = R.drawable.ic_privacy,
+                icon = Icons.Outlined.PrivacyTip,
                 title = stringResource(R.string.menu_privacy),
                 modifier = Modifier.clickable(onClick = onOpenPrivacy),
             )

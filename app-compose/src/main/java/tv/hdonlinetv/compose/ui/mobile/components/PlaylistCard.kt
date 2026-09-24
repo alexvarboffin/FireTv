@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -127,7 +128,7 @@ fun PlaylistCard(
 
 @Composable
 fun LegacySettingsRow(
-    iconRes: Int,
+    icon: ImageVector,
     title: String,
     subtitle: String? = null,
     trailing: String? = null,
@@ -141,7 +142,7 @@ fun LegacySettingsRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(iconRes),
+            imageVector = icon,
             contentDescription = null,
             modifier = Modifier
                 .size(35.dp)

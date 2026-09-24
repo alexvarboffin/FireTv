@@ -123,8 +123,8 @@
     <string name="settings_night_mode">Night Mode</string>
     <string name="settings_night_mode_on">On</string>
     <string name="settings_night_mode_off">Off</string>
-    <string name="settings_cleanup_empty_categories">Remove empty categories</string>
-    <string name="settings_cleanup_empty_categories_summary">When deleting a playlist, also delete categories that no longer have channels</string>
+    <string name="settings_cleanup_empty_categories">Empty categories cleanup</string>
+    <string name="settings_cleanup_empty_categories_summary">After a playlist is deleted, remove categories that no longer contain any channels</string>
     <string name="media_player_title">Select Media Player</string>
     <string name="media_player_JZMediaSystem" translatable="false">JZMediaSystem (Default)</string>
     <string name="media_player_jz_aliyun" translatable="false">JZMediaAliyun</string>

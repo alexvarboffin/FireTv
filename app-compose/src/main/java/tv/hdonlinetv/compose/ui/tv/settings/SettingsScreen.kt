@@ -5,12 +5,19 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.VideoSettings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,10 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -32,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
@@ -183,24 +193,28 @@ fun SettingsScreenBody(
         }
         Text(text = stringResource(R.string.menu_settings))
         SettingsRow(
+            icon = Icons.Outlined.GridView,
             title = stringResource(R.string.display_channel),
             subtitle = columnsLabel,
             onClick = onColumnsClick,
             modifier = leftToDrawer,
         )
         SettingsRow(
+            icon = Icons.Outlined.DarkMode,
             title = stringResource(R.string.settings_night_mode),
             subtitle = nightModeLabel,
             onClick = onNightModeClick,
             modifier = leftToDrawer,
         )
         SettingsRow(
+            icon = Icons.Outlined.DeleteSweep,
             title = stringResource(R.string.settings_cleanup_empty_categories),
-            subtitle = cleanupEmptyCategoriesLabel,
+            subtitle = "${cleanupEmptyCategoriesLabel} — ${stringResource(R.string.settings_cleanup_empty_categories_summary)}",
             onClick = onCleanupEmptyCategoriesClick,
             modifier = leftToDrawer,
         )
         SettingsRow(
+            icon = Icons.Outlined.VideoSettings,
             title = stringResource(R.string.media_player_title),
             subtitle = mediaPlayerLabel,
             onClick = onMediaPlayerClick,
@@ -212,6 +226,7 @@ fun SettingsScreenBody(
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 private fun SettingsRow(
+    icon: ImageVector,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
@@ -228,12 +243,24 @@ private fun SettingsRow(
             focusedContentColor = colors.onPrimary,
         ),
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(text = title)
-            Text(
-                text = subtitle,
-                modifier = Modifier.padding(top = 4.dp),
+        Row(
+            modifier = Modifier.padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(28.dp)
+                    .padding(end = 16.dp),
             )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = title)
+                Text(
+                    text = subtitle,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
         }
     }
 }
