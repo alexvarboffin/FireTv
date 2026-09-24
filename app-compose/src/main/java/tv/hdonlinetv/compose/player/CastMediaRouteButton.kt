@@ -1,8 +1,9 @@
 package tv.hdonlinetv.compose.player
 
-import android.content.Context
-import android.view.ContextThemeWrapper
-import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cast
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,13 +12,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.mediarouter.app.MediaRouteButton
-import com.google.android.gms.cast.framework.CastButtonFactory
+import androidx.compose.ui.res.colorResource
 import com.google.android.gms.cast.framework.CastContext
 import tv.hdonlinetv.compose.R
 
+/**
+ * Cinema pattern: Compose icon fakes a click on the activity-hosted [CustomMediaRouteButton]
+ * (see [MediaRouteButtonManager]) so the Cast dialog opens without embedding MediaRouteButton
+ * in the player chrome.
+ */
 @Composable
 fun CastMediaRouteButton(modifier: Modifier = Modifier) {
     val context = LocalContext.current
@@ -34,15 +37,14 @@ fun CastMediaRouteButton(modifier: Modifier = Modifier) {
 
     if (!castReady) return
 
-    AndroidView(
-        modifier = modifier.size(48.dp),
-        factory = { ctx -> createMediaRouteButton(ctx) },
-    )
-}
-
-private fun createMediaRouteButton(context: Context): MediaRouteButton {
-    val themedContext = ContextThemeWrapper(context, R.style.CastMediaRouteButtonTheme)
-    return MediaRouteButton(themedContext).apply {
-        CastButtonFactory.setUpMediaRouteButton(context.applicationContext, this)
+    IconButton(
+        onClick = { MediaRouteButtonManager.current?.performClick() },
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Cast,
+            contentDescription = "Cast",
+            tint = colorResource(R.color.white),
+        )
     }
 }

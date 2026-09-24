@@ -80,8 +80,8 @@
   Verify: phone `LegacySettingsRow(icon = Icons.Outlined.*)`; TV `SettingsRow(icon = …)`
   Mapping: Version→Info, Display→GridView, Sort→SortByAlpha, Open→OpenInNew, Night→DarkMode, Cleanup→DeleteSweep, Player→VideoSettings, Tutorial→MenuBook, Privacy→PrivacyTip
 
-- [ ] D2 — Phone `MainActivity` = **AppCompatActivity** + **Theme.AppCompat** (не platform Material theme): Cast `MediaRouteButton` требует FragmentActivity
-  Verify: `phone/MainActivity.kt` extends AppCompatActivity; manifest `android:theme="@style/Theme.ComposePhone"`; Cast click must not crash
+- [ ] D2 — Phone Cast = Cinema livehack: `FragmentActivity` + `Theme.AppCompat` + hidden `CustomMediaRouteButton` + Compose `performClick` (не `ComponentActivity`, не platform Material theme)
+  Verify: `phone/MainActivity.kt` FragmentActivity + host AndroidView; `MediaRouteButtonManager`; `CastMediaRouteButton` Icon + performClick; theme `Theme.ComposePhone`
 
 ---
 
