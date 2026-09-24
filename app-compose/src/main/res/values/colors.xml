@@ -8,6 +8,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bgMain">#FFFFFF</color>
     <color name="cardBack">#FFFFFF</color>
+    <!-- Fill behind channel cover/logo only (transparent PNGs), not the whole card. -->
+    <color name="channel_icon_placeholder">#E0E0E0</color>
     <color name="categoryOverlay">#33000000</color>
     <color name="ic_launcher_background">#FF0044</color>
     <color name="tabText">#353940</color>

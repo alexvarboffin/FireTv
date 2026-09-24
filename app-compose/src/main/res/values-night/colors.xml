@@ -8,6 +8,7 @@
     <color name="white">#000000</color>
     <color name="bgMain">#101D24</color>
     <color name="cardBack">#2E373C</color>
+    <color name="channel_icon_placeholder">#43474E</color>
     <color name="categoryOverlay">#33000000</color>
     <color name="ic_launcher_background">#FF0044</color>
     <color name="tabText">#353940</color>
