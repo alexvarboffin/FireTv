@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import tv.hdonlinetv.compose.core.domain.model.PlaylistRefreshResult
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
 import tv.hdonlinetv.compose.core.domain.repository.PlaylistRepository
 import tv.hdonlinetv.compose.core.presentation.error.UiError
@@ -16,6 +17,8 @@ import tv.hdonlinetv.compose.core.presentation.error.UiError
 data class PlaylistListUiState(
     val playlists: List<PlaylistUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val refreshResult: PlaylistRefreshResult? = null,
     val error: UiError? = null,
 )
 
@@ -52,13 +55,23 @@ class PlaylistViewModel(
 
     fun refresh(playlist: PlaylistUi) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isRefreshing = true, refreshResult = null) }
             try {
-                repository.refreshFromUrl(playlist)
+                val result = repository.refreshFromUrl(playlist)
+                _uiState.update { it.copy(isRefreshing = false, refreshResult = result) }
             } catch (_: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = UiError.Unknown) }
+                _uiState.update {
+                    it.copy(
+                        isRefreshing = false,
+                        refreshResult = PlaylistRefreshResult.Failed,
+                    )
+                }
             }
         }
+    }
+
+    fun clearRefreshResult() {
+        _uiState.update { it.copy(refreshResult = null) }
     }
 }
 

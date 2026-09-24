@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,6 +45,9 @@ import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.ChannelGridBody
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
+import tv.hdonlinetv.compose.ui.tv.notifications.LocalTvNotificationManager
+import tv.hdonlinetv.compose.ui.tv.notifications.NotificationType
+import tv.hdonlinetv.compose.util.PlaylistRefreshFeedback
 
 @Composable
 fun PlaylistChannelsScreen() {
@@ -53,6 +58,8 @@ fun PlaylistChannelsScreen() {
     val channelRepository = LocalChannelRepository.current
     val playlistRepository = LocalPlaylistRepository.current
     val settingsRepository = LocalSettingsRepository.current
+    val notifications = LocalTvNotificationManager.current
+    val context = LocalContext.current
     val viewModel: PlaylistChannelsViewModel = viewModel(
         factory = PlaylistChannelsViewModelFactory(
             channelRepository,
@@ -64,6 +71,21 @@ fun PlaylistChannelsScreen() {
     )
     val state by viewModel.uiState.collectAsState()
     val settings = settingsRepository.getSettings()
+
+    LaunchedEffect(state.refreshResult) {
+        val result = state.refreshResult ?: return@LaunchedEffect
+        notifications.show(
+            title = context.getString(R.string.refresh),
+            message = PlaylistRefreshFeedback.message(context, result),
+            type = if (PlaylistRefreshFeedback.isSuccess(result)) {
+                NotificationType.SUCCESS
+            } else {
+                NotificationType.ERROR
+            },
+        )
+        viewModel.clearRefreshResult()
+    }
+
     PlaylistChannelsScreenBody(
         title = state.title,
         channels = state.channels,
@@ -84,7 +106,7 @@ fun PlaylistChannelsScreen() {
             )
         },
     )
-    TvLoadingOverlay(visible = state.isLoading)
+    TvLoadingOverlay(visible = state.isLoading || state.isRefreshing)
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)

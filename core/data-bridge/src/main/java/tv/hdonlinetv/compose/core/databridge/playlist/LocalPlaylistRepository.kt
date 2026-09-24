@@ -14,6 +14,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import tv.hdonlinetv.compose.core.domain.model.PlaylistType
+import tv.hdonlinetv.compose.core.domain.model.PlaylistRefreshResult
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
 import tv.hdonlinetv.compose.core.domain.repository.PlaylistRepository
 import java.io.BufferedReader
@@ -48,19 +49,26 @@ class LocalPlaylistRepository(
         database.deletePlaylistAndRelatedChannels(playlist)
     }
 
-    override suspend fun refreshFromUrl(playlist: PlaylistUi): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun refreshFromUrl(playlist: PlaylistUi): PlaylistRefreshResult = withContext(Dispatchers.IO) {
         try {
-            val channels = downloadM3u(playlist.fileName) ?: return@withContext false
-            if (channels.isEmpty()) return@withContext false
-            val data = PlaylistMapper.toData(playlist)
-            val deleted = database.deletePlaylistAndRelatedChannels(data)
-            if (deleted <= 0) return@withContext false
-            val refreshed = PlaylistMapper.newCloudPlaylist(playlist.title, playlist.fileName)
+            val channels = downloadM3u(playlist.fileName)
+                ?: return@withContext PlaylistRefreshResult.Failed
+            if (channels.isEmpty()) {
+                return@withContext PlaylistRefreshResult.Empty
+            }
+            val previousCount = playlist.count
+            // Keep playlist row (same _id) so UI / navigation are not wiped mid-refresh.
+            database.clearPlaylistChannelLinks(playlist.id)
+            val refreshed = PlaylistMapper.toData(playlist)
             refreshed.updateDate = System.currentTimeMillis()
+            refreshed.count = channels.size
             database.addChannelAndPlaylist(channels, refreshed)
-            true
+            PlaylistRefreshResult.Success(
+                channelCount = channels.size,
+                previousCount = previousCount,
+            )
         } catch (_: Exception) {
-            false
+            PlaylistRefreshResult.Failed
         }
     }
 

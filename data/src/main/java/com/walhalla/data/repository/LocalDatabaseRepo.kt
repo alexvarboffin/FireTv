@@ -399,6 +399,17 @@ class LocalDatabaseRepo private constructor(private val context: Context) {
         return 0
     }
 
+    /** Clears channel links for a playlist without deleting the playlist row (keeps same _id). */
+    fun clearPlaylistChannelLinks(playlistId: Long) {
+        val playlistDao = db.playlistDao()
+        try {
+            playlistDao.deletePlaylistChannelJoinByPlaylistId(playlistId)
+            playlistDao.deleteChannelsNotInAnyPlaylist()
+        } catch (e: Exception) {
+            handleException(e)
+        }
+    }
+
     //    public int deletePlaylist(Playlist playlist) {
     //        long playListId = playlist._id;
     //        PlaylistDao playlistDao = db.playlistDao();

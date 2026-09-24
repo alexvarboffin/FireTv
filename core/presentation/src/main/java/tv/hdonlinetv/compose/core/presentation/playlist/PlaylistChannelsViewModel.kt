@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
+import tv.hdonlinetv.compose.core.domain.model.PlaylistRefreshResult
 import tv.hdonlinetv.compose.core.domain.repository.ChannelRepository
 import tv.hdonlinetv.compose.core.domain.repository.PlaylistRepository
 import tv.hdonlinetv.compose.core.domain.repository.SettingsRepository
@@ -17,6 +18,8 @@ import tv.hdonlinetv.compose.core.presentation.error.UiError
 data class PlaylistChannelsUiState(
     val channels: List<ChannelUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val refreshResult: PlaylistRefreshResult? = null,
     val error: UiError? = null,
     val title: String = "",
 )
@@ -53,17 +56,51 @@ class PlaylistChannelsViewModel(
 
     fun refresh() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(isRefreshing = true, refreshResult = null, error = null) }
             try {
                 val playlist = playlistRepository.getPlaylistById(playlistId)
-                if (playlist != null) {
-                    playlistRepository.refreshFromUrl(playlist)
+                if (playlist == null) {
+                    _uiState.update {
+                        it.copy(
+                            isRefreshing = false,
+                            refreshResult = PlaylistRefreshResult.Failed,
+                        )
+                    }
+                    return@launch
                 }
-                load()
+                val result = playlistRepository.refreshFromUrl(playlist)
+                when (result) {
+                    is PlaylistRefreshResult.Success -> {
+                        val sort = settingsRepository.getSettings().sortOption
+                        val channels = channelRepository.getChannelsInPlaylist(playlistId, sort)
+                        _uiState.update {
+                            it.copy(
+                                isRefreshing = false,
+                                channels = channels,
+                                refreshResult = result,
+                            )
+                        }
+                    }
+                    else -> {
+                        // Keep current channels — empty/failed download must not wipe UI.
+                        _uiState.update {
+                            it.copy(isRefreshing = false, refreshResult = result)
+                        }
+                    }
+                }
             } catch (_: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = UiError.Unknown) }
+                _uiState.update {
+                    it.copy(
+                        isRefreshing = false,
+                        refreshResult = PlaylistRefreshResult.Failed,
+                    )
+                }
             }
         }
+    }
+
+    fun clearRefreshResult() {
+        _uiState.update { it.copy(refreshResult = null) }
     }
 
     fun delete(onDeleted: () -> Unit) {

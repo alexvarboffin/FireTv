@@ -36,6 +36,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,14 +56,17 @@ import tv.hdonlinetv.compose.core.domain.model.PlaylistType
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModelFactory
-import tv.hdonlinetv.compose.util.PlaylistTypeIcons
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
-import tv.hdonlinetv.compose.util.PlaylistMetaFormat
-import java.util.Locale
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
+import tv.hdonlinetv.compose.ui.tv.notifications.LocalTvNotificationManager
+import tv.hdonlinetv.compose.ui.tv.notifications.NotificationType
+import tv.hdonlinetv.compose.util.PlaylistMetaFormat
+import tv.hdonlinetv.compose.util.PlaylistRefreshFeedback
+import tv.hdonlinetv.compose.util.PlaylistTypeIcons
+import java.util.Locale
 
 @Composable
 fun PlaylistTabScreen() {
@@ -70,8 +74,24 @@ fun PlaylistTabScreen() {
     val viewModel: PlaylistViewModel = viewModel(factory = PlaylistViewModelFactory(repository))
     val state by viewModel.uiState.collectAsState()
     val navController = LocalTvNavController.current
+    val notifications = LocalTvNotificationManager.current
+    val context = LocalContext.current
     var actionsFor by remember { mutableStateOf<PlaylistUi?>(null) }
     var pendingDelete by remember { mutableStateOf<PlaylistUi?>(null) }
+
+    LaunchedEffect(state.refreshResult) {
+        val result = state.refreshResult ?: return@LaunchedEffect
+        notifications.show(
+            title = context.getString(R.string.refresh),
+            message = PlaylistRefreshFeedback.message(context, result),
+            type = if (PlaylistRefreshFeedback.isSuccess(result)) {
+                NotificationType.SUCCESS
+            } else {
+                NotificationType.ERROR
+            },
+        )
+        viewModel.clearRefreshResult()
+    }
 
     PlaylistTabScreenBody(
         playlists = state.playlists,
@@ -112,7 +132,9 @@ fun PlaylistTabScreen() {
         )
     }
 
-    TvLoadingOverlay(visible = state.isLoading && state.playlists.isNotEmpty())
+    TvLoadingOverlay(
+        visible = state.isRefreshing || (state.isLoading && state.playlists.isNotEmpty()),
+    )
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)

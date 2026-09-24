@@ -1,5 +1,6 @@
 package tv.hdonlinetv.compose.ui.mobile.playlist
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -32,6 +35,7 @@ import tv.hdonlinetv.compose.phone.LocalPhoneNavController
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.ui.mobile.components.LegacyEmptyState
 import tv.hdonlinetv.compose.ui.mobile.components.PlaylistCard
+import tv.hdonlinetv.compose.util.PlaylistRefreshFeedback
 
 @Composable
 fun PlaylistTabScreen() {
@@ -39,9 +43,22 @@ fun PlaylistTabScreen() {
     val viewModel: PlaylistViewModel = viewModel(factory = PlaylistViewModelFactory(repository))
     val state by viewModel.uiState.collectAsState()
     val navController = LocalPhoneNavController.current
+    val context = LocalContext.current
+
+    LaunchedEffect(state.refreshResult) {
+        val result = state.refreshResult ?: return@LaunchedEffect
+        Toast.makeText(
+            context,
+            PlaylistRefreshFeedback.message(context, result),
+            Toast.LENGTH_SHORT,
+        ).show()
+        viewModel.clearRefreshResult()
+    }
+
     PlaylistTabScreenBody(
         playlists = state.playlists,
         isLoading = state.isLoading,
+        isRefreshing = state.isRefreshing,
         onPlaylistClick = { playlist ->
             if (playlist.type == PlaylistType.XTREAM_URL) {
                 navController.navigate(Routes.XtreamBrowser.build(playlist.id))
@@ -58,6 +75,7 @@ fun PlaylistTabScreen() {
 fun PlaylistTabScreenBody(
     playlists: List<PlaylistUi>,
     isLoading: Boolean,
+    isRefreshing: Boolean = false,
     onPlaylistClick: (PlaylistUi) -> Unit,
     onDelete: (Long) -> Unit,
     onRefresh: (PlaylistUi) -> Unit,
@@ -70,7 +88,7 @@ fun PlaylistTabScreenBody(
             .background(colorResource(R.color.bgMain)),
     ) {
         when {
-            isLoading -> {
+            isLoading && playlists.isEmpty() -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
             playlists.isEmpty() -> {
@@ -96,6 +114,9 @@ fun PlaylistTabScreenBody(
                     }
                 }
             }
+        }
+        if (isRefreshing) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
 
