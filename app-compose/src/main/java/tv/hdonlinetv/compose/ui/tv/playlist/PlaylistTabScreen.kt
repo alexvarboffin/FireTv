@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +36,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -53,6 +55,7 @@ import tv.hdonlinetv.compose.core.domain.model.PlaylistType
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModelFactory
+import tv.hdonlinetv.compose.util.PlaylistTypeIcons
 import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
@@ -222,34 +225,51 @@ private fun PlaylistCardTv(
                 }
             },
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                text = playlist.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painter = painterResource(PlaylistTypeIcons.iconRes(playlist.type)),
+                contentDescription = null,
+                modifier = Modifier.size(36.dp),
+                tint = MaterialTheme.colorScheme.onSurface,
             )
-            val channelsFmt = stringResource(R.string.channels_format)
-            val updatedFmt = stringResource(R.string.playlist_updated_short)
-            val meta = remember(playlist, channelsFmt, updatedFmt) {
-                PlaylistMetaFormat.buildMeta(
-                    playlist = playlist,
-                    channelsLabel = { count ->
-                        String.format(Locale.getDefault(), channelsFmt, count)
-                    },
-                    updatedLabel = { date ->
-                        String.format(Locale.getDefault(), updatedFmt, date)
-                    },
-                )
-            }
-            if (meta.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp),
+            ) {
                 Text(
-                    text = meta,
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+                    text = playlist.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                val channelsFmt = stringResource(R.string.channels_format)
+                val updatedFmt = stringResource(R.string.playlist_updated_short)
+                val meta = remember(playlist, channelsFmt, updatedFmt) {
+                    PlaylistMetaFormat.buildMeta(
+                        playlist = playlist,
+                        channelsLabel = { count ->
+                            String.format(Locale.getDefault(), channelsFmt, count)
+                        },
+                        updatedLabel = { date ->
+                            String.format(Locale.getDefault(), updatedFmt, date)
+                        },
+                    )
+                }
+                if (meta.isNotEmpty()) {
+                    Text(
+                        text = meta,
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }

@@ -25,9 +25,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tv.hdonlinetv.compose.R
-import tv.hdonlinetv.compose.core.domain.model.PlaylistType
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
 import tv.hdonlinetv.compose.util.PlaylistMetaFormat
+import tv.hdonlinetv.compose.util.PlaylistTypeIcons
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,13 +39,7 @@ fun PlaylistCard(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val iconRes = when (playlist.type) {
-        PlaylistType.M3U_CLOUD -> R.drawable.ic_cloud
-        PlaylistType.M3U_LOCAL -> R.drawable.ic_local
-        PlaylistType.M3U_BUFFER -> R.drawable.ic_buffer
-        PlaylistType.XTREAM_URL -> R.drawable.ic_xtream
-        else -> R.drawable.ic_playlist
-    }
+    val iconRes = PlaylistTypeIcons.iconRes(playlist.type)
     val channelsFmt = stringResource(R.string.channels_format)
     val updatedFmt = stringResource(R.string.playlist_updated_short)
     val meta = remember(playlist, channelsFmt, updatedFmt) {
