@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Phone MainActivity is AppCompatActivity (Cast MediaRoute needs FragmentActivity). -->
+    <style name="Theme.ComposePhone" parent="Theme.AppCompat.DayNight.NoActionBar" />
+
     <!-- MediaRouteButton crashes if windowBackground/colorPrimary is translucent (#0). -->
     <style name="CastMediaRouteButtonTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/playerToolbar</item>
