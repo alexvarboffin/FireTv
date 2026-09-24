@@ -4,18 +4,30 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
@@ -86,6 +98,7 @@ fun PlaylistChannelsScreenBody(
     onDelete: () -> Unit,
     onChannelClick: (ChannelUi) -> Unit,
 ) {
+    var showDeleteConfirm by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
     Column(
         modifier = Modifier
@@ -107,10 +120,16 @@ fun PlaylistChannelsScreenBody(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Button(onClick = onRefresh) {
-                Text(text = stringResource(R.string.refresh))
+                PlaylistActionLabel(
+                    icon = Icons.Filled.Refresh,
+                    text = stringResource(R.string.refresh),
+                )
             }
-            Button(onClick = onDelete) {
-                Text(text = stringResource(R.string.delete))
+            Button(onClick = { showDeleteConfirm = true }) {
+                PlaylistActionLabel(
+                    icon = Icons.Filled.Delete,
+                    text = stringResource(R.string.delete),
+                )
             }
         }
         ChannelGridBody(
@@ -119,4 +138,29 @@ fun PlaylistChannelsScreenBody(
             onChannelClick = onChannelClick,
         )
     }
+    if (showDeleteConfirm) {
+        TvConfirmDeletePlaylistDialog(
+            playlistTitle = title,
+            onConfirm = {
+                showDeleteConfirm = false
+                onDelete()
+            },
+            onDismiss = { showDeleteConfirm = false },
+        )
+    }
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun RowScope.PlaylistActionLabel(
+    icon: ImageVector,
+    text: String,
+) {
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        modifier = Modifier.size(22.dp),
+    )
+    Spacer(modifier = Modifier.width(8.dp))
+    Text(text = text)
 }

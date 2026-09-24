@@ -29,6 +29,8 @@
     <string name="playlist_url_hint">M3U URL</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="delete_playlist">Delete Playlist</string>
+    <string name="confirm_delete_playlist">Delete playlist \"%1$s\"?</string>
     <string name="refresh">Refresh</string>
     <string name="xtream_browser">Xtream browser</string>
     <string name="onboarding_title">Welcome to Ultimate.TV</string>

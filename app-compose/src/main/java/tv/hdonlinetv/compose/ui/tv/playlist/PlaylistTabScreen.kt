@@ -5,12 +5,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -37,6 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.Card
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import kotlinx.coroutines.delay
@@ -60,6 +68,7 @@ fun PlaylistTabScreen() {
     val state by viewModel.uiState.collectAsState()
     val navController = LocalTvNavController.current
     var actionsFor by remember { mutableStateOf<PlaylistUi?>(null) }
+    var pendingDelete by remember { mutableStateOf<PlaylistUi?>(null) }
 
     PlaylistTabScreenBody(
         playlists = state.playlists,
@@ -83,9 +92,20 @@ fun PlaylistTabScreen() {
             },
             onDelete = {
                 actionsFor = null
-                viewModel.delete(playlist.id)
+                pendingDelete = playlist
             },
             onDismiss = { actionsFor = null },
+        )
+    }
+
+    pendingDelete?.let { playlist ->
+        TvConfirmDeletePlaylistDialog(
+            playlistTitle = playlist.title,
+            onConfirm = {
+                pendingDelete = null
+                viewModel.delete(playlist.id)
+            },
+            onDismiss = { pendingDelete = null },
         )
     }
 
@@ -274,14 +294,20 @@ fun TvPlaylistActionsDialog(
                 enabled = actionsArmed,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = stringResource(R.string.refresh))
+                PlaylistDialogActionLabel(
+                    icon = Icons.Filled.Refresh,
+                    text = stringResource(R.string.refresh),
+                )
             }
             Button(
                 onClick = { if (actionsArmed) onDelete() },
                 enabled = actionsArmed,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(text = stringResource(R.string.delete))
+                PlaylistDialogActionLabel(
+                    icon = Icons.Filled.Delete,
+                    text = stringResource(R.string.delete),
+                )
             }
             Button(
                 onClick = onDismiss,
@@ -293,4 +319,74 @@ fun TvPlaylistActionsDialog(
             }
         }
     }
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+fun TvConfirmDeletePlaylistDialog(
+    playlistTitle: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    val cancelFocus = remember { FocusRequester() }
+    var actionsArmed by remember { mutableStateOf(false) }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false,
+        ),
+    ) {
+        LaunchedEffect(Unit) {
+            delay(320)
+            actionsArmed = true
+            cancelFocus.requestFocus()
+        }
+        Column(
+            modifier = Modifier
+                .width(480.dp)
+                .background(colors.surface)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(text = stringResource(R.string.delete_playlist))
+            Text(text = stringResource(R.string.confirm_delete_playlist, playlistTitle))
+            Button(
+                onClick = { if (actionsArmed) onConfirm() },
+                enabled = actionsArmed,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                PlaylistDialogActionLabel(
+                    icon = Icons.Filled.Delete,
+                    text = stringResource(R.string.delete),
+                )
+            }
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(cancelFocus),
+            ) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun RowScope.PlaylistDialogActionLabel(
+    icon: ImageVector,
+    text: String,
+) {
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        modifier = Modifier.size(22.dp),
+    )
+    Spacer(modifier = Modifier.width(8.dp))
+    Text(text = text)
 }
