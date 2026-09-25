@@ -37,6 +37,12 @@
 - [ ] A5 — Left из контента восстанавливает **исходный** пункт drawer (`focusRestorer` + `LocalTvDrawerFocusRequester`)
   Verify: drawer LazyColumn + leftmost `focusProperties { left = drawerGroupFocus }`
 
+- [ ] A8 — `XtreamBrowserScreen` — **не** переключатель типа в «Управлении». Это просмотр уже сохранённого Xtream: вкладка «Плейлист» → клик по `PlaylistType.XTREAM_URL`. M3U с того же места открывает `PlaylistChannels`. В «Управлении» кнопка ⇄ только меняет поля формы (URL vs сервер/логин/пароль)
+  Verify: `PlaylistTabScreen` `onPlaylistClick`; `Routes.XtreamBrowser`; TV `PlaylistManageScreen` `PlaylistManageType`
+
+- [ ] A9 — Drawer Search label = `menu_search` («Поиск» / Search), **не** `search_hint` («Какие каналы…»)
+  Verify: `MainShellScreen` drawer item; string `menu_search` в `app-compose` / common
+
 ---
 
 ## B. Списки, карточки, иконки
@@ -62,6 +68,9 @@
 - [ ] B6 — Категории: бейдж количества каналов (`N ch`), если count > 0
   Verify: `CategoryUi.count`, `CategoryCard` (tv + mobile), DAO counts
 
+- [ ] B8 — Карточка плейлиста: meta `N ch · дата добавления · upd дата обновления`; `upd` только если update ≠ import
+  Verify: TV `PlaylistCardTv` / phone `PlaylistCard`; Xtream без числа каналов в БД — дата без `N ch` допустима
+
 ---
 
 ## C. Плейлисты: delete / refresh / категории
@@ -83,6 +92,9 @@
 
 - [ ] C5 — Пункт настройки cleanup **информативен**: title + summary + On/Off (не одно слово On)
   Verify: strings + Settings rows phone/TV
+
+- [ ] C7 — Subscribe LOADING не срывается после валидации: `validateM3uUrl` / `validateXtream` сбрасывают `isSaving` **только при ошибке**, не при успехе
+  Verify: `PlaylistManageViewModel`; TV overlay / phone dialog держится до конца download/parse
 
 ---
 
@@ -154,6 +166,18 @@
 - [ ] I8 — Interstitial **не переносится**: в legacy он мёртв (unit id `"0"`, interval 0, `onAdLoaded` без `override`); включать только с боевым ID по решению пользователя
   Verify: в app-compose нет InterstitialAd
 
+- [ ] I11 — Play Console (не код): включить форм-фактор **TV** (иначе leanback в манифесте не даст TV-листинга); Data safety; раскатка internal → staged production; в AdMob → Privacy & messaging создать GDPR-сообщение (без него UMP = `Publisher misconfiguration`)
+  Verify: чеклист для загрузки, не для репозитория
+
+- [ ] I12 — Обновление с legacy не теряет данные: та же БД `db_app` (модуль `:data`), SharedPreferences `status_app` с теми же ключами; `applicationId` совпадает (I1)
+  Verify: `:data` DB name; prefs name/keys vs legacy
+
+- [ ] I13 — Универсальное 2-в-1: `LauncherActivity` → `phone/MainActivity` (material3) или `tv/MainActivity` (tv.material3); ViewModel/репозитории общие, не дублируются
+  Verify: `LauncherActivity`; нет копий VM в `ui/tv` vs `ui/mobile`
+
+- [ ] I14 — `:app-compose` minSdk **24** не меняет каталог `android-minSdk = 23` у `:app` и библиотек. Пользователи Android 6.0 остаются на legacy и не получат это обновление
+  Verify: `android-minSdkCompose` только в `app-compose/build.gradle.kts`
+
 ---
 
 ## E. TV Player
@@ -169,6 +193,27 @@
 
 - [ ] E4 — Overlay auto-hide: таймер сбрасывается на focus/click/D-pad
   Verify: `resetHideTimer` на focus/click
+
+- [ ] E5 — TV release: JZ XML-контролы скрыты (`suppressNativeChrome`); DEBUG оставляет оба слоя (Compose + JZ)
+  Verify: `JZVideoPlayerNew.suppressNativeChrome`; нет `gotoFullscreen()` на TV (DecorView уводит overlay под JZ)
+
+- [ ] E6 — Back в плеере сразу закрывает плеер (не «сначала показать chrome»)
+  Verify: `PlayerScreen` Back / `OnBackPressed`
+
+- [ ] E7 — Штора каналов и CH± уважают **browse scope** (Favorites / Playlist / Category / None), не всегда весь каталог
+  Verify: `PlayerBrowseScope`; `ARCHITECTURE/player-browse-scope.md`; Left/Menu открывает штору, клик по каналу **не** закрывает её
+
+- [ ] E8 — Кнопки chrome фиксированного размера: `TvPlayerIconButton` всегда `modifier.size(size)` (`size` default 48.dp, play/pause 64.dp)
+  Verify: `TvPlayerIconButton`; нет «blue focus flood»
+
+- [ ] E9 — На `STATE_ERROR` повтор = `clickRetryBtn()` (JZ «Click to try again»), не `startButton.performClick()` / `clickStart`
+  Verify: TV `PlayerScreen` error path
+
+- [ ] E10 — Фокус на центр (Play) **только когда chrome становится видимым**; `LaunchedEffect(..., playerRef)` не перехватывает Close/Settings при retry
+  Verify: `PlayerScreen.kt` chrome-visible focus
+
+- [ ] E11 — `Key.SystemHome` (KEYCODE_HOME = 3) обрабатывается рядом с `Key.MoveHome`. Нельзя удалять Home «заодно» и нельзя подменять его `MoveHome` (это разные коды)
+  Verify: `ui/tv/player/PlayerScreen.kt` / `PlayerChannelSheet.kt`
 
 ---
 
@@ -201,6 +246,22 @@
 
 - [ ] G2 — Не трогать shared/core «заодно» без предупреждения и списка правок
   Verify: процесс агента (rule); не код
+
+- [ ] G3 — Временные папки агента в `.gitignore`: `.tmp-*/`, `.tmp-smoke/`, `Documentation/reference/`. Mock Xtream и логи сборки не в индексе
+  Verify: `.gitignore`; `git ls-files .tmp-smoke .tmp-build`
+
+- [ ] G4 — Смысл кейкодов не менять без согласования (`Key.Home` ≠ `Key.MoveHome`). Deprecated `Key.Home` → `Key.SystemHome` (тот же код 3), не удаление обработчика
+  Verify: процесс + E11
+
+---
+
+## J. Xtream: как проверить
+
+- [ ] J1 — Живой провайдер: сервер + логин + пароль в «Управление» (тип Xtream) → «Подписаться» → вкладка «Плейлист» → клик по карточке. API: `player_api.php` (`get_live_streams` / `get_vod_streams` / `get_series` / `get_series_info`)
+  Verify: A8; поля title / URL / username / password
+
+- [ ] J2 — Legacy-тест `iptv.icsnleb.com:25461` / `:25463` (логин/пароль `12`) **мёртв**: порты API timeout; сайт `:80` ещё отвечает. Для smoke — локальный mock `.tmp-smoke/xtream_mock/server.py` (`127.0.0.1:8765`, `test`/`test`) + `adb reverse tcp:8765 tcp:8765`
+  Verify: mock не в git; на эмуляторе Live/VOD/Series открываются (A7, B7)
 
 ---
 
