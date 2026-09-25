@@ -1,5 +1,6 @@
 package tv.hdonlinetv.compose.ui.mobile.category
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,14 +11,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import tv.hdonlinetv.compose.R
@@ -29,6 +29,9 @@ import tv.hdonlinetv.compose.phone.LocalCategoryRepository
 import tv.hdonlinetv.compose.phone.LocalPhoneNavController
 import tv.hdonlinetv.compose.ui.mobile.components.CategoryCard
 import tv.hdonlinetv.compose.ui.mobile.components.LegacyEmptyState
+
+/** Material medium width; also covers most phones in landscape. */
+private const val TABLET_MIN_WIDTH_DP = 600
 
 @Composable
 fun CategoryScreen() {
@@ -53,6 +56,11 @@ fun CategoryScreenBody(
     isLoading: Boolean,
     onCategoryClick: (String) -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val wide = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ||
+        configuration.screenWidthDp >= TABLET_MIN_WIDTH_DP
+    val columns = if (wide) 3 else 2
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +79,7 @@ fun CategoryScreenBody(
             }
             else -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
+                    columns = GridCells.Fixed(columns),
                     contentPadding = PaddingValues(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),

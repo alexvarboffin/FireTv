@@ -99,6 +99,9 @@
 - [ ] H4 — Phone Tutorial&FAQ: табы **по центру/fill** (как legacy TabLayout fixed+fill); иконки табов **24dp**; copy у sample playlists **32dp** (не intrinsic 42 + IconButton 48)
   Verify: `ui/mobile/info/TutorialScreen.kt` TutorialIconTabRow weight(1f)+size(24); `TutorialFaqContent` FaqPlaylistRow size(32)
 
+- [ ] H5 — Phone Category tab: **3** колонки на tablet (`sw≥600`) или landscape, иначе **2**
+  Verify: `ui/mobile/category/CategoryScreen.kt` `columns` from orientation / screenWidthDp
+
 ---
 
 ## E. TV Player
