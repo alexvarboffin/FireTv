@@ -5,7 +5,7 @@
 #agp = "8.7.3"
 accompanistSwiperefresh = "0.36.0"
 activity-compose = "1.13.0"
-agp = "8.9.3"
+agp = "9.1.0"
 analytics = "8.5.1"
 android-buildTools = "37.0"
 android-compileSdk = "37"
