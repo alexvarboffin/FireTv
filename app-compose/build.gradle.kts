@@ -11,6 +11,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+base {
+    archivesName.set("iptv")
+}
+
 android {
     // R / source package may stay compose.*; Play identity = applicationId (same as legacy).
     namespace = "tv.hdonlinetv.compose"
@@ -25,7 +29,6 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = code
         versionName = "1.4.$code"
-        setProperty("archivesBaseName", "iptv")
     }
 
     signingConfigs {
@@ -77,6 +80,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = true
     }
 }
 

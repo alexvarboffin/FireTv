@@ -381,7 +381,7 @@ fun PlayerScreenBody(
                 if (channelSheetVisible) {
                     when (keyEvent.key) {
                         Key.DirectionLeft, Key.DirectionRight,
-                        Key.Home, Key.MoveHome, Key.Escape,
+                        Key.SystemHome, Key.MoveHome, Key.Escape,
                         -> {
                             channelSheetVisible = false
                             return@onKeyEvent true

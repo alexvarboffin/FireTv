@@ -1,4 +1,4 @@
-import java.text.SimpleDateFormat
+﻿import java.text.SimpleDateFormat
 import java.util.Date
 
 fun versionCodeDate(): Int {
@@ -15,6 +15,10 @@ plugins {
 //com.gdevs.firetvappbygdevelopers
 //com.gdevs.firetv
 //tv.hdonlinetv.bestchannels
+
+base {
+    archivesName.set("iptv")
+}
 
 android {
     namespace = "tv.hdonlinetv.besttvchannels.movies.watchfree"
@@ -35,7 +39,6 @@ android {
 
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
-        setProperty("archivesBaseName", "iptv")
     }
 
     signingConfigs {
@@ -55,7 +58,7 @@ android {
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), "proguard-rules.pro"
             //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             proguardFiles(
-                    getDefaultProguardFile("proguard-android.txt"),
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("x")
@@ -70,7 +73,7 @@ android {
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), "proguard-rules.pro"
             //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             proguardFiles(
-                    getDefaultProguardFile("proguard-android.txt"),
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
             )
             //debuggable false
@@ -92,6 +95,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        resValues = true
     }
 }
 
@@ -211,8 +215,8 @@ dependencies {
     //migration
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
-    //implementation(libs.androidx.media3.datasource.okhttp)  // Если вы используете OkHttp
-    implementation(libs.androidx.media3.extractor)  // Для поддержки разных форматов
+    //implementation(libs.androidx.media3.datasource.okhttp)  // Р•СЃР»Рё РІС‹ РёСЃРїРѕР»СЊР·СѓРµС‚Рµ OkHttp
+    implementation(libs.androidx.media3.extractor)  // Р”Р»СЏ РїРѕРґРґРµСЂР¶РєРё СЂР°Р·РЅС‹С… С„РѕСЂРјР°С‚РѕРІ
     //implementation(libs.androidx.media3.exoplayer.hls)
     implementation(libs.androidx.media3.cast)
     //0.8.4'
@@ -239,7 +243,7 @@ dependencies {
     implementation(libs.library)
     implementation(libs.androidanimations.library)
 
-    //CHROMECAST или Smart TV
+    //CHROMECAST РёР»Рё Smart TV
     implementation(libs.androidx.mediarouter)
     implementation(libs.play.services.cast.framework)
 
@@ -247,7 +251,7 @@ dependencies {
     implementation(libs.androidx.work.runtime)
 }
 
-// R8 fails on kotlinx-serialization-core 1.7.3 with Kotlin 2.2 — force catalog version.
+// R8 fails on kotlinx-serialization-core 1.7.3 with Kotlin 2.2 вЂ” force catalog version.
 configurations.configureEach {
     resolutionStrategy {
         force("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0")
@@ -259,7 +263,7 @@ configurations.configureEach {
 
 apply(plugin = "com.google.gms.google-services")
 
-// OneSignal 5.1.x wants firebase-messaging in [21, 23.4.99]; app uses 25.x — skip strict check.
+// OneSignal 5.1.x wants firebase-messaging in [21, 23.4.99]; app uses 25.x вЂ” skip strict check.
 googleServices {
     disableVersionCheck = true
 }

@@ -1,4 +1,4 @@
-plugins {
+﻿plugins {
     id("com.android.library")
     id("kotlin-android")
     //apply plugin: 'com.github.dcendents.android-maven'
@@ -11,7 +11,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 36
         //versionCode = 20
         //versionName = "0.2.0"
 
@@ -27,7 +26,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                    getDefaultProguardFile("proguard-android.txt"),
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
             )
         }

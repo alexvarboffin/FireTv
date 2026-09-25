@@ -107,7 +107,7 @@ fun PlayerChannelSheet(
                 if (!visible || event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
                     Key.DirectionLeft, Key.DirectionRight,
-                    Key.Home, Key.MoveHome, Key.Escape,
+                    Key.SystemHome, Key.MoveHome, Key.Escape,
                     -> {
                         onDismiss()
                         true
@@ -200,7 +200,7 @@ private fun ChannelSheetRow(
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
                     Key.DirectionLeft, Key.DirectionRight,
-                    Key.Home, Key.MoveHome, Key.Escape,
+                    Key.SystemHome, Key.MoveHome, Key.Escape,
                     -> {
                         onDismissSheet()
                         true

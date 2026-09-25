@@ -75,6 +75,8 @@
 APK: `app-compose/build/outputs/apk/debug/iptv-compose-debug.apk`  
 applicationId: `tv.hdonlinetv.besttvchannels.movies.watchfree.compose`
 
+> Устарело с 2026-09-24: `applicationId` = legacy `tv.hdonlinetv.besttvchannels.movies.watchfree`, APK `iptv-debug.apk` (см. записи ниже).
+
 ---
 
 ## 2026-09-22 — Player browse scope (zap sheet)
@@ -84,6 +86,22 @@ applicationId: `tv.hdonlinetv.besttvchannels.movies.watchfree.compose`
 | 1 | In-player channel sheet / CH± loaded siblings only by guessing playlist from `channelId` — Favorites opened full playlist | Explicit `PlayerBrowseScope` on Player/Details nav (`scope` + `scopeKey`); Favorites/Playlist/Category/None/Infer |
 | 2 | Search / All would dump huge lists into sheet | Entry points pass `None` |
 | 3 | Need durable design note | `Documentation/ARCHITECTURE/player-browse-scope.md` + index link |
+
+---
+
+## 2026-09-21 … 25 — Сводка сессии (подробно: [2026-09-21_25_session.md](2026-09-21_25_session.md))
+
+| # | Проблема | Решение |
+|---|----------|---------|
+| 1 | Android 15/16: контент под system bars (legacy + compose) | Legacy: `enableEdgeToEdge` + `fitsSystemWindows`; compose: M3 `TopAppBar`/`Scaffold` insets, player `contentWindowInsets` |
+| 2 | TV shell терял функции phone, табы не переключались фокусом | `NavigationDrawer` с полным набором пунктов, `TvFocusTabRow` onFocus, экраны внутри shell, `focusRestorer` |
+| 3 | TV-ввод, диалоги, long-press захватывали/теряли фокус | `TvEditableField`, Compose `Dialog`, long-press на KeyUp + arm, `NotificationOverlay` без фокуса |
+| 4 | TV-плеер тянул phone-UI и XML-контролы JZ | Свой TV `PlayerScreenBody`, Compose-chrome, Canvas-шкала, `clickRetryBtn` на ошибке, штора каналов + browse scope |
+| 5 | Refresh плейлиста показывал «No item» | `PlaylistRefreshResult`, перезапись с тем же `_id`, toast (правка общего слоя — впредь согласовывать) |
+| 6 | Cast падал (FragmentActivity / AppCompat theme) | Лайфхак Cinema: `FragmentActivity` + скрытый `MediaRouteButton` + `performClick()` |
+| 7 | Строки дублировались, в compose не было ru | Модуль `:common-resources` (en + ru) для `:app` и `:app-compose` |
+| 8 | Compose не мог заменить legacy в Play | Тот же `applicationId`, keystore, `versionName`, AdMob banner (не на TV) |
+| 9 | Сборка сломалась после AGP 9.1 / Gradle 9.7.1 | Opt-out `builtInKotlin`/`newDsl`, `archivesName`, `proguard-android-optimize` + `-dontoptimize`, `resValues`, без `targetSdk` в библиотеках, `Key.SystemHome` |
 
 ---
 

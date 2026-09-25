@@ -1,5 +1,8 @@
 # Ultimate.TV / FireTv release ProGuard rules
 
+# AGP 9 dropped proguard-android.txt; keep its no-optimize behaviour for legacy :app.
+-dontoptimize
+
 # From AGP missing_rules.txt (Aliyun / Ktor optional refs)
 -dontwarn com.aliyun.aio.keep.API
 -dontwarn com.aliyun.aio.keep.CalledByNative
