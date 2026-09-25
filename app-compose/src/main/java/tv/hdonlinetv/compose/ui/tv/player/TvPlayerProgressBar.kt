@@ -42,6 +42,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Cinema [VideoPlayerSeekerTV]: Canvas track (not Material Slider),
@@ -105,7 +106,7 @@ fun TvPlayerProgressBar(
                     val seekAmount =
                         (fastForwardInterval.toFloat() / durationMs.toFloat()) * direction
                     onProgressChange((latestProgress + seekAmount).coerceIn(0f, 1f))
-                    delay(100)
+                    delay(100.milliseconds)
                 }
             }
         } else if (event.type == KeyEventType.KeyUp) {
