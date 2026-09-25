@@ -17,6 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.OpenInNew
+import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.VideoSettings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +48,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
+import tv.hdonlinetv.compose.BuildConfig
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModel
 import tv.hdonlinetv.compose.core.presentation.settings.SettingsViewModelFactory
@@ -78,18 +82,33 @@ fun SettingsScreen(
         stringResource(R.string.settings_night_mode_on),
         stringResource(R.string.settings_night_mode_off),
     )
+    val sortOptions = listOf(
+        stringResource(R.string.sort_by_name_asc),
+        stringResource(R.string.sort_by_name_desc),
+        stringResource(R.string.sort_by_id_asc),
+        stringResource(R.string.sort_by_id_desc),
+    )
+    val modeOptions = listOf(
+        stringResource(R.string.option_details_activity),
+        stringResource(R.string.option_player_activity),
+    )
     val exit: () -> Unit = onBack ?: {
         navController.popBackStack()
         Unit
     }
 
     SettingsScreenBody(
+        versionName = BuildConfig.VERSION_NAME,
         columnsLabel = if (state.gridColumns <= 1) layoutOptions[1] else layoutOptions[0],
+        sortLabel = sortOptions[state.sortOption.coerceIn(0, sortOptions.lastIndex)],
+        modeLabel = if (state.detailsMode) modeOptions[0] else modeOptions[1],
         nightModeLabel = if (state.nightMode) nightLabels[0] else nightLabels[1],
         cleanupEmptyCategoriesLabel = if (state.cleanupEmptyCategories) nightLabels[0] else nightLabels[1],
         mediaPlayerLabel = mediaPlayerOptions[state.mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex)],
         onBack = exit,
         onColumnsClick = { choice = SettingsChoice.Columns },
+        onSortClick = { choice = SettingsChoice.Sort },
+        onModeClick = { choice = SettingsChoice.OpenMode },
         onNightModeClick = { choice = SettingsChoice.NightMode },
         onCleanupEmptyCategoriesClick = { choice = SettingsChoice.CleanupEmptyCategories },
         onMediaPlayerClick = { choice = SettingsChoice.MediaPlayer },
@@ -103,6 +122,28 @@ fun SettingsScreen(
                 onDismiss = { choice = null },
                 onSelect = { index ->
                     viewModel.setGridColumns(if (index == 0) 4 else 1)
+                    choice = null
+                },
+            )
+        }
+        SettingsChoice.Sort -> {
+            TvChoiceOverlay(
+                title = stringResource(R.string.settings_sort),
+                options = sortOptions,
+                onDismiss = { choice = null },
+                onSelect = { index ->
+                    viewModel.setSortOption(index)
+                    choice = null
+                },
+            )
+        }
+        SettingsChoice.OpenMode -> {
+            TvChoiceOverlay(
+                title = stringResource(R.string.settings_open_mode),
+                options = modeOptions,
+                onDismiss = { choice = null },
+                onSelect = { index ->
+                    viewModel.setDetailsMode(index == 0)
                     choice = null
                 },
             )
@@ -152,6 +193,8 @@ fun SettingsScreen(
 
 private enum class SettingsChoice {
     Columns,
+    Sort,
+    OpenMode,
     NightMode,
     CleanupEmptyCategories,
     MediaPlayer,
@@ -160,12 +203,17 @@ private enum class SettingsChoice {
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun SettingsScreenBody(
+    versionName: String,
     columnsLabel: String,
+    sortLabel: String,
+    modeLabel: String,
     nightModeLabel: String,
     cleanupEmptyCategoriesLabel: String,
     mediaPlayerLabel: String,
     onBack: () -> Unit,
     onColumnsClick: () -> Unit,
+    onSortClick: () -> Unit,
+    onModeClick: () -> Unit,
     onNightModeClick: () -> Unit,
     onCleanupEmptyCategoriesClick: () -> Unit,
     onMediaPlayerClick: () -> Unit,
@@ -193,10 +241,31 @@ fun SettingsScreenBody(
         }
         Text(text = stringResource(R.string.menu_settings))
         SettingsRow(
+            icon = Icons.Outlined.Info,
+            title = stringResource(R.string.version_label),
+            subtitle = versionName,
+            onClick = {},
+            modifier = leftToDrawer,
+        )
+        SettingsRow(
             icon = Icons.Outlined.GridView,
             title = stringResource(R.string.display_channel),
             subtitle = columnsLabel,
             onClick = onColumnsClick,
+            modifier = leftToDrawer,
+        )
+        SettingsRow(
+            icon = Icons.Outlined.SortByAlpha,
+            title = stringResource(R.string.settings_sort),
+            subtitle = sortLabel,
+            onClick = onSortClick,
+            modifier = leftToDrawer,
+        )
+        SettingsRow(
+            icon = Icons.Outlined.OpenInNew,
+            title = stringResource(R.string.settings_open_mode),
+            subtitle = modeLabel,
+            onClick = onModeClick,
             modifier = leftToDrawer,
         )
         SettingsRow(

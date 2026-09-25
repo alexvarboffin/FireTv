@@ -31,11 +31,13 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import tv.hdonlinetv.compose.R
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -166,7 +168,7 @@ fun TvPlayerProgressBar(
             }
         }
         Text(
-            text = if (seekable) formatPlayerTime(durationMs) else "LIVE",
+            text = if (seekable) formatPlayerTime(durationMs) else stringResource(R.string.player_live),
             style = MaterialTheme.typography.bodySmall,
             color = Color.White,
             textAlign = TextAlign.End,

@@ -3,8 +3,9 @@ package tv.hdonlinetv.compose.tv
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -76,8 +77,12 @@ fun TvNavHost() {
                 .fillMaxSize()
                 .background(colors.background),
         ) {
-            Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-                Box(modifier = Modifier.background(colors.background).padding(paddingValues)) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .background(colors.background)
+                        .windowInsetsPadding(WindowInsets.systemBars),
+                ) {
                     NavHost(
                         navController = navController,
                         startDestination = Routes.Splash.route,

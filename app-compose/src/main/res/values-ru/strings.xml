@@ -27,4 +27,6 @@
         <item>Сетка (4 колонки)</item>
         <item>Список (1 колонка)</item>
     </string-array>
+
+    <string name="player_live">ЭФИР</string>
 </resources>

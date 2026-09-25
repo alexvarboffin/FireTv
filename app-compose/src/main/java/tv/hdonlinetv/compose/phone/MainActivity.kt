@@ -13,6 +13,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
+import tv.hdonlinetv.compose.ads.AdsConsent
 import tv.hdonlinetv.compose.core.databridge.settings.LocalSettingsRepository
 import tv.hdonlinetv.compose.player.CustomMediaRouteButton
 import tv.hdonlinetv.compose.player.MediaRouteButtonManager
@@ -65,5 +66,6 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+        AdsConsent.gather(this)
     }
 }

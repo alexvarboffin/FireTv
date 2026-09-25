@@ -28,6 +28,9 @@
 - [ ] A4 — Search / PlaylistManage / Settings / Tutorial в shell (drawer selected), не «уход» с потерей drawer где так задумано
   Verify: `ShellPanel` / in-shell content; Left из полей → drawer
 
+- [ ] A6 — Xtream browser / Serial detail / Onboarding на TV — native tv.material3 (TvFocusTabRow, Surface-блоки, TvLoadingOverlay); `TvNavHost` без material3 `Scaffold` (Box + `windowInsetsPadding(systemBars)`)
+  Verify: `ui/tv/playlist/XtreamBrowserScreen.kt`, `SerialDetailScreen.kt`, `ui/tv/onboarding/OnboardingScreen.kt`, `tv/TvNavHost.kt`
+
 - [ ] A5 — Left из контента восстанавливает **исходный** пункт drawer (`focusRestorer` + `LocalTvDrawerFocusRequester`)
   Verify: drawer LazyColumn + leftmost `focusProperties { left = drawerGroupFocus }`
 
@@ -83,6 +86,9 @@
 - [ ] D2 — Phone Cast = Cinema livehack: `FragmentActivity` + `Theme.AppCompat` + hidden `CustomMediaRouteButton` + Compose `performClick` (не `ComponentActivity`, не platform Material theme)
   Verify: `phone/MainActivity.kt` FragmentActivity + host AndroidView; `MediaRouteButtonManager`; `CastMediaRouteButton` Icon + performClick; theme `Theme.ComposePhone`
 
+- [ ] D3 — TV Settings имеет паритет с phone: Version, Sort (4 варианта), Open mode (details / player)
+  Verify: `ui/tv/settings/SettingsScreen.kt` `SettingsChoice.Sort/OpenMode`; диалог выбора с фокусом на текущем значении
+
 ---
 
 ## H. Строки / i18n
@@ -94,7 +100,7 @@
   Verify: `app-compose/src/main/res/values{,-ru}/strings.xml` — только form-factor; legacy overrides (`channels_format` полный текст) могут жить в `:app`
 
 - [ ] H3 — Нет программного EN/RU в UI (`": ON"`, `"Cast"`, tab titles) — только `stringResource` / `stringArrayResource`
-  Verify: grep UI на литералы; PlaylistManage local storage; CastMediaRouteButton
+  Verify: grep UI на литералы; PlaylistManage local storage; CastMediaRouteButton; TV player `R.string.player_live` (LIVE / ЭФИР)
 
 - [ ] H4 — Phone Tutorial&FAQ: табы **по центру/fill** (как legacy TabLayout fixed+fill); иконки табов **24dp**; copy у sample playlists **32dp** (не intrinsic 42 + IconButton 48)
   Verify: `ui/mobile/info/TutorialScreen.kt` TutorialIconTabRow weight(1f)+size(24); `TutorialFaqContent` FaqPlaylistRow size(32)
@@ -120,6 +126,21 @@
 
 - [ ] I4 — `versionCode` > текущего в Play Console; `versionName` линия `1.4.*`
   Verify: перед upload сравнить с Console; date-based code
+
+- [ ] I5 — Release собирается с R8 и работает: правила legacy перенесены (`-dontoptimize`, aliyun, JZ-движки по конструктору, Jzvd, VLC, Glide, Cast OptionsProvider, Parcelable/Serializable)
+  Verify: `app-compose/proguard-rules.pro`; `assembleRelease` + `bundleRelease` (раздельно, `-Xmx6144m`); release smoke: онбординг → добавить URL-плейлист → канал играет → TV Settings
+
+- [ ] I6 — GDPR/UMP на phone: `AdsConsent.gather()` в `phone/MainActivity` (на TV пропуск); форма показывается только после настройки GDPR-сообщения в AdMob → Privacy & messaging
+  Verify: `ads/AdsConsent.kt`; logcat tag `AdsConsent` (без формы в консоли — `Publisher misconfiguration`)
+
+- [ ] I9 — GDPR/UMP **не запускается на TV**: ни `tv/MainActivity`, ни TV-экраны не вызывают `AdsConsent` / `UserMessagingPlatform`; phone-путь на TV-устройстве тоже отсекается `isTelevisionUi()`
+  Verify: grep `AdsConsent|UserMessagingPlatform` — вызов только в `phone/MainActivity.kt`; guard в `ads/AdsConsent.kt`; на TV в logcat нет запросов consent (tag `AdsConsent` → только `skip on television`, если вообще есть)
+
+- [ ] I7 — TV-листинг: `leanback` + `touchscreen` `required=false`, `LEANBACK_LAUNCHER` у `LauncherActivity`, `android:banner` 320×180
+  Verify: `app-compose/src/main/AndroidManifest.xml`; `drawable-xhdpi/tv_banner.png`
+
+- [ ] I8 — Interstitial **не переносится**: в legacy он мёртв (unit id `"0"`, interval 0, `onAdLoaded` без `override`); включать только с боевым ID по решению пользователя
+  Verify: в app-compose нет InterstitialAd
 
 ---
 
@@ -179,4 +200,4 @@
    `~/.cursor/skills/compose-tv-from-mobile/USER_CORRECTIONS.md` (если TV/UX).
 4. При необходимости — hard rule в skill `SKILL.md`.
 
-Дата последнего обновления чеклиста: **2026-09-24**.
+Дата последнего обновления чеклиста: **2026-09-25**.

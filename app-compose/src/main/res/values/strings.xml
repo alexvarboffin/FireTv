@@ -37,4 +37,7 @@
         <item>Grid View (4 Columns)</item>
         <item>List View (1 Column)</item>
     </string-array>
+
+    <!-- TV player seek bar: stream without duration -->
+    <string name="player_live">LIVE</string>
 </resources>
