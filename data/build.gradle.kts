@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.walhalla.data"
-    compileSdk = 36
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()

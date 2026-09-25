@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.walhalla.xtream"
-    compileSdk = 35
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 21

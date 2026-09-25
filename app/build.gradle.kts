@@ -18,8 +18,7 @@ plugins {
 
 android {
     namespace = "tv.hdonlinetv.besttvchannels.movies.watchfree"
-
-    compileSdk = 36
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     val code = versionCodeDate()
 
