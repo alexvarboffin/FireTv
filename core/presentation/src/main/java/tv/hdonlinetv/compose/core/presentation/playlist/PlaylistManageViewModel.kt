@@ -90,6 +90,10 @@ class PlaylistManageViewModel(
         _uiState.update { it.copy(error = null) }
     }
 
+    fun consumeSaved() {
+        _uiState.value = PlaylistManageUiState()
+    }
+
     private fun saveInternal(fileUri: Uri?, clipboardContent: String?) {
         val state = _uiState.value
         viewModelScope.launch {

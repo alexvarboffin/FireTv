@@ -72,6 +72,9 @@
 - [ ] C4 — Опциональная очистка пустых категорий при delete плейлиста (настройка, default Off)
   Verify: `AppSettingsUi.cleanupEmptyCategories`; до delete — cats листа; после — удалить empty; при включении On — сразу `deleteEmptyCategories`
 
+- [ ] C6 — TV «Управление» (in-shell панель, ViewModel живёт с shell): после успешного сохранения повторное открытие **не** показывает toast успеха и не закрывается само; форма пустая
+  Verify: `PlaylistManageViewModel.consumeSaved()` (сброс в `PlaylistManageUiState()`), вызов в TV `PlaylistManageScreen` после `notifications.show(SUCCESS)` перед `exit()`; на устройстве: сохранить → открыть «Управление» снова
+
 - [ ] C5 — Пункт настройки cleanup **информативен**: title + summary + On/Off (не одно слово On)
   Verify: strings + Settings rows phone/TV
 

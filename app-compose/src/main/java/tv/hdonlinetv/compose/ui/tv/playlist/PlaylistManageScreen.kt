@@ -107,6 +107,7 @@ fun PlaylistManageScreen(
             message = context.getString(messageRes),
             type = NotificationType.SUCCESS,
         )
+        viewModel.consumeSaved()
         exit()
     }
 
