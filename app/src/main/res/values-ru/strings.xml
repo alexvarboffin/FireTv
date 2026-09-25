@@ -64,7 +64,7 @@
     <string name="playlist_link">Ссылка на плейлист</string>
     <string name="local_storage">Локальное хранилище</string>
     <string name="subscribe">Подписаться</string>
-    <string name="parse_clipboard">Распознать буфер обмена</string>
+    <string name="parse_clipboard">Распознать буфер обмена (текст плейлиста M3U)</string>
     <string name="backup">Резервное копирование</string>
     <string name="restore">Восстановить</string>
     <string name="error_playlist_name">Пожалуйста, введите название плейлиста</string>

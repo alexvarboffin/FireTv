@@ -42,7 +42,7 @@
     <string name="playlist_link">Ссылка на плейлист</string>
     <string name="playlist_select_file">Выбрать файл плейлиста</string>
     <string name="local_storage">Локальное хранилище</string>
-    <string name="parse_clipboard">Распознать буфер обмена</string>
+    <string name="parse_clipboard">Распознать буфер обмена (текст плейлиста M3U)</string>
     <string name="xtream_browser">Xtream браузер</string>
     <string name="playlist_updated_short">обн %1$s</string>
     <string name="channels_format">%1$d кан.</string>

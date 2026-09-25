@@ -102,6 +102,9 @@
 - [ ] H5 — Phone Category tab: **3** колонки на tablet (`sw≥600`) или landscape, иначе **2**
   Verify: `ui/mobile/category/CategoryScreen.kt` `columns` from orientation / screenWidthDp
 
+- [ ] H6 — «Parse clipboard» парсит только **сырой текст M3U** (`M3UParser`, нужен `#EXTINF`), ссылку из буфера не скачивает → подпись это явно говорит: «Распознать буфер обмена (текст плейлиста M3U)» / «Parse clipboard (M3U playlist text)»; автоопределения текст/ссылка нет (решение пользователя)
+  Verify: `parse_clipboard` одинаковый в `common-resources` и `:app` (`values`, `values-ru`)
+
 ---
 
 ## I. Play cutover (замена listing)

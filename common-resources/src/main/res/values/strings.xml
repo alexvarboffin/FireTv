@@ -45,7 +45,7 @@
     <string name="playlist_link">Playlist link</string>
     <string name="playlist_select_file">Select playlist file</string>
     <string name="local_storage">Local Storage</string>
-    <string name="parse_clipboard">Parse Clipboard</string>
+    <string name="parse_clipboard">Parse clipboard (M3U playlist text)</string>
     <string name="xtream_browser">Xtream browser</string>
     <string name="playlist_updated_short">upd %1$s</string>
     <!-- Compose badge; legacy :app overrides with "Channels: %1$d" in its values/ -->
