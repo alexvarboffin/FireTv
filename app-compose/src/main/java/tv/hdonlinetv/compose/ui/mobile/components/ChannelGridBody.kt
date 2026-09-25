@@ -65,7 +65,7 @@ fun ChannelGridBody(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    itemsIndexed(channels, key = { _, ch -> ch.id }) { _, channel ->
+                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { _, channel ->
                         ChannelCard(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
@@ -76,3 +76,6 @@ fun ChannelGridBody(
         }
     }
 }
+
+private fun ChannelUi.gridKey(index: Int): Any =
+    if (id != 0L) id else "i$index|$name|$link|$desc"

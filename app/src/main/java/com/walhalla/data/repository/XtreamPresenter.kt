@@ -123,13 +123,13 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
                             }
 
 
-                            postToMainThread(Runnable { callback.successResult(channels) })
+                            postToMainThread { callback.successResult(channels) }
                         }
                     }
 
                     override fun onFailure(call: Call<MutableList<XtreamSerial>>, t: Throwable) {
                         d(t.message)
-                        postToMainThread(Runnable { callback.errorResult(t.message!!) })
+                        postToMainThread { callback.errorResult(t.message!!) }
                     }
                 })
             } catch (e: Exception) {
@@ -160,7 +160,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
                     ) {
                         val channels: MutableList<Channel> = ArrayList<Channel>()
 
-                        if (response.isSuccessful()) {
+                        if (response.isSuccessful) {
                             val liveStreams = response.body()
 
                             // Обработка списка потоков
@@ -198,13 +198,13 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
                             }
 
 
-                            postToMainThread(Runnable { callback.successResult(channels) })
+                            postToMainThread { callback.successResult(channels) }
                         }
                     }
 
                     override fun onFailure(call: Call<MutableList<XtreamLive>>, t: Throwable) {
                         d(t.message)
-                        postToMainThread(Runnable { callback.errorResult(t.message!!) })
+                        postToMainThread { callback.errorResult(t.message!!) }
                     }
                 })
             } catch (e: Exception) {
@@ -215,7 +215,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
 
     //https://iptv.icsnleb.com:25463/player_api.php?username=12&password=12&xtream_type=vod
     fun getVodStreams(input: XtreamInput, callback: RepoCallback<List<Channel>>) {
-        executeInBackground(Runnable {
+        executeInBackground {
 //            try {
 //                List<Channel> channels = db_repo.getFavorite(playlistId);
 //                postToMainThread(() -> callback.successResult(channels));
@@ -232,7 +232,9 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
                 )
 
                 liveCall.enqueue(object : Callback<MutableList<XtreamVod>> {
-                    override fun onResponse(call: Call<MutableList<XtreamVod>>, response: Response<MutableList<XtreamVod>>
+                    override fun onResponse(
+                        call: Call<MutableList<XtreamVod>>,
+                        response: Response<MutableList<XtreamVod>>
                     ) {
                         val channels: MutableList<Channel> = ArrayList()
 
@@ -283,7 +285,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
             } catch (e: Exception) {
                 postToMainThread(Runnable { callback.errorResult(e.message!!) })
             }
-        })
+        }
     }
 
     //    public String buildLiveStreamUrl(String baseUrlRaw, String username, String password,

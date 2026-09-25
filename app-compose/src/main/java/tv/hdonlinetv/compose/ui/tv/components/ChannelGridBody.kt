@@ -55,7 +55,7 @@ fun ChannelGridBody(
                     contentPadding = PaddingValues(horizontal = 48.dp, vertical = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    itemsIndexed(channels, key = { _, ch -> ch.id }) { _, channel ->
+                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { _, channel ->
                         ChannelListRow(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
@@ -75,7 +75,7 @@ fun ChannelGridBody(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    itemsIndexed(channels, key = { _, ch -> ch.id }) { index, channel ->
+                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { index, channel ->
                         ChannelCard(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
@@ -91,3 +91,6 @@ fun ChannelGridBody(
         }
     }
 }
+
+private fun ChannelUi.gridKey(index: Int): Any =
+    if (id != 0L) id else "i$index|$name|$link|$desc"
