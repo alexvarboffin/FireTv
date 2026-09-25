@@ -1,5 +1,6 @@
 package tv.hdonlinetv.compose.phone
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.activity.compose.setContent
@@ -27,9 +28,17 @@ import tv.hdonlinetv.compose.ui.mobile.theme.PhoneTheme
  */
 class MainActivity : FragmentActivity() {
 
+    override fun attachBaseContext(newBase: Context) {
+        val nightMode = LocalSettingsRepository(newBase.applicationContext ?: newBase)
+            .getSettings().nightMode
+        NightModeApplier.apply(nightMode)
+        super.attachBaseContext(NightModeApplier.wrap(newBase, nightMode))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val settingsRepository = LocalSettingsRepository(applicationContext)
-        NightModeApplier.apply(settingsRepository.getSettings().nightMode)
+        val nightMode = settingsRepository.getSettings().nightMode
+        NightModeApplier.apply(nightMode)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -45,7 +54,7 @@ class MainActivity : FragmentActivity() {
         }
 
         setContent {
-            PhoneTheme {
+            PhoneTheme(darkTheme = nightMode) {
                 Box(Modifier.fillMaxSize()) {
                     mediaRouteButton?.let { mRButton ->
                         // Must stay attached to the window (Cinema). onReset non-null avoids

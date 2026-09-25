@@ -116,6 +116,9 @@
 - [ ] D3 — TV Settings имеет паритет с phone: Version, Sort (4 варианта), Open mode (details / player)
   Verify: `ui/tv/settings/SettingsScreen.kt` `SettingsChoice.Sort/OpenMode`; диалог выбора с фокусом на текущем значении
 
+- [ ] D4 — Night mode реально меняет тему. Pref + `AppCompatDelegate` мало: `PhoneTheme` был всегда Light, `TvTheme` всегда dark. Phone `PhoneTheme(darkTheme = nightMode)` + `attachBaseContext` wrap `values-night`; TV `TvTheme(isDarkTheme = nightMode)`
+  Verify: Settings → Night On/Off → recreate; phone bg `bgMain`/`PhoneTheme`; TV JetStream dark vs `LightColorsTv`
+
 ---
 
 ## H. Строки / i18n
