@@ -1,7 +1,7 @@
 package tv.hdonlinetv.compose.ui.tv.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +21,10 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
+import tv.hdonlinetv.compose.ui.components.TvChannelGridHPadding
+import tv.hdonlinetv.compose.ui.components.TvChannelGridMinCell
+import tv.hdonlinetv.compose.ui.components.TvChannelGridSpacing
+import tv.hdonlinetv.compose.ui.components.adaptiveColumnCount
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -31,12 +35,15 @@ fun ChannelGridBody(
     onChannelClick: (ChannelUi) -> Unit,
 ) {
     val drawerFocus = LocalTvDrawerFocusRequester.current
-    // Read prefs each composition so in-shell Settings changes apply when returning to tabs.
-    val stored = LocalSettingsRepository.current.getSettings().gridColumns
-    val columns = if (stored <= 1) 1 else 4
-    val listMode = columns <= 1
+    val listMode = LocalSettingsRepository.current.getSettings().gridColumns <= 1
 
-    Box(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val columns = adaptiveColumnCount(
+            availableWidth = maxWidth,
+            minCell = TvChannelGridMinCell,
+            horizontalPadding = TvChannelGridHPadding,
+            spacing = TvChannelGridSpacing,
+        )
         when {
             isLoading -> {
                 Text(
@@ -70,7 +77,7 @@ fun ChannelGridBody(
             }
             else -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(columns),
+                    columns = GridCells.Adaptive(minSize = TvChannelGridMinCell),
                     contentPadding = PaddingValues(48.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),

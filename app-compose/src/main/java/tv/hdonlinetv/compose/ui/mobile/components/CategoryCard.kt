@@ -1,6 +1,7 @@
 package tv.hdonlinetv.compose.ui.mobile.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,14 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -30,7 +29,6 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.CategoryUi
 import tv.hdonlinetv.compose.ui.components.RemoteImage
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryCard(
     category: CategoryUi,
@@ -42,66 +40,61 @@ fun CategoryCard(
     val cardHeight = dimensionResource(R.dimen.category_card_height)
     val cardMargin = dimensionResource(R.dimen.category_card_margin)
     val iconSize = dimensionResource(R.dimen.category_icon_size)
+    val shape = RoundedCornerShape(dimensionResource(R.dimen.category_card_radius))
 
-    Card(
-        onClick = onClick,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(cardMargin)
-            .height(cardHeight),
-        shape = RoundedCornerShape(dimensionResource(R.dimen.category_card_radius)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            .height(cardHeight)
+            .clip(shape)
+            .background(bgColor)
+            .clickable(onClick = onClick),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(bgColor),
-        ) {
-            Box(
+                .background(colorResource(R.color.categoryOverlay)),
+        )
+        if (category.thumb.isNullOrBlank()) {
+            Icon(
+                painter = painterResource(R.drawable.ic_tv_icon_white),
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(colorResource(R.color.categoryOverlay)),
+                    .size(iconSize)
+                    .align(Alignment.Center),
+                tint = Color.White,
             )
-            if (category.thumb.isNullOrBlank()) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_tv_icon_white),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(iconSize)
-                        .align(Alignment.Center),
-                    tint = Color.White,
-                )
-            } else {
-                RemoteImage(
-                    url = category.thumb,
-                    modifier = Modifier
-                        .size(iconSize)
-                        .align(Alignment.Center),
-                    contentScale = ContentScale.Crop,
-                )
-            }
-            if (category.count > 0) {
-                Text(
-                    text = stringResource(R.string.channels_format, category.count),
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .background(Color.Black.copy(alpha = 0.65f), RoundedCornerShape(10.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                )
-            }
-            Text(
-                text = category.name,
-                color = Color.White,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center,
+        } else {
+            RemoteImage(
+                url = category.thumb,
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(10.dp),
+                    .size(iconSize)
+                    .align(Alignment.Center),
+                contentScale = ContentScale.Crop,
             )
         }
+        if (category.count > 0) {
+            Text(
+                text = stringResource(R.string.channels_format, category.count),
+                color = Color.White,
+                fontSize = 12.sp,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+                    .background(Color.Black.copy(alpha = 0.65f), RoundedCornerShape(10.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
+        }
+        Text(
+            text = category.name,
+            color = Color.White,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(10.dp),
+        )
     }
 }

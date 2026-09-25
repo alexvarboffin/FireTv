@@ -1,7 +1,7 @@
 package tv.hdonlinetv.compose.ui.tv.category
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,6 +26,10 @@ import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalCategoryRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
+import tv.hdonlinetv.compose.ui.components.TvChannelGridHPadding
+import tv.hdonlinetv.compose.ui.components.TvChannelGridMinCell
+import tv.hdonlinetv.compose.ui.components.TvChannelGridSpacing
+import tv.hdonlinetv.compose.ui.components.adaptiveColumnCount
 import tv.hdonlinetv.compose.ui.tv.components.CategoryCard
 
 @Composable
@@ -53,8 +57,13 @@ fun CategoryScreenBody(
     onCategoryClick: (String) -> Unit,
 ) {
     val drawerFocus = LocalTvDrawerFocusRequester.current
-    val columns = 4
-    Box(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val columns = adaptiveColumnCount(
+            availableWidth = maxWidth,
+            minCell = TvChannelGridMinCell,
+            horizontalPadding = TvChannelGridHPadding,
+            spacing = TvChannelGridSpacing,
+        )
         when {
             isLoading -> {
                 Text(
@@ -70,7 +79,7 @@ fun CategoryScreenBody(
             }
             else -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(columns),
+                    columns = GridCells.Adaptive(minSize = TvChannelGridMinCell),
                     contentPadding = PaddingValues(48.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),

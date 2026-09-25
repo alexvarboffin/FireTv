@@ -28,14 +28,13 @@
     <string name="media_player_jz_vlc" translatable="false">JZMediaVlc</string>
 
     <string-array name="layout_options">
-        <item>Grid View (3 Columns)</item>
-        <item>List View (1 Column)</item>
+        <item>Grid</item>
+        <item>List</item>
     </string-array>
 
-    <!-- TV-only grid column labels -->
     <string-array name="layout_options_tv">
-        <item>Grid View (4 Columns)</item>
-        <item>List View (1 Column)</item>
+        <item>Grid</item>
+        <item>List</item>
     </string-array>
 
     <!-- TV player seek bar: stream without duration -->

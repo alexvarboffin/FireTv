@@ -56,6 +56,9 @@
 - [ ] B2 — При 1 колонке сетки — **list row**, не grid-карточка
   Verify: `ChannelGridBody` `listMode` → `ChannelListRow` (tv + mobile)
 
+- [ ] B9 — Настройка отображения: только **Сетка / Список**. Сетка = `LazyVerticalGrid` + `GridCells.Adaptive`: phone min **104.dp** (портрет ~3 колонки), TV **176.dp** (1080p / 960dp ~4, шире — больше). TV `BoxWithConstraints` только для первой колонки Left→drawer (`adaptiveColumnCount` = формула Adaptive + spacing)
+  Verify: `layout_options{,_tv}` без цифр; нет `GridCells.Fixed(3|4)` в ChannelGridBody; phone 360dp = 3; TV 960dp = 4
+
 - [ ] B3 — List row показывает meta как legacy (категория, desc, favorite, geo и т.д.)
   Verify: `ChannelListRow` + `ChannelGeoLockBadge`
 
@@ -70,6 +73,9 @@
 
 - [ ] B8 — Карточка плейлиста: meta `N ch · дата добавления · upd дата обновления`; `upd` только если update ≠ import
   Verify: TV `PlaylistCardTv` / phone `PlaylistCard`; Xtream без числа каналов в БД — дата без `N ch` допустима
+
+- [ ] B10 — Category tile = **заливка цвета** (`category_colors` + overlay), не Material `Card`. Цвет на самом айтеме (`clip`+`background` / TV `Surface` containerColor). Иначе при скролле проступает обводка/elevation карточки
+  Verify: phone `CategoryCard` нет `material3.Card`; TV нет `tv.material3.Card`; скролл сетки категорий — нет белой/серой рамки между плитками
 
 ---
 
@@ -126,8 +132,8 @@
 - [ ] H4 — Phone Tutorial&FAQ: табы **по центру/fill** (как legacy TabLayout fixed+fill); иконки табов **24dp**; copy у sample playlists **32dp** (не intrinsic 42 + IconButton 48)
   Verify: `ui/mobile/info/TutorialScreen.kt` TutorialIconTabRow weight(1f)+size(24); `TutorialFaqContent` FaqPlaylistRow size(32)
 
-- [ ] H5 — Phone Category tab: **3** колонки на tablet (`sw≥600`) или landscape, иначе **2**
-  Verify: `ui/mobile/category/CategoryScreen.kt` `columns` from orientation / screenWidthDp
+- [ ] H5 — Category tab: та же `GridCells.Adaptive`, что каналы (phone 104.dp ~3 портрет, TV 176.dp ~4 на 1080p). **Не** `gridColumns` / Сетка-Список
+  Verify: `ui/mobile|tv/category/CategoryScreen.kt` нет `LocalSettings` / `gridColumns`; нет `Fixed(2|3|4)`
 
 - [ ] H6 — «Parse clipboard» парсит только **сырой текст M3U** (`M3UParser`, нужен `#EXTINF`), ссылку из буфера не скачивает → подпись это явно говорит: «Распознать буфер обмена (текст плейлиста M3U)» / «Parse clipboard (M3U playlist text)»; автоопределения текст/ссылка нет (решение пользователя)
   Verify: `parse_clipboard` одинаковый в `common-resources` и `:app` (`values`, `values-ru`)

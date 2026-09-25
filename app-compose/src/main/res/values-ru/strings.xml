@@ -19,13 +19,13 @@
     <string name="menu_privacy">Политика конфиденциальности</string>
 
     <string-array name="layout_options">
-        <item>Сетка (3 колонки)</item>
-        <item>Список (1 колонка)</item>
+        <item>Сетка</item>
+        <item>Список</item>
     </string-array>
 
     <string-array name="layout_options_tv">
-        <item>Сетка (4 колонки)</item>
-        <item>Список (1 колонка)</item>
+        <item>Сетка</item>
+        <item>Список</item>
     </string-array>
 
     <string name="player_live">ЭФИР</string>

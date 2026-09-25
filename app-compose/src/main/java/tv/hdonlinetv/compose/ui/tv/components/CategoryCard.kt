@@ -17,9 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.tv.material3.Card
-import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.CategoryUi
@@ -36,12 +36,18 @@ fun CategoryCard(
     val colors = stringArrayResource(R.array.category_colors)
     val bgColor = Color(android.graphics.Color.parseColor(colors[index % colors.size]))
 
-    Card(
+    Surface(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1.2f),
-        colors = CardDefaults.colors(containerColor = bgColor),
+        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f),
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = bgColor,
+            focusedContainerColor = bgColor,
+            pressedContainerColor = bgColor,
+        ),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Box(

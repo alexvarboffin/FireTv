@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
+import tv.hdonlinetv.compose.ui.components.PhoneChannelGridMinCell
 
 @Composable
 fun ChannelGridBody(
@@ -27,8 +28,7 @@ fun ChannelGridBody(
     modifier: Modifier = Modifier,
     onChannelClick: (ChannelUi) -> Unit,
 ) {
-    val columns = LocalSettingsRepository.current.getSettings().gridColumns.coerceAtLeast(1)
-    val listMode = columns <= 1
+    val listMode = LocalSettingsRepository.current.getSettings().gridColumns <= 1
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -60,7 +60,7 @@ fun ChannelGridBody(
             }
             else -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(columns),
+                    columns = GridCells.Adaptive(minSize = PhoneChannelGridMinCell),
                     contentPadding = PaddingValues(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
