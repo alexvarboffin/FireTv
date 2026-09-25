@@ -104,6 +104,22 @@
 
 ---
 
+## I. Play cutover (замена listing)
+
+- [ ] I1 — `applicationId` = legacy `tv.hdonlinetv.besttvchannels.movies.watchfree` (не `.compose`)
+  Verify: `app-compose/build.gradle.kts` defaultConfig.applicationId
+
+- [ ] I2 — Release/debug signing = тот же `app/keystore/keystore.jks` (alias `release`)
+  Verify: `signingConfigs.x` + `signingConfig` на debug/release
+
+- [ ] I3 — AdMob: `APPLICATION_ID` в manifest + phone banner на MainShell (debug=test unit; release=`b1` / admob_banner_unit_id); **TV: no MobileAds.init / no banner**; listener → Log
+  Verify: `ads.xml`, meta-data, `AdMobBanner` + `isTelevisionUi()`; `ComposeApp` skip TV; logcat tag `AdMobBanner` / `ComposeAds`
+
+- [ ] I4 — `versionCode` > текущего в Play Console; `versionName` линия `1.4.*`
+  Verify: перед upload сравнить с Console; date-based code
+
+---
+
 ## E. TV Player
 
 - [ ] E1 — Пока spinner / play скрыт: фокус на Favorite/Close, **не** на отсутствующий `frPlay` (Right не в пустоту)

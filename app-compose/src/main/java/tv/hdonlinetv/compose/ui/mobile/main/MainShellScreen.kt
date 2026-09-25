@@ -45,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import tv.hdonlinetv.compose.BuildConfig
 import tv.hdonlinetv.compose.R
+import tv.hdonlinetv.compose.ads.AdMobBanner
 import tv.hdonlinetv.compose.core.presentation.category.CategoryViewModel
 import tv.hdonlinetv.compose.core.presentation.category.CategoryViewModelFactory
 import tv.hdonlinetv.compose.core.presentation.channel.ChannelListViewModel
@@ -305,7 +306,9 @@ fun MainShellScreen() {
                 )
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
                 ) { page ->
                     when (page) {
                         0 -> PlaylistTabScreen()
@@ -314,6 +317,7 @@ fun MainShellScreen() {
                         else -> FavoritesScreen()
                     }
                 }
+                AdMobBanner()
             }
         }
     }

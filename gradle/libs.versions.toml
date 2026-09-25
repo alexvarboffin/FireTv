@@ -72,11 +72,7 @@ kotlinStdlibJdk7 = "2.1.21"
 kotlinx-coroutines = "1.10.2"
 kotlinxSerializationJson = "1.9.0"
 ksp = "2.2.21-2.0.4"
-ktor = "3.0.3"
-ktorClientCore = "3.3.0"
-ktorClientOkhttp = "3.3.0"
-ktorClientSerialization = "3.3.0"
-ktorHttp = "3.3.0"
+ktor = "3.6.0"
 legacySupportV4 = "1.0.0"
 
 #lifecycle = "2.9.3"
@@ -163,10 +159,10 @@ jiaozivideoplayer = { module = "cn.jzvd:jiaozivideoplayer", version.ref = "jiaoz
 aliyun-player = { module = "com.aliyun.sdk.android:AliyunPlayer", version.ref = "aliyunPlayer" }
 kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlinStdlibJdk7" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientOkhttp" }
-ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktorClientSerialization" }
-ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktorHttp" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
+ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
 
 library = { module = "com.daimajia.easing:library", version.ref = "library" }
 material = { version.ref = "androidx-material", group = "com.google.android.material", name = "material"}

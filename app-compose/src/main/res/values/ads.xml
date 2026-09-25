@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Same AdMob IDs as legacy :app (values/const.xml) — required for Play listing continuity. -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-5111357348858303~6069049164</string>
+    <string name="admob_banner_unit_id" translatable="false">ca-app-pub-5111357348858303/6032819324</string>
+    <!-- Google sample banner — used when BuildConfig.DEBUG -->
+    <string name="admob_banner_unit_id_test" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+</resources>

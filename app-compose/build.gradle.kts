@@ -12,18 +12,29 @@ plugins {
 }
 
 android {
+    // R / source package may stay compose.*; Play identity = applicationId (same as legacy).
     namespace = "tv.hdonlinetv.compose"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     val code = versionCodeDate()
 
     defaultConfig {
-        applicationId = "tv.hdonlinetv.besttvchannels.movies.watchfree.compose"
+        // Play replacement: MUST match legacy :app
+        applicationId = "tv.hdonlinetv.besttvchannels.movies.watchfree"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = code
-        versionName = "0.1.$code"
-        setProperty("archivesBaseName", "iptv-compose")
+        versionName = "1.4.$code"
+        setProperty("archivesBaseName", "iptv")
+    }
+
+    signingConfigs {
+        create("x") {
+            keyAlias = "release"
+            keyPassword = "release"
+            storeFile = file("../app/keystore/keystore.jks")
+            storePassword = "release"
+        }
     }
 
     packaging {
@@ -38,16 +49,20 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            resValue("string", "app_name", "FireTv Compose")
+            signingConfig = signingConfigs.getByName("x")
+            versionNameSuffix = ".DEMO"
+            resValue("string", "app_name", "1 APP")
         }
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("x")
+            versionNameSuffix = ".release"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            resValue("string", "app_name", "Ultimate.TV Compose")
+            resValue("string", "app_name", "Ultimate.TV")
         }
     }
 
@@ -91,6 +106,9 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.material.icons.extended.android)
+
+    // AdMob banner (same units as legacy :app)
+    implementation(libs.play.services.ads)
 
     // Legacy JiaoZi player stack (same as :app)
     implementation(libs.jiaozivideoplayer)
