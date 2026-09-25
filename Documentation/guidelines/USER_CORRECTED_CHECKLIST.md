@@ -139,6 +139,9 @@
 - [ ] I9 — GDPR/UMP **не запускается на TV**: ни `tv/MainActivity`, ни TV-экраны не вызывают `AdsConsent` / `UserMessagingPlatform`; phone-путь на TV-устройстве тоже отсекается `isTelevisionUi()`
   Verify: grep `AdsConsent|UserMessagingPlatform` — вызов только в `phone/MainActivity.kt`; guard в `ads/AdsConsent.kt`; на TV в logcat нет запросов consent (tag `AdsConsent` → только `skip on television`, если вообще есть)
 
+- [ ] I10 — `:app-compose` `minSdk = 24` (`android-minSdkCompose`), без костылей в `FilteredDns`: при minSdk 23 D8 не добавлял forwarder default-метода `Dns.newCall` (OkHttp 5.5.0 через Ktor 3.6.0) → `AbstractMethodError` в плеере (Error в потоке OkHttp, try/catch не ловит)
+  Verify: `app-compose/build.gradle.kts` minSdk; `FilteredDns` — только `lookup`; debug: открыть канал → играет, в `logcat -b crash` пусто
+
 - [ ] I7 — TV-листинг: `leanback` + `touchscreen` `required=false`, `LEANBACK_LAUNCHER` у `LauncherActivity`, `android:banner` 320×180
   Verify: `app-compose/src/main/AndroidManifest.xml`; `drawable-xhdpi/tv_banner.png`
 

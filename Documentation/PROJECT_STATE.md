@@ -62,7 +62,7 @@ LauncherActivity ── UI_MODE_TYPE_TELEVISION? ──► tv/MainActivity    �
 | Gradle wrapper | **9.7.1** (поднят пользователем 2026-09-25, коммит `3d7d045`) |
 | AGP | **9.1.0** (там же) |
 | Kotlin | 2.2.21 |
-| compileSdk / targetSdk / minSdk | 37 / 37 / 23 |
+| compileSdk / targetSdk / minSdk | 37 / 37 / 23 (`:app-compose` — 24: OkHttp 5.5 `Dns.newCall` + desugaring, см. чеклист I10) |
 | Compose BOM | 2026.09.00 |
 | Ktor | единая версия `ktor = "3.6.0"` для всех `ktor-*` |
 
