@@ -28,6 +28,9 @@
 - [ ] A4 — Search / PlaylistManage / Settings / Tutorial в shell (drawer selected), не «уход» с потерей drawer где так задумано
   Verify: `ShellPanel` / in-shell content; Left из полей → drawer
 
+- [ ] A7 — Табы Xtream (Live / VOD / Series) показывают **количество**, как табы MainShell
+  Verify: `XtreamBrowserUiState.tabCounts`; TV `TvFocusTabRow(badges)`, phone `LegacyTabRow(badges)`; mock: Live 3, VOD 2, Series 2
+
 - [ ] A6 — Xtream browser / Serial detail / Onboarding на TV — native tv.material3 (TvFocusTabRow, Surface-блоки, TvLoadingOverlay); `TvNavHost` без material3 `Scaffold` (Box + `windowInsetsPadding(systemBars)`)
   Verify: `ui/tv/playlist/XtreamBrowserScreen.kt`, `SerialDetailScreen.kt`, `ui/tv/onboarding/OnboardingScreen.kt`, `tv/TvNavHost.kt`
 

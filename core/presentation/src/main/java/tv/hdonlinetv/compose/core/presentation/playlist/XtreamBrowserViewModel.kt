@@ -19,6 +19,7 @@ data class XtreamBrowserUiState(
     val apiUrl: String = "",
     val selectedTab: XtreamStreamType = XtreamStreamType.LIVE,
     val channels: List<ChannelUi> = emptyList(),
+    val tabCounts: Map<XtreamStreamType, Int> = emptyMap(),
     val isLoading: Boolean = false,
     val error: UiError? = null,
 )
@@ -43,6 +44,7 @@ class XtreamBrowserViewModel(
                 it.copy(title = playlist.title, apiUrl = playlist.fileName, isLoading = false)
             }
             loadStreams(XtreamStreamType.LIVE)
+            prefetchOtherTabCounts()
         }
     }
 
@@ -59,9 +61,29 @@ class XtreamBrowserViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
                 val channels = xtreamRepository.getStreams(apiUrl, type)
-                _uiState.update { it.copy(isLoading = false, channels = channels) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        channels = if (it.selectedTab == type) channels else it.channels,
+                        tabCounts = it.tabCounts + (type to channels.size),
+                    )
+                }
             } catch (_: Exception) {
                 _uiState.update { it.copy(isLoading = false, error = UiError.Unknown, channels = emptyList()) }
+            }
+        }
+    }
+
+    private fun prefetchOtherTabCounts() {
+        val apiUrl = _uiState.value.apiUrl
+        if (apiUrl.isBlank()) return
+        XtreamStreamType.entries.filter { it != XtreamStreamType.LIVE }.forEach { type ->
+            viewModelScope.launch {
+                try {
+                    val size = xtreamRepository.getStreams(apiUrl, type).size
+                    _uiState.update { it.copy(tabCounts = it.tabCounts + (type to size)) }
+                } catch (_: Exception) {
+                }
             }
         }
     }

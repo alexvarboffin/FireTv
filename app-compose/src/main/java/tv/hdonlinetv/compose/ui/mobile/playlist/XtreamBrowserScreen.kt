@@ -67,6 +67,7 @@ fun XtreamBrowserScreen() {
     XtreamBrowserScreenBody(
         title = state.title.ifBlank { stringResource(R.string.xtream_browser) },
         tabTitles = tabTitles,
+        tabBadges = xtreamTabBadges(state.selectedTab, state.channels.size, state.tabCounts),
         pagerState = pagerState,
         channels = state.channels,
         isLoading = state.isLoading,
@@ -90,6 +91,7 @@ fun XtreamBrowserScreen() {
 fun XtreamBrowserScreenBody(
     title: String,
     tabTitles: List<String>,
+    tabBadges: Map<Int, String>,
     pagerState: androidx.compose.foundation.pager.PagerState,
     channels: List<tv.hdonlinetv.compose.core.domain.model.ChannelUi>,
     isLoading: Boolean,
@@ -123,6 +125,7 @@ fun XtreamBrowserScreenBody(
             LegacyTabRow(
                 tabs = tabTitles,
                 selectedIndex = pagerState.currentPage,
+                badges = tabBadges,
                 onTabSelected = onTabSelected,
             )
             HorizontalPager(
@@ -138,3 +141,12 @@ fun XtreamBrowserScreenBody(
         }
     }
 }
+
+private fun xtreamTabBadges(
+    selected: XtreamStreamType,
+    selectedSize: Int,
+    tabCounts: Map<XtreamStreamType, Int>,
+): Map<Int, String> = xtreamTabTypes.mapIndexedNotNull { index, type ->
+    val n = tabCounts[type] ?: if (type == selected) selectedSize else null
+    n?.let { index to it.toString() }
+}.toMap()

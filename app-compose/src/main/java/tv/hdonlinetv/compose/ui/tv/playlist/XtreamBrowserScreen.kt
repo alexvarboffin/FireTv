@@ -58,6 +58,7 @@ fun XtreamBrowserScreen() {
     XtreamBrowserScreenBody(
         title = state.title.ifBlank { stringResource(R.string.xtream_browser) },
         tabTitles = stringArrayResource(R.array.tab_titles_xtream).toList(),
+        tabBadges = xtreamTabBadges(state.selectedTab, state.channels.size, state.tabCounts),
         selectedIndex = selectedIndex,
         channels = state.channels,
         onTabSelected = { index -> viewModel.selectTab(xtreamTabTypes[index]) },
@@ -79,6 +80,7 @@ fun XtreamBrowserScreen() {
 fun XtreamBrowserScreenBody(
     title: String,
     tabTitles: List<String>,
+    tabBadges: Map<Int, String>,
     selectedIndex: Int,
     channels: List<ChannelUi>,
     onTabSelected: (Int) -> Unit,
@@ -98,6 +100,7 @@ fun XtreamBrowserScreenBody(
         )
         TvFocusTabRow(
             tabs = tabTitles,
+            badges = tabBadges,
             selectedIndex = selectedIndex,
             onSelectedIndexChange = { index ->
                 if (index != selectedIndex) onTabSelected(index)
@@ -114,3 +117,12 @@ fun XtreamBrowserScreenBody(
         runCatching { tabFocus.requestFocus() }
     }
 }
+
+private fun xtreamTabBadges(
+    selected: XtreamStreamType,
+    selectedSize: Int,
+    tabCounts: Map<XtreamStreamType, Int>,
+): Map<Int, String> = xtreamTabTypes.mapIndexedNotNull { index, type ->
+    val n = tabCounts[type] ?: if (type == selected) selectedSize else null
+    n?.let { index to it.toString() }
+}.toMap()
