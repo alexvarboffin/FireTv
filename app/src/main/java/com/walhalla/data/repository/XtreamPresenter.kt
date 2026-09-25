@@ -133,13 +133,13 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
                     }
                 })
             } catch (e: Exception) {
-                postToMainThread(Runnable { callback.errorResult(e.message!!) })
+                postToMainThread { callback.errorResult(e.message!!) }
             }
         }
     }
 
     fun getLiveStreams(input: XtreamInput, callback: RepoCallback<List<Channel>>) {
-        executeInBackground(Runnable {
+        executeInBackground {
 //            try {
 //                List<Channel> channels = db_repo.getFavorite(input);
 //                postToMainThread(() -> callback.successResult(channels));
@@ -210,7 +210,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
             } catch (e: Exception) {
                 postToMainThread { callback.errorResult(e.message!!) }
             }
-        })
+        }
     }
 
     //https://iptv.icsnleb.com:25463/player_api.php?username=12&password=12&xtream_type=vod
