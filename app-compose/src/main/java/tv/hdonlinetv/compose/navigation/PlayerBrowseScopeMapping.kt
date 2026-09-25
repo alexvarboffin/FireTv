@@ -9,6 +9,7 @@ import tv.hdonlinetv.compose.core.presentation.player.PlayerBrowseScopeWire
 fun PlayerBrowseScope.toWire(): PlayerBrowseScopeWire = when (this) {
     PlayerBrowseScope.Favorites -> PlayerBrowseScopeWire.Favorites
     is PlayerBrowseScope.Playlist -> PlayerBrowseScopeWire.Playlist(playlistId)
+    is PlayerBrowseScope.Xtream -> PlayerBrowseScopeWire.Xtream(playlistId, streamType.name)
     is PlayerBrowseScope.Category -> PlayerBrowseScopeWire.Category(name)
     PlayerBrowseScope.All -> PlayerBrowseScopeWire.All
     PlayerBrowseScope.None -> PlayerBrowseScopeWire.None

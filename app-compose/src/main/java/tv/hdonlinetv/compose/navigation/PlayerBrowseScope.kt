@@ -1,6 +1,7 @@
 package tv.hdonlinetv.compose.navigation
 
 import android.net.Uri
+import tv.hdonlinetv.compose.core.domain.repository.XtreamStreamType
 
 /**
  * Browse / zap context for the player: the list the user came from.
@@ -12,8 +13,14 @@ sealed class PlayerBrowseScope {
     /** Favorites grid / list. */
     data object Favorites : PlayerBrowseScope()
 
-    /** Channels of a single M3U/Xtream playlist. */
+    /** Channels of a single M3U playlist (DB join). */
     data class Playlist(val playlistId: Long) : PlayerBrowseScope()
+
+    /** Xtream Live/VOD/Series list for this playlist (API, not DB). */
+    data class Xtream(
+        val playlistId: Long,
+        val streamType: XtreamStreamType,
+    ) : PlayerBrowseScope()
 
     /** Category browser. */
     data class Category(val name: String) : PlayerBrowseScope()
@@ -36,6 +43,7 @@ sealed class PlayerBrowseScope {
     fun typeWire(): String = when (this) {
         Favorites -> TYPE_FAVORITES
         is Playlist -> TYPE_PLAYLIST
+        is Xtream -> TYPE_XTREAM
         is Category -> TYPE_CATEGORY
         All -> TYPE_ALL
         None -> TYPE_NONE
@@ -44,6 +52,7 @@ sealed class PlayerBrowseScope {
 
     fun keyWire(): String = when (this) {
         is Playlist -> playlistId.toString()
+        is Xtream -> "$playlistId:${streamType.name}"
         is Category -> name
         else -> ""
     }
@@ -51,6 +60,7 @@ sealed class PlayerBrowseScope {
     companion object {
         const val TYPE_FAVORITES = "favorites"
         const val TYPE_PLAYLIST = "playlist"
+        const val TYPE_XTREAM = "xtream"
         const val TYPE_CATEGORY = "category"
         const val TYPE_ALL = "all"
         const val TYPE_NONE = "none"
@@ -65,6 +75,7 @@ sealed class PlayerBrowseScope {
                     val id = k.toLongOrNull()
                     if (id != null && id > 0) Playlist(id) else InferPlaylist
                 }
+                TYPE_XTREAM -> parseXtreamKey(k)
                 TYPE_CATEGORY -> {
                     if (k.isNotEmpty()) Category(Uri.decode(k)) else InferPlaylist
                 }
@@ -72,6 +83,14 @@ sealed class PlayerBrowseScope {
                 TYPE_NONE -> None
                 else -> InferPlaylist
             }
+        }
+
+        private fun parseXtreamKey(key: String): PlayerBrowseScope {
+            val idPart = key.substringBefore(':')
+            val typePart = key.substringAfter(':', missingDelimiterValue = "LIVE")
+            val id = idPart.toLongOrNull()
+            val type = runCatching { XtreamStreamType.valueOf(typePart) }.getOrDefault(XtreamStreamType.LIVE)
+            return if (id != null && id > 0) Xtream(id, type) else InferPlaylist
         }
     }
 }

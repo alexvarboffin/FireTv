@@ -3,6 +3,7 @@ package tv.hdonlinetv.compose.navigation
 import androidx.navigation.NavHostController
 import tv.hdonlinetv.compose.core.domain.model.AppSettingsUi
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
+import tv.hdonlinetv.compose.core.domain.repository.XtreamStreamType
 
 fun navigateToChannel(
     navController: NavHostController,
@@ -27,6 +28,7 @@ fun navigateToXtreamItem(
     settings: AppSettingsUi,
     playlistId: Long,
     isSeriesTab: Boolean,
+    streamType: XtreamStreamType = if (isSeriesTab) XtreamStreamType.SERIES else XtreamStreamType.LIVE,
 ) {
     if (isSeriesTab) {
         val seriesId = channel.desc?.toIntOrNull() ?: return
@@ -38,7 +40,7 @@ fun navigateToXtreamItem(
             navController,
             channel,
             settings,
-            scope = PlayerBrowseScope.Playlist(playlistId),
+            scope = PlayerBrowseScope.Xtream(playlistId, streamType),
         )
     }
 }
