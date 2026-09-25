@@ -41,6 +41,9 @@
 - [ ] B1 — Прозрачные иконки каналов: placeholder **по форме иконки**, не заливка всего айтема
   Verify: `RemoteImage` + `contentBackground` / `channel_icon_placeholder`; clip совпадает с image bounds
 
+- [ ] B7 — Lazy-сетка каналов: ключ уникален. Xtream-стримы приходят с `ChannelUi.id = 0` (маппер не пишет stream_id) → `key = ch.id` даёт `IllegalArgumentException: Key "0" was already used`
+  Verify: TV/phone `ChannelGridBody` `gridKey`: при `id != 0` — id, иначе `index|name|link|desc`; открыть Xtream-плейлист с ≥2 live
+
 - [ ] B2 — При 1 колонке сетки — **list row**, не grid-карточка
   Verify: `ChannelGridBody` `listMode` → `ChannelListRow` (tv + mobile)
 

@@ -50,7 +50,7 @@ fun ChannelGridBody(
                     contentPadding = PaddingValues(8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    itemsIndexed(channels, key = { _, ch -> ch.id }) { _, channel ->
+                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { _, channel ->
                         ChannelListRow(
                             channel = channel,
                             onClick = { onChannelClick(channel) },

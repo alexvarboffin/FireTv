@@ -37,9 +37,9 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
         baseUrl = xtreamInput.basicUrl.toHttpUrlOrNull()
         d("@@@@@@@@@@@@$baseUrl")
         val retrofit = RetrofitClient.getClient(xtreamInput.basicUrl)
-        xtreamApi = retrofit.create<XtreamApi>(XtreamApi::class.java)
+        xtreamApi = retrofit.create(XtreamApi::class.java)
         // Мы предпочитаем ts, но не m3u8.
-        liveContainerExtension = if (Arrays.asList<String?>(*allowedOutputFormats).contains("ts"))
+        liveContainerExtension = if (Arrays.asList(*allowedOutputFormats).contains("ts"))
             "ts"
         else
             (if (allowedOutputFormats.size > 0) allowedOutputFormats[0] else "ts")
@@ -55,7 +55,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
     //        }
     //    }
     fun getSeriesStreams(input: XtreamInput, callback: RepoCallback<List<Channel>>) {
-        executeInBackground(Runnable {
+        executeInBackground {
 //            try {
 //                List<Channel> channels = db_repo.getFavorite(playlistId);
 //                postToMainThread(() -> callback.successResult(channels));
@@ -100,7 +100,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
 
                             // Обработка списка потоков
                             for (stream in liveStreams!!) {
-                                d("Icon: " + stream)
+                                d("Icon: $stream")
 
                                 //                                XtreamDataKt.toChannel(
 //                                        stream.url,
@@ -135,7 +135,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
             } catch (e: Exception) {
                 postToMainThread(Runnable { callback.errorResult(e.message!!) })
             }
-        })
+        }
     }
 
     fun getLiveStreams(input: XtreamInput, callback: RepoCallback<List<Channel>>) {
