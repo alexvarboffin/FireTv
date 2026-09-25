@@ -27,3 +27,4 @@ Documentation/reference/
 # Agent local smoke / unpack scratch (screenshots, aar extract, logs)
 .tmp-smoke/
 .tmp-*/
+.tmp/
