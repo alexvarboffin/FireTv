@@ -165,7 +165,7 @@ class XtreamPresenter(handler: Handler, context: Context, private val xtreamInpu
 
                             // Обработка списка потоков
                             for (stream in liveStreams!!) {
-                                d("Icon: " + stream)
+                                d("Icon: $stream")
 
                                 val url = buildLiveStreamUrl(
                                     baseUrl!!,
