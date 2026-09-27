@@ -160,7 +160,8 @@ public class JZMediaAliyun extends JZMediaInterface implements IPlayer.OnPrepare
             if (jzvd.jzDataSource.objects != null) {
                 Jzvd.setVideoImageDisplayType((Integer) jzvd.jzDataSource.objects[0]);
             } else {
-                Jzvd.setVideoImageDisplayType(Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_FILL_SCROP); // 默认剪裁模式
+                // Fit inside (letterbox) — same as phone player ADAPTER; do not crop sides.
+                Jzvd.setVideoImageDisplayType(Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_ADAPTER);
             }
             aliyunMediaPlayer.setScaleMode(IPlayer.ScaleMode.SCALE_ASPECT_FIT); // 设置模式为fit适应
 
