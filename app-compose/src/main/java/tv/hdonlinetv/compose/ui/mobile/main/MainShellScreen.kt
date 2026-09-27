@@ -67,6 +67,7 @@ import tv.hdonlinetv.compose.ui.mobile.components.LegacyTabRow
 import tv.hdonlinetv.compose.ui.mobile.components.LegacyTopAppBar
 import tv.hdonlinetv.compose.ui.mobile.favorites.FavoritesScreen
 import tv.hdonlinetv.compose.ui.mobile.playlist.PlaylistTabScreen
+import tv.hdonlinetv.compose.util.startActivitySafe
 import androidx.core.net.toUri
 
 private val tabTitleRes = listOf(
@@ -206,7 +207,7 @@ fun MainShellScreen() {
                                 label = stringResource(R.string.menu_rate),
                                 onClick = {
                                     scope.launch { drawerState.close() }
-                                    context.startActivity(
+                                    context.startActivitySafe(
                                         Intent(
                                             Intent.ACTION_VIEW,
                                             "market://details?id=${context.packageName}".toUri(),
@@ -226,7 +227,7 @@ fun MainShellScreen() {
                                             context.getString(R.string.app_name_legacy),
                                         )
                                     }
-                                    context.startActivity(Intent.createChooser(shareIntent, null))
+                                    context.startActivitySafe(Intent.createChooser(shareIntent, null))
                                 },
                             )
                             LegacyDrawerItem(
@@ -241,7 +242,7 @@ fun MainShellScreen() {
                                             context.getString(R.string.menu_feedback),
                                         )
                                     }
-                                    context.startActivity(mailIntent)
+                                    context.startActivitySafe(mailIntent)
                                 },
                             )
                             LegacyDrawerItem(

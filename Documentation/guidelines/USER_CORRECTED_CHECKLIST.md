@@ -230,6 +230,9 @@
 - [ ] E12 — Phone VLC: после поворота экрана картинка остаётся (не чёрный экран). Как cinema `VlcPlayerComponent`: при resize `detachViews` + `attachViews`, не один `setWindowSize`
   Verify: `JZMediaVlc` layout listener / `reattachVideoOutput`; VLC → play → rotate portrait↔landscape
 
+- [ ] E13 — Drawer Feedback / Rate / Share не крашат при отсутствии почты/Play/шера: `startActivitySafe` + Toast `no_app_to_handle`; `<queries>` mailto/market/SEND в манифесте
+  Verify: эмулятор без Gmail → Feedback → Toast, процесс жив; phone + TV `MainShellScreen`
+
 ---
 
 ## F. Диалоги / long-press / поля / loading

@@ -19,6 +19,7 @@
     <string name="menu_feedback">Feedback &amp; Bugs</string>
     <string name="menu_tutorial">Tutorial &amp; FAQ</string>
     <string name="menu_privacy">Privacy Policy</string>
+    <string name="no_app_to_handle">No app available to open this</string>
     <string name="privacy_url">https://fightmagick.web.app/en/privacy.html</string>
 
     <string name="media_player_JZMediaSystem" translatable="false">JZMediaSystem (Default)</string>

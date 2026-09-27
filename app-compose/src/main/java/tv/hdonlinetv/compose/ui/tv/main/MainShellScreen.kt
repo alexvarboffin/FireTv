@@ -78,6 +78,7 @@ import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistManageScreen
 import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistTabScreen
 import tv.hdonlinetv.compose.ui.tv.search.SearchScreen
 import tv.hdonlinetv.compose.ui.tv.settings.SettingsScreen
+import tv.hdonlinetv.compose.util.startActivitySafe
 
 private val tabTitleRes = listOf(
     R.string.tab_playlists,
@@ -171,7 +172,7 @@ fun MainShellScreen() {
             showAbout = true
         },
         DrawerNavItem(R.string.menu_rate, R.drawable.ic_ic_actions_star) {
-            context.startActivity(
+            context.startActivitySafe(
                 Intent(
                     Intent.ACTION_VIEW,
                     "market://details?id=${context.packageName}".toUri(),
@@ -183,14 +184,14 @@ fun MainShellScreen() {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, context.getString(R.string.app_name_legacy))
             }
-            context.startActivity(Intent.createChooser(shareIntent, null))
+            context.startActivitySafe(Intent.createChooser(shareIntent, null))
         },
         DrawerNavItem(R.string.menu_feedback, R.drawable.ic_ic_contact_mail) {
             val mailIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.menu_feedback))
             }
-            context.startActivity(mailIntent)
+            context.startActivitySafe(mailIntent)
         },
         DrawerNavItem(R.string.menu_privacy, R.drawable.ic_privacy) {
             navController.navigate(
