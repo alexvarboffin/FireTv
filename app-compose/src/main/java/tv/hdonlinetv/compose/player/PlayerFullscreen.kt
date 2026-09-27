@@ -29,12 +29,34 @@ private data class SavedWindowState(
 )
 
 /**
+ * Prevent screen sleep while any player UI is visible (phone + TV).
+ * Cleared on leave so the rest of the app can dim normally.
+ */
+@Composable
+fun KeepPlayerScreenOn() {
+    val view = LocalView.current
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        val previousView = view.keepScreenOn
+        view.keepScreenOn = true
+        val window = context.findActivity()?.window
+        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        onDispose {
+            view.keepScreenOn = previousView
+            window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+}
+
+/**
  * Black status/navigation bars for the whole player screen (portrait toolbar + video).
  */
 @Composable
 fun HandlePlayerScreenSystemUi() {
     val context = LocalContext.current
     val view = LocalView.current
+
+    KeepPlayerScreenOn()
 
     SideEffect {
         val activity = context.findActivity() ?: return@SideEffect

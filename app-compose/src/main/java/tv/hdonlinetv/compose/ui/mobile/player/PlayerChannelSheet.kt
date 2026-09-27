@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,9 +34,14 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.ui.components.RemoteImage
 
+private val SheetScrim = Color.Black.copy(alpha = 0.22f)
+private val SheetContainer = Color.Black.copy(alpha = 0.45f)
+private val RowIdle = Color.White.copy(alpha = 0.10f)
+private val RowCurrent = Color.White.copy(alpha = 0.22f)
+
 /**
  * Touch channel list for the phone player — same browse-scope order as TV curtain,
- * presented as a Material3 bottom sheet.
+ * presented as a translucent Material3 bottom sheet over the video.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,12 +80,15 @@ fun PlayerChannelSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = colorResource(R.color.bgMain),
+        containerColor = SheetContainer,
+        scrimColor = SheetScrim,
+        tonalElevation = 0.dp,
+        contentColor = Color.White,
     ) {
         Text(
             text = stringResource(R.string.menu_home),
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-            color = colorResource(R.color.black),
+            color = Color.White,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
         )
@@ -96,7 +103,7 @@ fun PlayerChannelSheet(
                 item(key = "h_$category") {
                     Text(
                         text = category,
-                        color = colorResource(R.color.lightGray),
+                        color = Color.White.copy(alpha = 0.65f),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(
@@ -128,11 +135,7 @@ private fun ChannelSheetRow(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .background(
-                color = if (isCurrent) {
-                    colorResource(R.color.colorAccent).copy(alpha = 0.18f)
-                } else {
-                    Color(0xFFF2F2F2)
-                },
+                color = if (isCurrent) RowCurrent else RowIdle,
                 shape = RoundedCornerShape(10.dp),
             )
             .clickable(onClick = onClick)
@@ -151,7 +154,7 @@ private fun ChannelSheetRow(
                 text = channel.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = colorResource(R.color.black),
+                color = Color.White,
                 fontSize = 15.sp,
                 fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Normal,
             )
@@ -160,11 +163,10 @@ private fun ChannelSheetRow(
                     text = cat,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = colorResource(R.color.lightGray),
+                    color = Color.White.copy(alpha = 0.65f),
                     fontSize = 12.sp,
                 )
             }
         }
     }
 }
-

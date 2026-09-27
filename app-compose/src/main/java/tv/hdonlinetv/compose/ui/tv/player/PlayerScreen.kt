@@ -94,6 +94,7 @@ import tv.hdonlinetv.compose.navigation.toWire
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.player.JZVideoPlayerNew
+import tv.hdonlinetv.compose.player.KeepPlayerScreenOn
 import tv.hdonlinetv.compose.player.LegacyJzPlayerRelease
 import tv.hdonlinetv.compose.player.LegacyJzPlayerSetup
 import tv.hdonlinetv.compose.tv.LocalTvNavController
@@ -289,6 +290,7 @@ fun PlayerScreenBody(
         }
     }
 
+    KeepPlayerScreenOn()
     HandleTvPlayerImmersiveUi()
 
     DisposableEffect(lifecycleOwner, isExiting) {
