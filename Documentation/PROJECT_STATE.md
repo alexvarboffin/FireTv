@@ -187,3 +187,4 @@ $env:GRADLE_OPTS='-Djava.net.preferIPv4Stack=true'
 | 7 | Версии, пониженные 2026-09-21 из-за 404 Google Maven | `room 2.7.2`, `core 1.16.0`, `google-services 4.4.2` — до сих пор в каталоге |
 | 8 | Roadmap, фаза 8 (cutover) | `applicationId`, подпись, ProGuard/R8, leanback/banner выровнены; legacy archive / flavor — не сделаны |
 | 9 | Play Console | UMP-сообщение в AdMob; включить форм-фактор TV (иначе leanback-декларации не дадут TV-листинга); Data safety; раскатка через internal → staged production |
+| 10 | Aliyun Player License | С 7.0 — платный License; 6.x с Maven тоже валит prepare без Key. Pin как в первом коммите: `4.5.0-full`. Конспект: [ARCHITECTURE/aliyun-player-license.md](ARCHITECTURE/aliyun-player-license.md) |

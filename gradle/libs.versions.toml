@@ -59,7 +59,9 @@ installreferrer = "2.2"
 jiaozivideoplayer = "7.7.2.3300"
 # Original project pin from first commit (commented): AliyunPlayer:4.5.0-full — no paid License gate.
 # 6.x/7.x on Maven now embed licenseManager and fail prepare without Key.
+# 4.5.0-full needs sibling AlivcConan (libalivc_conan.so); without it UnsatisfiedLinkError on createAliPlayer.
 aliyunPlayer = "4.5.0-full"
+alivcConan = "0.9.5"
 jsoup = "1.21.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -159,6 +161,7 @@ glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 jiaozivideoplayer = { module = "cn.jzvd:jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 aliyun-player = { module = "com.aliyun.sdk.android:AliyunPlayer", version.ref = "aliyunPlayer" }
+alivc-conan = { module = "com.alivc.conan:AlivcConan", version.ref = "alivcConan" }
 kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlinStdlibJdk7" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -177,7 +180,6 @@ androidx-preference-ktx = { version.ref = "preference", module = "androidx.prefe
 androidx-preference-ktx-ktx = { version.ref = "preference", module = "androidx.preference:preference-ktx-ktx"}
 androidx-room-compiler = { version.ref = "room", module = "androidx.room:room-compiler"}
 androidx-room-runtime = { version.ref = "room", module = "androidx.room:room-runtime"}
-
 
 
 androidx-runner = { version.ref = "runner", module = "androidx.test:runner"}
