@@ -7,10 +7,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
@@ -128,198 +129,216 @@ fun MainShellScreen() {
         )
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet(
-                drawerContainerColor = colorResource(R.color.bgMain),
-            ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(colorResource(R.color.bgMain))
-                            .padding(horizontal = 16.dp, vertical = 24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+    // AdMob Site Behavior: Navigation — banner MUST sit outside the drawer
+    // (legacy activity_main.xml): open menu must not cover the ad; FAB stays above the banner.
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
+    ) {
+        ModalNavigationDrawer(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            drawerState = drawerState,
+            drawerContent = {
+                ModalDrawerSheet(
+                    drawerContainerColor = colorResource(R.color.bgMain),
+                ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(colorResource(R.color.bgMain))
+                                .padding(horizontal = 16.dp, vertical = 24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Image(
+                                painter = painterResource(R.mipmap.ic_launcher_foreground),
+                                contentDescription = null,
+                                modifier = Modifier.size(90.dp),
+                            )
+                            Text(
+                                text = stringResource(R.string.app_name_legacy),
+                                color = colorResource(R.color.black),
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(top = 8.dp),
+                            )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .verticalScroll(rememberScrollState()),
+                        ) {
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_tv_icon,
+                                label = stringResource(R.string.menu_home),
+                                onClick = { scope.launch { drawerState.close() } },
+                            )
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_favorite_border,
+                                label = stringResource(R.string.menu_profile),
+                                onClick = {
+                                    scope.launch {
+                                        drawerState.close()
+                                        pagerState.animateScrollToPage(3)
+                                    }
+                                },
+                            )
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_actions_settings,
+                                label = stringResource(R.string.menu_settings),
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    navController.navigate(Routes.Settings.route)
+                                },
+                            )
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_info,
+                                label = stringResource(R.string.menu_about),
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    showAboutDialog = true
+                                },
+                            )
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_ic_actions_star,
+                                label = stringResource(R.string.menu_rate),
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    context.startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            "market://details?id=${context.packageName}".toUri(),
+                                        ),
+                                    )
+                                },
+                            )
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_share,
+                                label = stringResource(R.string.menu_share),
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(
+                                            Intent.EXTRA_TEXT,
+                                            context.getString(R.string.app_name_legacy),
+                                        )
+                                    }
+                                    context.startActivity(Intent.createChooser(shareIntent, null))
+                                },
+                            )
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_ic_contact_mail,
+                                label = stringResource(R.string.menu_feedback),
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    val mailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                        data = Uri.parse("mailto:")
+                                        putExtra(
+                                            Intent.EXTRA_SUBJECT,
+                                            context.getString(R.string.menu_feedback),
+                                        )
+                                    }
+                                    context.startActivity(mailIntent)
+                                },
+                            )
+                            LegacyDrawerItem(
+                                iconRes = R.drawable.ic_privacy,
+                                label = stringResource(R.string.menu_privacy),
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    navController.navigate(
+                                        Routes.InfoWeb.build(
+                                            url = context.getString(R.string.privacy_url),
+                                            title = context.getString(R.string.policy_privacy),
+                                        ),
+                                    )
+                                },
+                            )
+                        }
+                    }
+                }
+            },
+        ) {
+            Scaffold(
+                containerColor = colorResource(R.color.bgMain),
+                topBar = {
+                    LegacyTopAppBar(
+                        title = stringResource(tabTitleRes[pagerState.currentPage]),
+                        navigationIcon = {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_action_action),
+                                    contentDescription = null,
+                                    tint = colorResource(R.color.black),
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { navController.navigate(Routes.Search.route) }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_actions_search),
+                                    contentDescription = null,
+                                    tint = colorResource(R.color.black),
+                                )
+                            }
+                            IconButton(onClick = { navController.navigate(Routes.Tutorial.route) }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_info),
+                                    contentDescription = null,
+                                    tint = colorResource(R.color.black),
+                                )
+                            }
+                        },
+                    )
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { navController.navigate(Routes.PlaylistManage.route) },
+                        containerColor = colorResource(R.color.colorPrimary),
+                        contentColor = colorResource(R.color.white),
                     ) {
-                        Image(
-                            painter = painterResource(R.mipmap.ic_launcher_foreground),
+                        Icon(
+                            painter = painterResource(R.drawable.ic_add_black_24dp),
                             contentDescription = null,
-                            modifier = Modifier.size(90.dp),
-                        )
-                        Text(
-                            text = stringResource(R.string.app_name_legacy),
-                            color = colorResource(R.color.black),
-                            fontSize = 16.sp,
-                            modifier = Modifier.padding(top = 8.dp),
+                            tint = colorResource(R.color.black),
                         )
                     }
-                    Column(
+                },
+            ) { padding ->
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize()
+                        .background(colorResource(R.color.bgMain)),
+                ) {
+                    LegacyTabRow(
+                        tabs = tabTitleRes.map { stringResource(it) },
+                        selectedIndex = pagerState.currentPage,
+                        badges = tabBadges,
+                        onTabSelected = { index ->
+                            scope.launch { pagerState.animateScrollToPage(index) }
+                        },
+                    )
+                    HorizontalPager(
+                        state = pagerState,
                         modifier = Modifier
                             .weight(1f)
-                            .verticalScroll(rememberScrollState()),
-                    ) {
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_tv_icon,
-                            label = stringResource(R.string.menu_home),
-                            onClick = { scope.launch { drawerState.close() } },
-                        )
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_favorite_border,
-                            label = stringResource(R.string.menu_profile),
-                            onClick = {
-                                scope.launch {
-                                    drawerState.close()
-                                    pagerState.animateScrollToPage(3)
-                                }
-                            },
-                        )
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_actions_settings,
-                            label = stringResource(R.string.menu_settings),
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                navController.navigate(Routes.Settings.route)
-                            },
-                        )
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_info,
-                            label = stringResource(R.string.menu_about),
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                showAboutDialog = true
-                            },
-                        )
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_ic_actions_star,
-                            label = stringResource(R.string.menu_rate),
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                context.startActivity(
-                                    Intent(Intent.ACTION_VIEW,
-                                        "market://details?id=${context.packageName}".toUri()),
-                                )
-                            },
-                        )
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_share,
-                            label = stringResource(R.string.menu_share),
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, context.getString(R.string.app_name_legacy))
-                                }
-                                context.startActivity(Intent.createChooser(shareIntent, null))
-                            },
-                        )
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_ic_contact_mail,
-                            label = stringResource(R.string.menu_feedback),
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                val mailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                                    data = Uri.parse("mailto:")
-                                    putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.menu_feedback))
-                                }
-                                context.startActivity(mailIntent)
-                            },
-                        )
-                        LegacyDrawerItem(
-                            iconRes = R.drawable.ic_privacy,
-                            label = stringResource(R.string.menu_privacy),
-                            onClick = {
-                                scope.launch { drawerState.close() }
-                                navController.navigate(
-                                    Routes.InfoWeb.build(
-                                        url = context.getString(R.string.privacy_url),
-                                        title = context.getString(R.string.policy_privacy),
-                                    ),
-                                )
-                            },
-                        )
+                            .fillMaxWidth(),
+                    ) { page ->
+                        when (page) {
+                            0 -> PlaylistTabScreen()
+                            1 -> AllChannelsScreen()
+                            2 -> CategoryScreen()
+                            else -> FavoritesScreen()
+                        }
                     }
                 }
-            }
-        },
-    ) {
-        Scaffold(
-            containerColor = colorResource(R.color.bgMain),
-            topBar = {
-                LegacyTopAppBar(
-                    title = stringResource(tabTitleRes[pagerState.currentPage]),
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_action_action),
-                                contentDescription = null,
-                                tint = colorResource(R.color.black),
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { navController.navigate(Routes.Search.route) }) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_actions_search),
-                                contentDescription = null,
-                                tint = colorResource(R.color.black),
-                            )
-                        }
-                        IconButton(onClick = { navController.navigate(Routes.Tutorial.route) }) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_info),
-                                contentDescription = null,
-                                tint = colorResource(R.color.black),
-                            )
-                        }
-                    },
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navController.navigate(Routes.PlaylistManage.route) },
-                    containerColor = colorResource(R.color.colorPrimary),
-                    contentColor = colorResource(R.color.white),
-                    modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_add_black_24dp),
-                        contentDescription = null,
-                        tint = colorResource(R.color.black),
-                    )
-                }
-            },
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .background(colorResource(R.color.bgMain)),
-            ) {
-                LegacyTabRow(
-                    tabs = tabTitleRes.map { stringResource(it) },
-                    selectedIndex = pagerState.currentPage,
-                    badges = tabBadges,
-                    onTabSelected = { index ->
-                        scope.launch { pagerState.animateScrollToPage(index) }
-                    },
-                )
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                ) { page ->
-                    when (page) {
-                        0 -> PlaylistTabScreen()
-                        1 -> AllChannelsScreen()
-                        2 -> CategoryScreen()
-                        else -> FavoritesScreen()
-                    }
-                }
-                AdMobBanner()
             }
         }
+        AdMobBanner()
     }
 }
 

@@ -205,7 +205,7 @@ dependencies {
 
     implementation(libs.lottie)
 
-    // ApsaraVideo Player SDK (JZMediaAliyun). Docs: AliyunPlayer:7.15.0-full
+    // ApsaraVideo Player SDK (JZMediaAliyun). First-commit pin: 4.5.0-full (no License Key).
     implementation(libs.aliyun.player)
     // Older builds also pulled Conan; not required for full AAR.
 
