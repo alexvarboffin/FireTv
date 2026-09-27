@@ -227,6 +227,9 @@
 - [ ] E11 — `Key.SystemHome` (KEYCODE_HOME = 3) обрабатывается рядом с `Key.MoveHome`. Нельзя удалять Home «заодно» и нельзя подменять его `MoveHome` (это разные коды)
   Verify: `ui/tv/player/PlayerScreen.kt` / `PlayerChannelSheet.kt`
 
+- [ ] E12 — Phone VLC: после поворота экрана картинка остаётся (не чёрный экран). Как cinema `VlcPlayerComponent`: при resize `detachViews` + `attachViews`, не один `setWindowSize`
+  Verify: `JZMediaVlc` layout listener / `reattachVideoOutput`; VLC → play → rotate portrait↔landscape
+
 ---
 
 ## F. Диалоги / long-press / поля / loading
