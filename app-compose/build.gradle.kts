@@ -56,7 +56,7 @@ android {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("x")
             versionNameSuffix = ".DEMO"
-            resValue("string", "app_name", "1 APP")
+            resValue("string", "app_name", "Ultimate.TV")
         }
         getByName("release") {
             isMinifyEnabled = true
