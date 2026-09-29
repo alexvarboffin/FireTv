@@ -65,6 +65,7 @@ alivcConan = "0.9.5"
 jsoup = "1.21.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
+kxml2 = "2.3.0"
 koinAndroid = "4.1.1"
 kotlin = "2.2.21"
 # cinema notKmp: 3.6.5; 3.7.0+ — 16 KB ELF alignment для Play (Android 15+)
@@ -207,6 +208,7 @@ hilt-compiler = { version.ref = "hilt", group = "com.google.dagger", name = "hil
 installreferrer = { version.ref = "installreferrer", module = "com.android.installreferrer:installreferrer"}
 jsoup = { version.ref = "jsoup", module = "org.jsoup:jsoup"}
 junit = { version.ref = "junit", group = "junit", name = "junit"}
+kxml2 = { version.ref = "kxml2", module = "net.sf.kxml:kxml2"}
 koin-android = { version.ref = "koinAndroid", module = "io.insert-koin:koin-android"}
 kotlin-gradle-plugin = { version.ref = "kotlinGradlePlugin", module = "org.jetbrains.kotlin:kotlin-gradle-plugin"}
 kotlin-stdlib-jdk8 = { version.ref = "kotlin", module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8"}
