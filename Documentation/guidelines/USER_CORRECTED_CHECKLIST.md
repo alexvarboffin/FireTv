@@ -92,6 +92,9 @@
 - [ ] B12 — TV плитка категории: градиент как Cinema `GradientBg` (radial пары цветов, alpha по фокусу), но из **наших** `category_colors`: цвет плитки (осветлённый центр) → следующий цвет палитры; пара детерминирована по index (не `random()`); alpha 0.35 → 0.85 в фокусе (анимация); снизу vertical-затемнение под название. Базовая заливка — всё ещё `Surface containerColor` (B10)
   Verify: `CategoryCard.kt` `Brush.radialGradient` + `collectIsFocusedAsState`; при скролле цвета не прыгают
 
+- [ ] B13 — TV плитка категории **без иконки** (блок `AsyncImage` с `R.mipmap.ic_launcher_round` закомментирован, не удалён); **имя категории по центру** как Cinema `CategoriesScreenTv`: белый текст 20sp + `Shadow(Black, blur 8)`. Нижнее затемнение убрано (было под текстом внизу). Если иконку вернут — только через Coil: на API 26+ `ic_launcher_round` = adaptive-icon XML, `painterResource` падает
+  Verify: `ui/tv/components/CategoryCard.kt` `Text(align = Center, shadow)`; иконки нет; общий `RemoteImage` не менялся
+
 ---
 
 ## C. Плейлисты: delete / refresh / категории

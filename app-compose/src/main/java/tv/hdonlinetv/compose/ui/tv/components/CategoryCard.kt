@@ -19,10 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,7 +35,6 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.CategoryUi
-import tv.hdonlinetv.compose.ui.components.RemoteImage
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -88,25 +88,24 @@ fun CategoryCard(
                         ),
                     ),
             )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            0.5f to Color.Transparent,
-                            1f to Color.Black.copy(alpha = 0.55f),
-                        ),
-                    ),
-            )
-            RemoteImage(
-                url = category.thumb,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(top = 24.dp)
-                    .fillMaxWidth(0.4f)
-                    .aspectRatio(1f),
-                contentScale = ContentScale.Crop,
-            )
+            // Icon hidden: name centered like Cinema CategoriesScreenTv.
+            // ic_launcher_round is an adaptive-icon XML on API 26+: painterResource can't load it,
+            // Coil can (via the resource drawable).
+            // val roundIcon = rememberAsyncImagePainter(R.mipmap.ic_launcher_round)
+            // AsyncImage(
+            //     model = category.thumb?.trim()?.takeIf { it.isNotBlank() }
+            //         ?: R.mipmap.ic_launcher_round,
+            //     contentDescription = null,
+            //     placeholder = roundIcon,
+            //     error = roundIcon,
+            //     contentScale = ContentScale.Crop,
+            //     modifier = Modifier
+            //         .align(Alignment.Center)
+            //         .padding(top = 24.dp)
+            //         .fillMaxWidth(0.4f)
+            //         .aspectRatio(1f)
+            //         .clip(CircleShape),
+            // )
             if (category.count > 0) {
                 Text(
                     text = stringResource(R.string.channels_format, category.count),
@@ -122,12 +121,13 @@ fun CategoryCard(
             Text(
                 text = category.name,
                 color = Color.White,
-                fontSize = 18.sp,
+                fontSize = 20.sp,
                 textAlign = TextAlign.Center,
+                style = TextStyle(shadow = Shadow(color = Color.Black, blurRadius = 8f)),
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.Center)
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    .padding(horizontal = 12.dp),
             )
         }
     }
