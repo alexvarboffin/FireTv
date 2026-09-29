@@ -28,3 +28,4 @@ Documentation/reference/
 .tmp-smoke/
 .tmp-*/
 .tmp/
+.idea/
