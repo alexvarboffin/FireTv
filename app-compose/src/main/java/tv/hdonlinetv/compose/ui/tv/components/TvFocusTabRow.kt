@@ -1,8 +1,12 @@
 package tv.hdonlinetv.compose.ui.tv.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +18,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Tab
 import androidx.tv.material3.TabDefaults
@@ -90,13 +95,36 @@ fun TvFocusTabRow(
                 ) {
                     Text(text = title)
                     if (!badge.isNullOrBlank()) {
-                        Text(
-                            text = " $badge",
-                            modifier = Modifier.padding(start = 4.dp),
+                        TabCountBadge(
+                            text = badge,
+                            modifier = Modifier.padding(start = 8.dp),
                         )
                     }
                 }
             }
         }
+    }
+}
+
+/** Mirror of phone `LegacyTabRow` material3 `Badge` (tv.material3 has no Badge). */
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun TabCountBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
+            .background(colorResource(R.color.badge_background_color), CircleShape)
+            .padding(horizontal = 6.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = text,
+            color = colorResource(R.color.badge_text_color),
+            fontSize = 11.sp,
+            maxLines = 1,
+        )
     }
 }
