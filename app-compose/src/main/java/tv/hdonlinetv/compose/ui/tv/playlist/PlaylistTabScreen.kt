@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
@@ -61,6 +61,8 @@ import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
+import tv.hdonlinetv.compose.ui.tv.components.rememberTvLazyFocusRestorer
+import tv.hdonlinetv.compose.ui.tv.components.tvLazyFocusGroup
 import tv.hdonlinetv.compose.ui.tv.notifications.LocalTvNotificationManager
 import tv.hdonlinetv.compose.ui.tv.notifications.NotificationType
 import tv.hdonlinetv.compose.util.PlaylistMetaFormat
@@ -145,6 +147,7 @@ fun PlaylistTabScreenBody(
     onPlaylistClick: (PlaylistUi) -> Unit,
     onPlaylistLongClick: (PlaylistUi) -> Unit,
 ) {
+    val listRestorer = rememberTvLazyFocusRestorer()
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             isLoading && playlists.isEmpty() -> {
@@ -161,15 +164,18 @@ fun PlaylistTabScreenBody(
             }
             else -> {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .tvLazyFocusGroup(listRestorer),
                     contentPadding = PaddingValues(horizontal = 48.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    items(playlists, key = { it.id }) { playlist ->
+                    itemsIndexed(playlists, key = { _, it -> it.id }) { index, playlist ->
                         PlaylistCardTv(
                             playlist = playlist,
                             onClick = { onPlaylistClick(playlist) },
                             onLongClick = { onPlaylistLongClick(playlist) },
+                            modifier = listRestorer.itemModifier(index),
                         )
                     }
                 }
@@ -184,6 +190,7 @@ private fun PlaylistCardTv(
     playlist: PlaylistUi,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val drawerFocus = LocalTvDrawerFocusRequester.current
     // Cinema MovieCardTvSimple: long-press only arms a flag; invoke on KeyUp.
@@ -208,7 +215,7 @@ private fun PlaylistCardTv(
             // Pointer long-press; D-pad uses KeyUp path below.
             onLongClick()
         },
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .then(
                 if (drawerFocus != null) {

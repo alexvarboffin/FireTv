@@ -35,6 +35,7 @@ fun ChannelGridBody(
     onChannelClick: (ChannelUi) -> Unit,
 ) {
     val drawerFocus = LocalTvDrawerFocusRequester.current
+    val listRestorer = rememberTvLazyFocusRestorer()
     val listMode = LocalSettingsRepository.current.getSettings().gridColumns <= 1
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -59,18 +60,21 @@ fun ChannelGridBody(
             }
             listMode -> {
                 LazyColumn(
+                    modifier = Modifier.tvLazyFocusGroup(listRestorer),
                     contentPadding = PaddingValues(horizontal = 48.dp, vertical = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { _, channel ->
+                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { index, channel ->
                         ChannelListRow(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
-                            modifier = if (drawerFocus != null) {
-                                Modifier.focusProperties { left = drawerFocus }
-                            } else {
-                                Modifier
-                            },
+                            modifier = listRestorer.itemModifier(index).then(
+                                if (drawerFocus != null) {
+                                    Modifier.focusProperties { left = drawerFocus }
+                                } else {
+                                    Modifier
+                                },
+                            ),
                         )
                     }
                 }
@@ -78,6 +82,7 @@ fun ChannelGridBody(
             else -> {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(minSize = TvChannelGridMinCell),
+                    modifier = Modifier.tvLazyFocusGroup(listRestorer),
                     contentPadding = PaddingValues(48.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -86,11 +91,13 @@ fun ChannelGridBody(
                         ChannelCard(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
-                            modifier = if (drawerFocus != null && index % columns == 0) {
-                                Modifier.focusProperties { left = drawerFocus }
-                            } else {
-                                Modifier
-                            },
+                            modifier = listRestorer.itemModifier(index).then(
+                                if (drawerFocus != null && index % columns == 0) {
+                                    Modifier.focusProperties { left = drawerFocus }
+                                } else {
+                                    Modifier
+                                },
+                            ),
                         )
                     }
                 }

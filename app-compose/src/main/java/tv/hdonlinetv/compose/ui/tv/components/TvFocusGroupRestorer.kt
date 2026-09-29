@@ -27,6 +27,9 @@ data class TvLazyFocusRestorer(
     val child: FocusRequester,
 ) {
     fun childModifier(): Modifier = Modifier.focusRequester(child)
+
+    fun itemModifier(index: Int): Modifier =
+        if (index == 0) childModifier() else Modifier
 }
 
 @Composable
