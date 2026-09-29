@@ -15,13 +15,17 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
+import kotlinx.coroutines.launch
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
@@ -45,6 +49,7 @@ fun ChannelGridBody(
     val gridState = rememberLazyGridState()
     val itemCount = if (isLoading) 0 else channels.size
     val offset = if (header != null) 1 else 0
+    val scope = rememberCoroutineScope()
     if (listMode) {
         listRestorer.RestoreFocusOnReturn(listState, itemCount, offset)
     } else {
@@ -76,7 +81,11 @@ fun ChannelGridBody(
                 ChannelListRow(
                     channel = channel,
                     onClick = { onChannelClick(channel) },
-                    modifier = listRestorer.itemModifier(index, channels.size).then(
+                    modifier = listRestorer.itemModifier(index, channels.size).onFocusChanged {
+                        if (it.isFocused && header != null && index == 0) {
+                            scope.launch { revealHeader { listState.animateScrollToItem(0) } }
+                        }
+                    }.then(
                         if (drawerFocus != null) {
                             Modifier.focusProperties { left = drawerFocus }
                         } else {
@@ -107,11 +116,24 @@ fun ChannelGridBody(
                     channel = channel,
                     onClick = { onChannelClick(channel) },
                     modifier = listRestorer.itemModifier(index, channels.size)
-                        .leftFromFirstColumn(gridState, index + offset, drawerFocus),
+                        .leftFromFirstColumn(gridState, index + offset, drawerFocus)
+                        .onFocusChanged {
+                            val firstRow = header != null && gridState.layoutInfo.visibleItemsInfo
+                                .firstOrNull { info -> info.index == index + offset }?.row == 1
+                            if (it.isFocused && firstRow) {
+                                scope.launch { revealHeader { gridState.animateScrollToItem(0) } }
+                            }
+                        },
                 )
             }
         }
     }
+}
+
+/** Focus bring-into-view starts its own scroll right after the focus change; start ours after it so it wins. */
+private suspend fun revealHeader(scrollToTop: suspend () -> Unit) {
+    withFrameNanos { }
+    scrollToTop()
 }
 
 private const val HEADER_KEY = "header"
