@@ -39,7 +39,7 @@ fun ChannelCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                 )
                 ChannelGeoLockBadge(
                     channel = channel,

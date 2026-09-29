@@ -23,7 +23,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -211,6 +213,14 @@ fun MainShellScreen() {
     val screenFallback = remember { FocusRequester() }
     val tabRowFallback = remember { FocusRequester() }
     val drawerRestorer = rememberTvLazyFocusRestorer()
+    // Saveable: back from player/details must not steal focus from the restored list item.
+    var initialFocusDone by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (initialFocusDone) return@LaunchedEffect
+        initialFocusDone = true
+        withFrameNanos { }
+        runCatching { drawerRestorer.child.requestFocus() }
+    }
 
     Box(
         modifier = Modifier
@@ -231,7 +241,7 @@ fun MainShellScreen() {
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.Start,
                     ) {
-                        itemsIndexed(drawerItems, key = { _, item -> item.titleRes }) { index, item ->
+                        itemsIndexed(drawerItems, key = { _, item -> item.titleRes }) { _, item ->
                             val selected = when (item.titleRes) {
                                 R.string.menu_search -> shellPanel == ShellPanel.Search
                                 R.string.playlist_management ->
@@ -247,7 +257,8 @@ fun MainShellScreen() {
                             NavigationDrawerItem(
                                 selected = selected,
                                 onClick = item.onClick,
-                                modifier = if (index == 0) {
+                                // Drawer fallback + initial focus: "Channels" (menu_home), not Search.
+                                modifier = if (item.titleRes == R.string.menu_home) {
                                     drawerRestorer.childModifier()
                                 } else {
                                     Modifier

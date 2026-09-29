@@ -31,6 +31,9 @@
 - [ ] A7 — Табы Xtream (Live / VOD / Series) показывают **количество**, как табы MainShell
   Verify: `XtreamBrowserUiState.tabCounts`; TV `TvFocusTabRow(badges)`, phone `LegacyTabRow(badges)`; mock: Live 3, VOD 2, Series 2
 
+- [ ] A12 — TV: количество на табах в **круглом лейбле**, как phone `Badge` (`badge_background_color` #D50000 + `badge_text_color`), не голый текст. tv.material3 без Badge → `TabCountBadge` (CircleShape, min 20dp). На табе **в фокусе** (розовая капсула) кружок инвертирован: белый фон + `colorPrimary` текст, иначе красный сливается с #FF0044
+  Verify: `TvFocusTabRow` `TabCountBadge` + `collectIsFocusedAsState`; MainShell и Xtream табы
+
 - [ ] A6 — Xtream browser / Serial detail / Onboarding на TV — native tv.material3 (TvFocusTabRow, Surface-блоки, TvLoadingOverlay); `TvNavHost` без material3 `Scaffold` (Box + `windowInsetsPadding(systemBars)`)
   Verify: `ui/tv/playlist/XtreamBrowserScreen.kt`, `SerialDetailScreen.kt`, `ui/tv/onboarding/OnboardingScreen.kt`, `tv/TvNavHost.kt`
 
@@ -42,6 +45,9 @@
 
 - [ ] A11 — Списки плейлистов и каналов восстанавливают фокус **после возврата** (плеер / каналы плейлиста / Xtream → Back): фокус на том айтеме, с которого ушли, список прокручен к нему. Cinema `MoviesScreenTv`: fallback-`FocusRequester` на **последнем сфокусированном** айтеме (`lastFocusedIndex`), не на первом; индекс в `rememberSaveable`
   Verify: `TvLazyFocusRestorer.itemModifier(index, count)` + `RestoreFocusOnReturn(listState|gridState, count)` в `PlaylistTabScreenBody` и `ChannelGridBody`; прокрутить на 20-й канал → OK → Back → фокус на 20-м
+
+- [ ] A13 — При запуске TV MainShell **начальный фокус** на пункте drawer «Каналы» (`menu_home`), не пусто и не «Поиск». Этот же пункт — fallback child drawer-restorer'а. Одноразово: флаг в `rememberSaveable`, чтобы Back из плеера не перебивал `RestoreFocusOnReturn` списка
+  Verify: холодный старт → drawer раскрыт, фокус на «Каналы»; канал → плеер → Back → фокус на канале, не в меню
 
 - [ ] A9 — Drawer Search label = `menu_search` («Поиск» / Search), **не** `search_hint` («Какие каналы…»)
   Verify: `MainShellScreen` drawer item; string `menu_search` в `app-compose` / common

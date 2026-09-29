@@ -59,7 +59,7 @@ fun ChannelListRow(
                     modifier = Modifier
                         .size(72.dp)
                         .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                 )
                 Column(
                     modifier = Modifier
