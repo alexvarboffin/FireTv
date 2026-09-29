@@ -17,6 +17,7 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.ui.components.ChannelGeoLockBadge
+import tv.hdonlinetv.compose.ui.components.ChannelTvgIdDebugLabel
 import tv.hdonlinetv.compose.ui.components.RemoteImage
 
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -44,6 +45,12 @@ fun ChannelCard(
                 ChannelGeoLockBadge(
                     channel = channel,
                     modifier = Modifier.align(Alignment.TopEnd),
+                )
+                ChannelTvgIdDebugLabel(
+                    channel = channel,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(4.dp),
                 )
             }
             Text(

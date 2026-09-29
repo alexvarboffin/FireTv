@@ -25,6 +25,7 @@ import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.BuildConfig
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.ui.components.ChannelGeoLockBadge
+import tv.hdonlinetv.compose.ui.components.ChannelTvgIdDebugLabel
 import tv.hdonlinetv.compose.ui.components.RemoteImage
 import tv.hdonlinetv.compose.ui.components.isGeoBlocked
 
@@ -92,6 +93,10 @@ fun ChannelListRow(
                             modifier = Modifier.padding(top = 4.dp),
                         )
                     }
+                    ChannelTvgIdDebugLabel(
+                        channel = channel,
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
                     if (BuildConfig.DEBUG) {
                         val debugBits = buildList {
                             if (!channel.extUserAgent.isNullOrBlank() ||

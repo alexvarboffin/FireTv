@@ -33,6 +33,7 @@ internal object XtreamStreamMapper {
             category = stream.categoryId?.toString(),
             link = url,
             desc = stream.epgChannelId,
+            tvgId = stream.epgChannelId,
         )
     }
 

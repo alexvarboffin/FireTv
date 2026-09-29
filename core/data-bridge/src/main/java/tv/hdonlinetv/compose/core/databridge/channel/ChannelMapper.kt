@@ -16,6 +16,7 @@ object ChannelMapper {
         extUserAgent = channel.extUserAgent,
         extReferer = channel.extReferer,
         ua = channel.ua,
+        tvgId = channel.tvgId,
     )
 
     fun toUiList(channels: List<Channel>): List<ChannelUi> =
@@ -33,6 +34,7 @@ object ChannelMapper {
         channel.extUserAgent = ui.extUserAgent
         channel.extReferer = ui.extReferer
         channel.ua = ui.ua
+        channel.tvgId = ui.tvgId
         return channel
     }
 }

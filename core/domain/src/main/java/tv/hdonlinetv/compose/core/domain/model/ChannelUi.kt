@@ -11,4 +11,6 @@ data class ChannelUi(
     val extUserAgent: String? = null,
     val extReferer: String? = null,
     val ua: String? = null,
+    /** M3U `tvg-id` / Xtream `epg_channel_id` — EPG key, not the Room `_id`. */
+    val tvgId: String? = null,
 )
