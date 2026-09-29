@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
@@ -60,6 +61,7 @@ import tv.hdonlinetv.compose.navigation.Routes
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
+import tv.hdonlinetv.compose.ui.tv.components.RestoreFocusOnReturn
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
 import tv.hdonlinetv.compose.ui.tv.components.rememberTvLazyFocusRestorer
 import tv.hdonlinetv.compose.ui.tv.components.tvLazyFocusGroup
@@ -148,6 +150,8 @@ fun PlaylistTabScreenBody(
     onPlaylistLongClick: (PlaylistUi) -> Unit,
 ) {
     val listRestorer = rememberTvLazyFocusRestorer()
+    val listState = rememberLazyListState()
+    listRestorer.RestoreFocusOnReturn(listState, playlists.size)
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             isLoading && playlists.isEmpty() -> {
@@ -164,6 +168,7 @@ fun PlaylistTabScreenBody(
             }
             else -> {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .fillMaxSize()
                         .tvLazyFocusGroup(listRestorer),
@@ -175,7 +180,7 @@ fun PlaylistTabScreenBody(
                             playlist = playlist,
                             onClick = { onPlaylistClick(playlist) },
                             onLongClick = { onPlaylistLongClick(playlist) },
-                            modifier = listRestorer.itemModifier(index),
+                            modifier = listRestorer.itemModifier(index, playlists.size),
                         )
                     }
                 }

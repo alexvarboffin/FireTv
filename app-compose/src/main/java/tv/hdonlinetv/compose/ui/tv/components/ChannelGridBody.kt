@@ -8,7 +8,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,14 @@ fun ChannelGridBody(
     val drawerFocus = LocalTvDrawerFocusRequester.current
     val listRestorer = rememberTvLazyFocusRestorer()
     val listMode = LocalSettingsRepository.current.getSettings().gridColumns <= 1
+    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
+    val itemCount = if (isLoading) 0 else channels.size
+    if (listMode) {
+        listRestorer.RestoreFocusOnReturn(listState, itemCount)
+    } else {
+        listRestorer.RestoreFocusOnReturn(gridState, itemCount)
+    }
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val columns = adaptiveColumnCount(
@@ -60,6 +70,7 @@ fun ChannelGridBody(
             }
             listMode -> {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier.tvLazyFocusGroup(listRestorer),
                     contentPadding = PaddingValues(horizontal = 48.dp, vertical = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -68,7 +79,7 @@ fun ChannelGridBody(
                         ChannelListRow(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
-                            modifier = listRestorer.itemModifier(index).then(
+                            modifier = listRestorer.itemModifier(index, channels.size).then(
                                 if (drawerFocus != null) {
                                     Modifier.focusProperties { left = drawerFocus }
                                 } else {
@@ -82,6 +93,7 @@ fun ChannelGridBody(
             else -> {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(minSize = TvChannelGridMinCell),
+                    state = gridState,
                     modifier = Modifier.tvLazyFocusGroup(listRestorer),
                     contentPadding = PaddingValues(48.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -91,7 +103,7 @@ fun ChannelGridBody(
                         ChannelCard(
                             channel = channel,
                             onClick = { onChannelClick(channel) },
-                            modifier = listRestorer.itemModifier(index).then(
+                            modifier = listRestorer.itemModifier(index, channels.size).then(
                                 if (drawerFocus != null && index % columns == 0) {
                                     Modifier.focusProperties { left = drawerFocus }
                                 } else {

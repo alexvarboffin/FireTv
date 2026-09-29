@@ -40,6 +40,9 @@
 - [ ] A8 — `XtreamBrowserScreen` — **не** переключатель типа в «Управлении». Это просмотр уже сохранённого Xtream: вкладка «Плейлист» → клик по `PlaylistType.XTREAM_URL`. M3U с того же места открывает `PlaylistChannels`. В «Управлении» кнопка ⇄ только меняет поля формы (URL vs сервер/логин/пароль)
   Verify: `PlaylistTabScreen` `onPlaylistClick`; `Routes.XtreamBrowser`; TV `PlaylistManageScreen` `PlaylistManageType`
 
+- [ ] A11 — Списки плейлистов и каналов восстанавливают фокус **после возврата** (плеер / каналы плейлиста / Xtream → Back): фокус на том айтеме, с которого ушли, список прокручен к нему. Cinema `MoviesScreenTv`: fallback-`FocusRequester` на **последнем сфокусированном** айтеме (`lastFocusedIndex`), не на первом; индекс в `rememberSaveable`
+  Verify: `TvLazyFocusRestorer.itemModifier(index, count)` + `RestoreFocusOnReturn(listState|gridState, count)` в `PlaylistTabScreenBody` и `ChannelGridBody`; прокрутить на 20-й канал → OK → Back → фокус на 20-м
+
 - [ ] A9 — Drawer Search label = `menu_search` («Поиск» / Search), **не** `search_hint` («Какие каналы…»)
   Verify: `MainShellScreen` drawer item; string `menu_search` в `app-compose` / common
 
