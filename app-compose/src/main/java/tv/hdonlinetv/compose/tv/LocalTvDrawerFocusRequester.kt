@@ -4,8 +4,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.focus.FocusRequester
 
 /**
- * FocusRequester of the side NavigationDrawer focus-group ([Modifier.focusRestorer]).
- * Content leftmost items / first Tab should set `focusProperties { left = it }`
- * so D-pad Left returns to the drawer item the user left from.
+ * FocusRequester of the side NavigationDrawer **group**.
+ * Leftmost content must set `focusProperties { left = it }` so Left lands on the group;
+ * the group restores the child that was focused when we left (`saveFocusedChild` / enter).
  */
 val LocalTvDrawerFocusRequester = staticCompositionLocalOf<FocusRequester?> { null }

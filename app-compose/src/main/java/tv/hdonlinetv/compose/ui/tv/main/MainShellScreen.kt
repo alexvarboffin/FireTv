@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -72,6 +71,8 @@ import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.category.CategoryScreen
 import tv.hdonlinetv.compose.ui.tv.channel.AllChannelsScreen
 import tv.hdonlinetv.compose.ui.tv.components.TvFocusTabRow
+import tv.hdonlinetv.compose.ui.tv.components.rememberTvLazyFocusRestorer
+import tv.hdonlinetv.compose.ui.tv.components.tvLazyFocusGroup
 import tv.hdonlinetv.compose.ui.tv.favorites.FavoritesScreen
 import tv.hdonlinetv.compose.ui.tv.info.TutorialScreen
 import tv.hdonlinetv.compose.ui.tv.playlist.PlaylistManageScreen
@@ -209,29 +210,23 @@ fun MainShellScreen() {
 
     val screenFallback = remember { FocusRequester() }
     val tabRowFallback = remember { FocusRequester() }
-    val drawerGroupFocus = remember { FocusRequester() }
-    val drawerFallback = remember { FocusRequester() }
+    val drawerRestorer = rememberTvLazyFocusRestorer()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.background),
     ) {
-        CompositionLocalProvider(LocalTvDrawerFocusRequester provides drawerGroupFocus) {
+        CompositionLocalProvider(LocalTvDrawerFocusRequester provides drawerRestorer.group) {
             NavigationDrawer(
                 drawerState = drawerState,
                 modifier = Modifier.fillMaxSize(),
                 drawerContent = {
-                    // focusRestorer remembers the drawer item we left from;
-                    // content leftmost Left → drawerGroupFocus restores that child.
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxHeight()
                             .background(colors.surface)
-                            .focusRequester(drawerGroupFocus)
-                            .focusRestorer(drawerFallback)
-                            .focusGroup()
-                            .selectableGroup(),
+                            .tvLazyFocusGroup(drawerRestorer),
                         contentPadding = PaddingValues(12.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.Start,
@@ -253,7 +248,7 @@ fun MainShellScreen() {
                                 selected = selected,
                                 onClick = item.onClick,
                                 modifier = if (index == 0) {
-                                    Modifier.focusRequester(drawerFallback)
+                                    drawerRestorer.childModifier()
                                 } else {
                                     Modifier
                                 },
@@ -332,7 +327,7 @@ fun MainShellScreen() {
                                 onSelectedIndexChange = { selectedTabIndex = it },
                                 badges = tabBadges,
                                 tabRowFallback = tabRowFallback,
-                                leftFocusRequester = drawerGroupFocus,
+                                leftFocusRequester = drawerRestorer.group,
                             )
                             Column(
                                 modifier = Modifier

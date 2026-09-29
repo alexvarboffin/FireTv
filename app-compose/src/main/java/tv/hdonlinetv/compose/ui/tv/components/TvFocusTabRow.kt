@@ -48,15 +48,16 @@ fun TvFocusTabRow(
                 selected = selectedIndex == index,
                 onFocus = { onSelectedIndexChange(index) },
                 onClick = { onSelectedIndexChange(index) },
-                modifier = (if (index == 0) {
-                    Modifier
-                        .focusRequester(tabRowFallback)
-                        .focusProperties {
-                            leftFocusRequester?.let { left = it }
-                        }
-                } else {
-                    Modifier
-                }).onFocusChanged { onTabFocusChanged(it.isFocused) },
+                modifier = Modifier
+                    .then(if (index == 0) Modifier.focusRequester(tabRowFallback) else Modifier)
+                    .then(
+                        if (leftFocusRequester != null) {
+                            Modifier.focusProperties { left = leftFocusRequester }
+                        } else {
+                            Modifier
+                        },
+                    )
+                    .onFocusChanged { onTabFocusChanged(it.isFocused) },
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),

@@ -34,8 +34,8 @@
 - [ ] A6 — Xtream browser / Serial detail / Onboarding на TV — native tv.material3 (TvFocusTabRow, Surface-блоки, TvLoadingOverlay); `TvNavHost` без material3 `Scaffold` (Box + `windowInsetsPadding(systemBars)`)
   Verify: `ui/tv/playlist/XtreamBrowserScreen.kt`, `SerialDetailScreen.kt`, `ui/tv/onboarding/OnboardingScreen.kt`, `tv/TvNavHost.kt`
 
-- [ ] A5 — Left из контента восстанавливает **исходный** пункт drawer (`focusRestorer` + `LocalTvDrawerFocusRequester`)
-  Verify: drawer LazyColumn + leftmost `focusProperties { left = drawerGroupFocus }`
+- [ ] A5 — Left из контента бросает фокус на **группу** drawer, группа восстанавливает child. Drawer = **LazyColumn** → кейс LazyList (Cinema `MovieCategoryRowTv` / `SettingsSideMenu`): `focusRequester(group).focusRestorer(firstChild)` **на Lazy***, первый айтем `focusRequester(firstChild)`. **Не** enter/exit `saveFocusedChild` (это только простые Column/Box — ребёнок Lazy ещё не в composition). Leftmost (все табы, col 0) `left = group`. Без лишнего `focusGroup()` / `selectableGroup()` на Lazy
+  Verify: Settings → Right → походить по контенту → Left = Settings. `rememberTvLazyFocusRestorer` / `tvLazyFocusGroup`; `TvFocusTabRow` left на каждом табе
 
 - [ ] A8 — `XtreamBrowserScreen` — **не** переключатель типа в «Управлении». Это просмотр уже сохранённого Xtream: вкладка «Плейлист» → клик по `PlaylistType.XTREAM_URL`. M3U с того же места открывает `PlaylistChannels`. В «Управлении» кнопка ⇄ только меняет поля формы (URL vs сервер/логин/пароль)
   Verify: `PlaylistTabScreen` `onPlaylistClick`; `Routes.XtreamBrowser`; TV `PlaylistManageScreen` `PlaylistManageType`
