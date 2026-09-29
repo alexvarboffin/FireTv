@@ -89,6 +89,9 @@
 - [ ] B11 — TV плитка категории в фокусе имеет **обводку как у Card** (не только scale — иначе фокус плохо видно). `Surface(border = ClickableSurfaceDefaults.border(focusedBorder = 3.dp colorScheme.border))`, без фокуса `Border.None` (B10 не ломается)
   Verify: `ui/tv/components/CategoryCard.kt`; D-pad по сетке категорий — рамка у фокусной плитки такая же, как у `ChannelCard`
 
+- [ ] B12 — TV плитка категории: градиент как Cinema `GradientBg` (radial пары цветов, alpha по фокусу), но из **наших** `category_colors`: цвет плитки (осветлённый центр) → следующий цвет палитры; пара детерминирована по index (не `random()`); alpha 0.35 → 0.85 в фокусе (анимация); снизу vertical-затемнение под название. Базовая заливка — всё ещё `Surface containerColor` (B10)
+  Verify: `CategoryCard.kt` `Brush.radialGradient` + `collectIsFocusedAsState`; при скролле цвета не прыгают
+
 ---
 
 ## C. Плейлисты: delete / refresh / категории
