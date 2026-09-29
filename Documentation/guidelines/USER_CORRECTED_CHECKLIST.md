@@ -68,6 +68,9 @@
 - [ ] B7 — Lazy-сетка каналов: ключ уникален. Xtream-стримы приходят с `ChannelUi.id = 0` (маппер не пишет stream_id) → `key = ch.id` даёт `IllegalArgumentException: Key "0" was already used`
   Verify: TV/phone `ChannelGridBody` `gridKey`: при `id != 0` — id, иначе `index|name|link|desc`; открыть Xtream-плейлист с ≥2 live
 
+- [ ] B14 — Логотипы каналов **не обрезаются** по бокам: `ContentScale.Fit`, не `Crop` (широкие лого вписываются целиком в квадратную подложку)
+  Verify: TV + phone `ChannelCard` и `ChannelListRow` → `RemoteImage(contentScale = Fit)`; канал «5 Cops» / «24h» виден полностью. Обложка на Details остаётся `Crop`
+
 - [ ] B2 — При 1 колонке сетки — **list row**, не grid-карточка
   Verify: `ChannelGridBody` `listMode` → `ChannelListRow` (tv + mobile)
 
