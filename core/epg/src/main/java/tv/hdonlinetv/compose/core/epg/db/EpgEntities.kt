@@ -42,3 +42,15 @@ data class ProgrammeEntity(
     val title: String,
     val desc: String?,
 )
+
+/**
+ * Playlist channel → guide channel, filled from the epg-index lookup.
+ * [appKey] is `i:<EpgKey.normalize(tvgId)>` or `n:<EpgKey.nameKey(name)>`.
+ */
+@Entity(tableName = "channel_map")
+data class ChannelMapEntity(
+    @PrimaryKey val appKey: String,
+    /** [tv.hdonlinetv.compose.core.epg.EpgKey.normalize]d guide channel id, matches [ProgrammeEntity.channelKey]. */
+    val guideKey: String,
+    val icon: String?,
+)

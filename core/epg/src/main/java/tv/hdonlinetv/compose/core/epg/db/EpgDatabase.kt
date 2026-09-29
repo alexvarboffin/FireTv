@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 
 /** Separate from the legacy `FavoriteDatabase`: guide data is a disposable cache. */
 @Database(
-    entities = [EpgSourceEntity::class, ProgrammeEntity::class],
-    version = 1,
+    entities = [EpgSourceEntity::class, ProgrammeEntity::class, ChannelMapEntity::class],
+    version = 2,
     exportSchema = false,
 )
 abstract class EpgDatabase : RoomDatabase() {

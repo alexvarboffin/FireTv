@@ -48,6 +48,12 @@ interface EpgDao {
     )
     fun observeUpcoming(keys: List<String>, now: Long): Flow<List<ProgrammeEntity>>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun upsertChannelMap(items: List<ChannelMapEntity>)
+
+    @Query("SELECT * FROM channel_map WHERE appKey IN (:appKeys)")
+    fun channelMap(appKeys: List<String>): List<ChannelMapEntity>
+
     @Query(
         "SELECT * FROM programme WHERE channelKey = :key AND stop > :from AND start < :to ORDER BY start",
     )

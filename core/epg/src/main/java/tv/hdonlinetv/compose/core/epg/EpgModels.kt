@@ -24,3 +24,13 @@ sealed interface EpgSyncResult {
 
     data class Failed(val reason: String) : EpgSyncResult
 }
+
+data class EpgIndexSyncResult(
+    val channels: Int,
+    val matchedById: Int,
+    val matchedByName: Int,
+    /** Guide file URL → its download/parse result. */
+    val files: Map<String, EpgSyncResult>,
+    /** Index in the input list → guide icon, for channels without their own logo. */
+    val icons: Map<Int, String>,
+)

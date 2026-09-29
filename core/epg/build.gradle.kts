@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.okhttp)
+    implementation(libs.gson)
     implementation(libs.androidx.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.androidx.room.compiler)
