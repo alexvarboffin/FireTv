@@ -1,6 +1,8 @@
 package tv.hdonlinetv.compose.ui.tv.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -8,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -67,7 +71,10 @@ fun TvFocusTabRow(
     ) {
         tabs.forEachIndexed { index, title ->
             val badge = badges[index]
+            val tabInteraction = remember { MutableInteractionSource() }
+            val tabFocused by tabInteraction.collectIsFocusedAsState()
             Tab(
+                interactionSource = tabInteraction,
                 selected = selectedIndex == index,
                 onFocus = { onSelectedIndexChange(index) },
                 onClick = { onSelectedIndexChange(index) },
@@ -97,6 +104,17 @@ fun TvFocusTabRow(
                     if (!badge.isNullOrBlank()) {
                         TabCountBadge(
                             text = badge,
+                            // Red badge disappears on the pink focus pill: invert it there.
+                            containerColor = if (tabFocused) {
+                                Color.White
+                            } else {
+                                colorResource(R.color.badge_background_color)
+                            },
+                            contentColor = if (tabFocused) {
+                                accent
+                            } else {
+                                colorResource(R.color.badge_text_color)
+                            },
                             modifier = Modifier.padding(start = 8.dp),
                         )
                     }
@@ -111,18 +129,20 @@ fun TvFocusTabRow(
 @Composable
 private fun TabCountBadge(
     text: String,
+    containerColor: Color,
+    contentColor: Color,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
-            .background(colorResource(R.color.badge_background_color), CircleShape)
+            .background(containerColor, CircleShape)
             .padding(horizontal = 6.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = text,
-            color = colorResource(R.color.badge_text_color),
+            color = contentColor,
             fontSize = 11.sp,
             maxLines = 1,
         )
