@@ -46,6 +46,7 @@ LauncherActivity ── UI_MODE_TYPE_TELEVISION? ──► tv/MainActivity    �
 | `:common-resources` | **общие строки en + ru** для `:app` и `:app-compose` (создан 2026-09-24) |
 | `:core:domain`, `:core:presentation`, `:core:data-bridge` | общий слой данных и ViewModel |
 | `:data`, `:xtream` | Room / M3U; Xtream API (kapt) |
+| `:core:epg` | программа передач: lookup в индексе `epg-index` (сервер — отдельный репозиторий, GitHub Pages), XMLTV → `epg.db`. См. [ARCHITECTURE/epg.md](ARCHITECTURE/epg.md) |
 | `:simplesearchview`, `:mylibrary` | библиотеки legacy |
 | `:shared`, `:features:ui` | внешний репозиторий `C:\Synced\WalhallaUI` (подключён через `projectDir`) |
 

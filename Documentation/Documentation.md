@@ -7,6 +7,7 @@
 | [Roadmap.md](Roadmap.md) | Полное ТЗ миграции Compose |
 | [ARCHITECTURE/compose-architecture.md](ARCHITECTURE/compose-architecture.md) | Модули, диаграммы |
 | [ARCHITECTURE/player-browse-scope.md](ARCHITECTURE/player-browse-scope.md) | Player zap: browse scope (Favorites/Playlist/…) |
+| [ARCHITECTURE/epg.md](ARCHITECTURE/epg.md) | EPG: серверная часть (репозиторий `epg-index`, GitHub Pages API) + клиент `:core:epg` |
 | [ARCHITECTURE/aliyun-player-license.md](ARCHITECTURE/aliyun-player-license.md) | JZMediaAliyun / AliyunPlayer: License 7.x, откат к 4.5.0-full |
 | [guidelines/SCREEN_SCREENBODY.md](guidelines/SCREEN_SCREENBODY.md) | Screen / ScreenBody / mockScreens |
 | [guidelines/00_guidelines.md](guidelines/00_guidelines.md) | ViewModel + StateFlow |

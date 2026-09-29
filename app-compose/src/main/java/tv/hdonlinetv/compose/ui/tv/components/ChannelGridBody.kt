@@ -1,11 +1,14 @@
 package tv.hdonlinetv.compose.ui.tv.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -23,10 +26,7 @@ import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.phone.LocalSettingsRepository
 import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
-import tv.hdonlinetv.compose.ui.components.TvChannelGridHPadding
 import tv.hdonlinetv.compose.ui.components.TvChannelGridMinCell
-import tv.hdonlinetv.compose.ui.components.TvChannelGridSpacing
-import tv.hdonlinetv.compose.ui.components.adaptiveColumnCount
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -34,6 +34,8 @@ fun ChannelGridBody(
     channels: List<ChannelUi>,
     isLoading: Boolean,
     modifier: Modifier = Modifier,
+    /** Scrolls with the items (first full-width item). */
+    header: (@Composable () -> Unit)? = null,
     onChannelClick: (ChannelUi) -> Unit,
 ) {
     val drawerFocus = LocalTvDrawerFocusRequester.current
@@ -42,81 +44,78 @@ fun ChannelGridBody(
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
     val itemCount = if (isLoading) 0 else channels.size
+    val offset = if (header != null) 1 else 0
     if (listMode) {
-        listRestorer.RestoreFocusOnReturn(listState, itemCount)
+        listRestorer.RestoreFocusOnReturn(listState, itemCount, offset)
     } else {
-        listRestorer.RestoreFocusOnReturn(gridState, itemCount)
+        listRestorer.RestoreFocusOnReturn(gridState, itemCount, offset)
     }
 
-    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val columns = adaptiveColumnCount(
-            availableWidth = maxWidth,
-            minCell = TvChannelGridMinCell,
-            horizontalPadding = TvChannelGridHPadding,
-            spacing = TvChannelGridSpacing,
-        )
-        when {
-            isLoading -> {
-                Text(
-                    text = stringResource(R.string.loading),
-                    modifier = Modifier.align(Alignment.Center),
+    when {
+        isLoading || channels.isEmpty() -> Column(modifier.fillMaxSize()) {
+            if (header != null) {
+                Box(Modifier.padding(start = 48.dp, end = 48.dp, top = HeaderTopPadding)) { header() }
+            }
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = stringResource(if (isLoading) R.string.loading else R.string.no_item))
+            }
+        }
+        listMode -> LazyColumn(
+            state = listState,
+            modifier = modifier.fillMaxSize().tvLazyFocusGroup(listRestorer),
+            contentPadding = PaddingValues(
+                start = 48.dp,
+                end = 48.dp,
+                top = if (header != null) HeaderTopPadding else 24.dp,
+                bottom = 24.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            if (header != null) item(key = HEADER_KEY) { header() }
+            itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { index, channel ->
+                ChannelListRow(
+                    channel = channel,
+                    onClick = { onChannelClick(channel) },
+                    modifier = listRestorer.itemModifier(index, channels.size).then(
+                        if (drawerFocus != null) {
+                            Modifier.focusProperties { left = drawerFocus }
+                        } else {
+                            Modifier
+                        },
+                    ),
                 )
             }
-            channels.isEmpty() -> {
-                Text(
-                    text = stringResource(R.string.no_item),
-                    modifier = Modifier.align(Alignment.Center),
+        }
+        else -> LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = TvChannelGridMinCell),
+            state = gridState,
+            modifier = modifier.fillMaxSize().tvLazyFocusGroup(listRestorer),
+            contentPadding = PaddingValues(
+                start = 48.dp,
+                end = 48.dp,
+                top = if (header != null) HeaderTopPadding else 48.dp,
+                bottom = 48.dp,
+            ),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            if (header != null) {
+                item(key = HEADER_KEY, span = { GridItemSpan(maxLineSpan) }) { header() }
+            }
+            itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { index, channel ->
+                ChannelCard(
+                    channel = channel,
+                    onClick = { onChannelClick(channel) },
+                    modifier = listRestorer.itemModifier(index, channels.size)
+                        .leftFromFirstColumn(gridState, index + offset, drawerFocus),
                 )
-            }
-            listMode -> {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.tvLazyFocusGroup(listRestorer),
-                    contentPadding = PaddingValues(horizontal = 48.dp, vertical = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { index, channel ->
-                        ChannelListRow(
-                            channel = channel,
-                            onClick = { onChannelClick(channel) },
-                            modifier = listRestorer.itemModifier(index, channels.size).then(
-                                if (drawerFocus != null) {
-                                    Modifier.focusProperties { left = drawerFocus }
-                                } else {
-                                    Modifier
-                                },
-                            ),
-                        )
-                    }
-                }
-            }
-            else -> {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = TvChannelGridMinCell),
-                    state = gridState,
-                    modifier = Modifier.tvLazyFocusGroup(listRestorer),
-                    contentPadding = PaddingValues(48.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    itemsIndexed(channels, key = { index, ch -> ch.gridKey(index) }) { index, channel ->
-                        ChannelCard(
-                            channel = channel,
-                            onClick = { onChannelClick(channel) },
-                            modifier = listRestorer.itemModifier(index, channels.size).then(
-                                if (drawerFocus != null && index % columns == 0) {
-                                    Modifier.focusProperties { left = drawerFocus }
-                                } else {
-                                    Modifier
-                                },
-                            ),
-                        )
-                    }
-                }
             }
         }
     }
 }
+
+private const val HEADER_KEY = "header"
+private val HeaderTopPadding = 16.dp
 
 private fun ChannelUi.gridKey(index: Int): Any =
     if (id != 0L) id else "i$index|$name|$link|$desc"

@@ -70,21 +70,24 @@ fun rememberTvLazyFocusRestorer(): TvLazyFocusRestorer {
 fun Modifier.tvLazyFocusGroup(restorer: TvLazyFocusRestorer): Modifier =
     focusRequester(restorer.group).focusRestorer(restorer.child)
 
-/** Back from another destination: scroll to the saved item and give it focus. */
+/**
+ * Back from another destination: scroll to the saved item and give it focus.
+ * [indexOffset] = lazy items placed before the first data item (e.g. a header).
+ */
 @Composable
-fun TvLazyFocusRestorer.RestoreFocusOnReturn(state: LazyListState, itemCount: Int) =
+fun TvLazyFocusRestorer.RestoreFocusOnReturn(state: LazyListState, itemCount: Int, indexOffset: Int = 0) =
     RestoreFocusOnReturn(
         itemCount = itemCount,
-        isVisible = { index -> state.layoutInfo.visibleItemsInfo.any { it.index == index } },
-        scrollTo = { state.scrollToItem(it) },
+        isVisible = { index -> state.layoutInfo.visibleItemsInfo.any { it.index == index + indexOffset } },
+        scrollTo = { state.scrollToItem(it + indexOffset) },
     )
 
 @Composable
-fun TvLazyFocusRestorer.RestoreFocusOnReturn(state: LazyGridState, itemCount: Int) =
+fun TvLazyFocusRestorer.RestoreFocusOnReturn(state: LazyGridState, itemCount: Int, indexOffset: Int = 0) =
     RestoreFocusOnReturn(
         itemCount = itemCount,
-        isVisible = { index -> state.layoutInfo.visibleItemsInfo.any { it.index == index } },
-        scrollTo = { state.scrollToItem(it) },
+        isVisible = { index -> state.layoutInfo.visibleItemsInfo.any { it.index == index + indexOffset } },
+        scrollTo = { state.scrollToItem(it + indexOffset) },
     )
 
 @Composable

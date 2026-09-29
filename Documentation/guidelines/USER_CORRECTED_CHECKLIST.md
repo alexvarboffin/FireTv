@@ -74,7 +74,7 @@
 - [ ] B2 — При 1 колонке сетки — **list row**, не grid-карточка
   Verify: `ChannelGridBody` `listMode` → `ChannelListRow` (tv + mobile)
 
-- [ ] B9 — Настройка отображения: только **Сетка / Список**. Сетка = `LazyVerticalGrid` + `GridCells.Adaptive`: phone min **104.dp** (портрет ~3 колонки), TV **176.dp** (1080p / 960dp ~4, шире — больше). TV `BoxWithConstraints` только для первой колонки Left→drawer (`adaptiveColumnCount` = формула Adaptive + spacing)
+- [ ] B9 — Настройка отображения: только **Сетка / Список**. Сетка = `LazyVerticalGrid` + `GridCells.Adaptive`: phone min **104.dp** (портрет ~3 колонки), TV **176.dp** (1080p / 960dp ~4, шире — больше). Первая колонка Left→drawer — `Modifier.leftFromFirstColumn(gridState, index, drawerFocus)` (колонка из `LazyGridItemInfo.column` в момент focus search). **Без `BoxWithConstraints` и ручного расчёта колонок** (см. B15)
   Verify: `layout_options{,_tv}` без цифр; нет `GridCells.Fixed(3|4)` в ChannelGridBody; phone 360dp = 3; TV 960dp = 4
 
 - [ ] B3 — List row показывает meta как legacy (категория, desc, favorite, geo и т.д.)
@@ -103,6 +103,9 @@
 
 - [ ] B13 — TV плитка категории **без иконки** (блок `AsyncImage` с `R.mipmap.ic_launcher_round` закомментирован, не удалён); **имя категории по центру** как Cinema `CategoriesScreenTv`: белый текст 20sp + `Shadow(Black, blur 8)`. Нижнее затемнение убрано (было под текстом внизу). Если иконку вернут — только через Coil: на API 26+ `ic_launcher_round` = adaptive-icon XML, `painterResource` падает
   Verify: `ui/tv/components/CategoryCard.kt` `Text(align = Center, shadow)`; иконки нет; общий `RemoteImage` не менялся
+
+- [ ] B15 — TV сетки (`CategoryScreen`, `ChannelGridBody`) — просто `LazyVerticalGrid(GridCells.Adaptive)`, **без `BoxWithConstraints`** и `index % columns`. Заголовок экрана над сеткой — в `Column` (заголовок, затем сетка `weight(1f)`), а не соседним узлом в `Box` NavHost: иначе сетка на весь экран и айтемы при скролле наезжают на заголовок
+  Verify: TV Категория → «Auto» → вниз 3 раза: заголовок «Auto» на месте, карточки обрезаются под ним; Категория: Left с первой колонки → drawer
 
 ---
 

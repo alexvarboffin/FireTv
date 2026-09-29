@@ -1,13 +1,11 @@
 package tv.hdonlinetv.compose.ui.tv.channel
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
@@ -60,14 +58,11 @@ fun ChannelListScreenBody(
     isLoading: Boolean,
     onChannelClick: (ChannelUi) -> Unit,
 ) {
-    Text(
-        text = title,
-        modifier = Modifier.padding(horizontal = 48.dp, vertical = 16.dp),
-    )
     ChannelGridBody(
         channels = channels,
         isLoading = isLoading,
         modifier = Modifier.fillMaxSize(),
+        header = { Text(text = title) },
         onChannelClick = onChannelClick,
     )
 }
