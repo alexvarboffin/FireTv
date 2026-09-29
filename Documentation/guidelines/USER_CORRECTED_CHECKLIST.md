@@ -86,6 +86,9 @@
 - [ ] B10 — Category tile = **заливка цвета** (`category_colors` + overlay), не Material `Card`. Цвет на самом айтеме (`clip`+`background` / TV `Surface` containerColor). Иначе при скролле проступает обводка/elevation карточки
   Verify: phone `CategoryCard` нет `material3.Card`; TV нет `tv.material3.Card`; скролл сетки категорий — нет белой/серой рамки между плитками
 
+- [ ] B11 — TV плитка категории в фокусе имеет **обводку как у Card** (не только scale — иначе фокус плохо видно). `Surface(border = ClickableSurfaceDefaults.border(focusedBorder = 3.dp colorScheme.border))`, без фокуса `Border.None` (B10 не ломается)
+  Verify: `ui/tv/components/CategoryCard.kt`; D-pad по сетке категорий — рамка у фокусной плитки такая же, как у `ChannelCard`
+
 ---
 
 ## C. Плейлисты: delete / refresh / категории

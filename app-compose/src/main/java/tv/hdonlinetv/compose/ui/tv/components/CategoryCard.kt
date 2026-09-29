@@ -1,5 +1,6 @@
 package tv.hdonlinetv.compose.ui.tv.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,8 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
@@ -35,14 +38,22 @@ fun CategoryCard(
 ) {
     val colors = stringArrayResource(R.array.category_colors)
     val bgColor = Color(android.graphics.Color.parseColor(colors[index % colors.size]))
+    val shape = RoundedCornerShape(10.dp)
 
     Surface(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1.2f),
-        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
+        shape = ClickableSurfaceDefaults.shape(shape),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f),
+        // Same focus ring as tv.material3 Card (CardDefaults.border); none when unfocused.
+        border = ClickableSurfaceDefaults.border(
+            focusedBorder = Border(
+                border = BorderStroke(width = 3.dp, color = MaterialTheme.colorScheme.border),
+                shape = shape,
+            ),
+        ),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = bgColor,
             focusedContainerColor = bgColor,
