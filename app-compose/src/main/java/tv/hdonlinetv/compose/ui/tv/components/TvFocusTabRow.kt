@@ -74,7 +74,9 @@ fun TvFocusTabRow(
                 modifier = Modifier
                     .then(if (index == 0) Modifier.focusRequester(tabRowFallback) else Modifier)
                     .then(
-                        if (leftFocusRequester != null) {
+                        // Only the left edge of the TabRow group. Inner tabs keep Default
+                        // so Left/Right stay in the row (tab-4 → tab-3, not the drawer).
+                        if (index == 0 && leftFocusRequester != null) {
                             Modifier.focusProperties { left = leftFocusRequester }
                         } else {
                             Modifier
