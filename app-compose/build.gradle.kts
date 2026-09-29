@@ -2,13 +2,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 fun versionCodeDate(): Int {
-    return SimpleDateFormat("yyMMdd").format(Date()).toInt()
+    // yyMMddHH so same-day Play hotfixes (e.g. R8) can bump without waiting until tomorrow.
+    return SimpleDateFormat("yyMMddHH").format(Date()).toInt()
 }
 
 plugins {
     id("com.android.application")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 base {
@@ -54,7 +56,7 @@ android {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("x")
             versionNameSuffix = ".DEMO"
-            resValue("string", "app_name", "1 APP")
+            resValue("string", "app_name", "Ultimate.TV")
         }
         getByName("release") {
             isMinifyEnabled = true
@@ -111,12 +113,17 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.material.icons.extended.android)
 
-    // AdMob banner (same units as legacy :app)
+    // AdMob banner + interstitial scaffold (same app id as legacy :app)
     implementation(libs.play.services.ads)
+    // Firebase + OneSignal (phone init only; skipped on TV in ComposeApp)
+    implementation(libs.google.firebase.analytics)
+    implementation(libs.firebase.messaging)
+    implementation(libs.onesignal)
 
     // Legacy JiaoZi player stack (same as :app)
     implementation(libs.jiaozivideoplayer)
     implementation(libs.aliyun.player)
+    implementation(libs.alivc.conan)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.exoplayer.hls)
@@ -131,4 +138,9 @@ dependencies {
     compileOnly("com.google.errorprone:error_prone_annotations:2.36.0")
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+// OneSignal 5.1.x wants firebase-messaging in [21, 23.4.99]; app uses 25.x — skip strict check.
+googleServices {
+    disableVersionCheck = true
 }

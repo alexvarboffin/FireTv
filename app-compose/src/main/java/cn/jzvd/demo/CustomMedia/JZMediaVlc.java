@@ -150,6 +150,22 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
         return jzvd.textureView;
     }
 
+    private final View.OnLayoutChangeListener vlcLayoutChangeListener =
+            (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                int width = right - left;
+                int height = bottom - top;
+                int oldWidth = oldRight - oldLeft;
+                int oldHeight = oldBottom - oldTop;
+                if (width <= 0 || height <= 0) {
+                    return;
+                }
+                if (width == oldWidth && height == oldHeight) {
+                    return;
+                }
+                // cinema notKmp: detach + attachViews on UI size change (setWindowSize alone → black).
+                mainHandler.post(this::reattachVideoOutput);
+            };
+
     private void ensureVlcVideoLayout() {
         if (vlcVideoLayout != null) {
             return;
@@ -170,6 +186,7 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
         int index = parent.indexOfChild(textureView);
         parent.addView(vlcVideoLayout, index + 1);
         textureView.setVisibility(View.INVISIBLE);
+        vlcVideoLayout.addOnLayoutChangeListener(vlcLayoutChangeListener);
     }
 
     private void removeVlcVideoLayout() {
@@ -178,6 +195,7 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
             textureView.setVisibility(View.VISIBLE);
         }
         if (vlcVideoLayout != null) {
+            vlcVideoLayout.removeOnLayoutChangeListener(vlcLayoutChangeListener);
             ViewGroup parent = (ViewGroup) vlcVideoLayout.getParent();
             if (parent != null) {
                 parent.removeView(vlcVideoLayout);
@@ -193,6 +211,33 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
                 && vlcVideoLayout.getHeight() > 0;
     }
 
+    /**
+     * Same pattern as cinema {@code VlcPlayerComponent.PlayerUIView777}:
+     * detachViews → attachViews. Needed after rotation / layout resize.
+     */
+    private boolean reattachVideoOutput() {
+        if (isReleased || vlcPlayer == null || !isSurfaceReady()) {
+            return false;
+        }
+
+        int width = vlcVideoLayout.getWidth();
+        int height = vlcVideoLayout.getHeight();
+
+        try {
+            if (vlcPlayer.getVLCVout().areViewsAttached()) {
+                vlcPlayer.detachViews();
+            }
+        } catch (Exception ignored) {
+        }
+        videoOutputAttached = false;
+
+        vlcPlayer.attachViews(vlcVideoLayout, null, false, false);
+        videoOutputAttached = true;
+        attachedWidth = width;
+        attachedHeight = height;
+        return true;
+    }
+
     private boolean attachVideoOutputOnce() {
         if (isReleased || vlcPlayer == null || !isSurfaceReady()) {
             return false;
@@ -205,34 +250,7 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
             return true;
         }
 
-        try {
-            if (vlcPlayer.getVLCVout().areViewsAttached()) {
-                vlcPlayer.detachViews();
-            }
-        } catch (Exception ignored) {
-        }
-
-        vlcPlayer.attachViews(vlcVideoLayout, null, false, false);
-        videoOutputAttached = true;
-        attachedWidth = width;
-        attachedHeight = height;
-        return true;
-    }
-
-    private void updateVideoWindowSize(int width, int height) {
-        if (isReleased || vlcPlayer == null || width <= 0 || height <= 0) {
-            return;
-        }
-        if (width == attachedWidth && height == attachedHeight) {
-            return;
-        }
-        if (!videoOutputAttached) {
-            attachVideoOutputOnce();
-            return;
-        }
-        vlcPlayer.getVLCVout().setWindowSize(width, height);
-        attachedWidth = width;
-        attachedHeight = height;
+        return reattachVideoOutput();
     }
 
     private void notifyPreparedWhenSurfaceReady() {
@@ -432,7 +450,8 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         mainHandler.post(() -> {
-            updateVideoWindowSize(width, height);
+            // Prefer VLCVideoLayout size; TextureView is invisible and may lag after rotate.
+            reattachVideoOutput();
             notifyPreparedWhenSurfaceReady();
         });
     }

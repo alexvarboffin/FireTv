@@ -114,10 +114,12 @@ $env:GRADLE_OPTS='-Djava.net.preferIPv4Stack=true'
 - `MobileAds.initialize` — в `ComposeApp`, **кроме TV**.
 - `AdMobBanner` (`ads/AdMobBanner.kt`) — anchored adaptive banner внизу phone `MainShellScreen`, контейнер скрыт до `onAdLoaded` (как legacy `include_banner_ad`). На TV не создаётся.
 - DEBUG → тестовый unit Google, release → боевой.
-- Логи: tag `AdMobBanner` (load / loaded / failed с code+message / opened / closed / clicked / impression), tag `ComposeAds` (инициализация).
-- GDPR/UMP: `ads/AdsConsent.kt`, вызов в `phone/MainActivity` после `setContent` (на TV пропуск), tag `AdsConsent`. Форма появится только после создания GDPR-сообщения в AdMob → Privacy & messaging; сейчас SDK отвечает `Publisher misconfiguration: no form(s) configured` (тот же App ID, что у legacy).
-- Interstitial **не перенесён намеренно**: в legacy он не работает (`admob_interstitial_unit_id` = `"0"`, интервал 0, `onAdLoaded(InterstitialAd)` объявлен без `override` и SDK его не вызывает). Нужен боевой unit ID и решение владельца.
-- **Не перенесено** в compose: Firebase (analytics, messaging), OneSignal, плагин `google-services`.
+- Interstitial **каркас**: `ads/InterstitialAds.kt`, preload в phone `MainActivity`, `maybeShow` при навигации к каналу. Unit в `ads.xml` пока `"0"` (выкл.); после подстановки боевого ID DEBUG использует Google test interstitial. На TV всегда skip.
+- Логи: tag `AdMobBanner`, `InterstitialAds`, `ComposeAds`, `AdsConsent`.
+- GDPR/UMP: `ads/AdsConsent.kt`, вызов в `phone/MainActivity` после `setContent` (на TV пропуск), tag `AdsConsent`.
+- Firebase Analytics + Messaging + plugin `google-services` в `:app-compose` (тот же `google-services.json`).
+- OneSignal: init в `ComposeApp` только phone (app id как legacy `MyApp`).
+- **Не на TV:** MobileAds, OneSignal, UMP, banner, interstitial.
 
 ---
 
@@ -180,8 +182,9 @@ $env:GRADLE_OPTS='-Djava.net.preferIPv4Stack=true'
 | 1 | AGP 9 opt-out (`builtInKotlin`, `newDsl`) | временное решение; нужна согласованная миграция модулей и WalhallaUI |
 | 2 | `preferIPv4Stack` | нужен для сборки на этой машине, в проект не записан |
 | 3 | Release-сборка с R8 | `:app-compose` — 2026-09-25 собрана (APK 114,6 МБ, AAB 119,2 МБ), smoke на эмуляторе пройден (онбординг, URL-плейлист, воспроизведение, TV Settings). Правила — `app-compose/proguard-rules.pro`. APK и AAB собирать раздельно с `-Xmx6144m`. На реальном TV не проверялось. `:app` не проверялся |
-| 4 | Interstitial, Firebase, OneSignal, `google-services` | не перенесены; interstitial в legacy мёртв (см. §5) |
+| 4 | Interstitial / Firebase / OneSignal | Каркас в compose: unit interstitial `"0"` (выкл.), Firebase+OneSignal init phone-only; TV skip |
 | 5 | Размер compose (~115–120 МБ release) | вероятная причина — `libvlc-all` (все ABI); Play раздаст split по ABI из AAB || 6 | Папка `.tmp/` в корне | осталась после попытки сборки 2026-09-25 (логи Kotlin-демона); не в `.gitignore` (там только `.tmp-*/`) |
 | 7 | Версии, пониженные 2026-09-21 из-за 404 Google Maven | `room 2.7.2`, `core 1.16.0`, `google-services 4.4.2` — до сих пор в каталоге |
 | 8 | Roadmap, фаза 8 (cutover) | `applicationId`, подпись, ProGuard/R8, leanback/banner выровнены; legacy archive / flavor — не сделаны |
 | 9 | Play Console | UMP-сообщение в AdMob; включить форм-фактор TV (иначе leanback-декларации не дадут TV-листинга); Data safety; раскатка через internal → staged production |
+| 10 | Aliyun Player License | С 7.0 — платный License; 6.x с Maven тоже валит prepare без Key. Pin как в первом коммите: `4.5.0-full`. Конспект: [ARCHITECTURE/aliyun-player-license.md](ARCHITECTURE/aliyun-player-license.md) |

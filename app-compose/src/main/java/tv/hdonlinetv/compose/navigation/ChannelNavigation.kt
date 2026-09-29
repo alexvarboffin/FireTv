@@ -1,6 +1,7 @@
 package tv.hdonlinetv.compose.navigation
 
 import androidx.navigation.NavHostController
+import tv.hdonlinetv.compose.ads.InterstitialAds
 import tv.hdonlinetv.compose.core.domain.model.AppSettingsUi
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.domain.repository.XtreamStreamType
@@ -11,6 +12,8 @@ fun navigateToChannel(
     settings: AppSettingsUi,
     scope: PlayerBrowseScope = PlayerBrowseScope.InferPlaylist,
 ) {
+    // Phone interstitial scaffold; no-op on TV / when unit id is "0".
+    InterstitialAds.maybeShowFrom(navController.context)
     if (channel.id > 0) {
         if (settings.detailsMode) {
             navController.navigate(Routes.Details.build(channel.id, scope))
@@ -18,7 +21,13 @@ fun navigateToChannel(
             navController.navigate(Routes.Player.build(channel.id, scope))
         }
     } else {
-        navigateToStreamChannel(navController, channel, settings, scope)
+        navigateToStreamChannel(
+            navController,
+            channel,
+            settings,
+            scope,
+            offerInterstitial = false,
+        )
     }
 }
 
@@ -50,9 +59,13 @@ fun navigateToStreamChannel(
     channel: ChannelUi,
     settings: AppSettingsUi,
     scope: PlayerBrowseScope = PlayerBrowseScope.None,
+    offerInterstitial: Boolean = true,
 ) {
     val streamUrl = channel.link.orEmpty()
     if (streamUrl.isBlank()) return
+    if (offerInterstitial) {
+        InterstitialAds.maybeShowFrom(navController.context)
+    }
     if (settings.detailsMode && channel.id > 0) {
         navController.navigate(Routes.Details.build(channel.id, scope))
     } else {

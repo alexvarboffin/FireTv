@@ -157,8 +157,8 @@
 - [ ] I4 — `versionCode` > текущего в Play Console; `versionName` линия `1.4.*`
   Verify: перед upload сравнить с Console; date-based code
 
-- [ ] I5 — Release собирается с R8 и работает: правила legacy перенесены (`-dontoptimize`, aliyun, JZ-движки по конструктору, Jzvd, VLC, Glide, Cast OptionsProvider, Parcelable/Serializable)
-  Verify: `app-compose/proguard-rules.pro`; `assembleRelease` + `bundleRelease` (раздельно, `-Xmx6144m`); release smoke: онбординг → добавить URL-плейлист → канал играет → TV Settings
+- [ ] I5 — Release собирается с R8 full optimize (без `-dontoptimize`: Play Vitals DEX optimization ≥25%), aliyun/JZ/VLC/Glide/Cast/Parcelable keep-rules; `assembleRelease` + `bundleRelease`; smoke: онбординг → URL-плейлист → канал играет → TV Settings
+  Verify: `app-compose/proguard-rules.pro`; AAB `BUNDLE-METADATA/com.android.tools/r8.json` (optimization > 0)
 
 - [ ] I6 — GDPR/UMP на phone: `AdsConsent.gather()` в `phone/MainActivity` (на TV пропуск); форма показывается только после настройки GDPR-сообщения в AdMob → Privacy & messaging
   Verify: `ads/AdsConsent.kt`; logcat tag `AdsConsent` (без формы в консоли — `Publisher misconfiguration`)
@@ -172,8 +172,11 @@
 - [ ] I7 — TV-листинг: `leanback` + `touchscreen` `required=false`, `LEANBACK_LAUNCHER` у `LauncherActivity`, `android:banner` 320×180
   Verify: `app-compose/src/main/AndroidManifest.xml`; `drawable-xhdpi/tv_banner.png`
 
-- [ ] I8 — Interstitial **не переносится**: в legacy он мёртв (unit id `"0"`, interval 0, `onAdLoaded` без `override`); включать только с боевым ID по решению пользователя
-  Verify: в app-compose нет InterstitialAd
+- [ ] I8 — Interstitial **каркас** в compose: `InterstitialAds` + hook в `navigateToChannel` / `navigateToStreamChannel`. Unit `admob_interstitial_unit_id` = `"0"` → load/show no-op (как legacy AdsPref). Чтобы включить — подставить боевой unit в `ads.xml` (DEBUG тогда берёт Google test interstitial). **TV: всегда skip**
+  Verify: `ads/InterstitialAds.kt`; `ads.xml`; phone MainActivity `preload`; logcat tag `InterstitialAds`; TV без load
+
+- [ ] I8b — Firebase Analytics + Messaging + OneSignal в `:app-compose` (google-services). Init OneSignal / MobileAds **только phone** в `ComposeApp`; на TV skip
+  Verify: `app-compose/build.gradle.kts` plugins/deps; `google-services.json`; `ComposeApp` log `ComposeAds`; TV log «skip MobileAds / OneSignal»
 
 - [ ] I11 — Play Console (не код): включить форм-фактор **TV** (иначе leanback в манифесте не даст TV-листинга); Data safety; раскатка internal → staged production; в AdMob → Privacy & messaging создать GDPR-сообщение (без него UMP = `Publisher misconfiguration`)
   Verify: чеклист для загрузки, не для репозитория
@@ -223,6 +226,12 @@
 
 - [ ] E11 — `Key.SystemHome` (KEYCODE_HOME = 3) обрабатывается рядом с `Key.MoveHome`. Нельзя удалять Home «заодно» и нельзя подменять его `MoveHome` (это разные коды)
   Verify: `ui/tv/player/PlayerScreen.kt` / `PlayerChannelSheet.kt`
+
+- [ ] E12 — Phone VLC: после поворота экрана картинка остаётся (не чёрный экран). Как cinema `VlcPlayerComponent`: при resize `detachViews` + `attachViews`, не один `setWindowSize`
+  Verify: `JZMediaVlc` layout listener / `reattachVideoOutput`; VLC → play → rotate portrait↔landscape
+
+- [ ] E13 — Drawer Feedback / Rate / Share не крашат при отсутствии почты/Play/шера: `startActivitySafe` + Toast `no_app_to_handle`; `<queries>` mailto/market/SEND в манифесте
+  Verify: эмулятор без Gmail → Feedback → Toast, процесс жив; phone + TV `MainShellScreen`
 
 ---
 

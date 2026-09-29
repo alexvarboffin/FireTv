@@ -105,6 +105,14 @@ applicationId: `tv.hdonlinetv.besttvchannels.movies.watchfree.compose`
 
 ---
 
+## 2026-09-27 — Aliyun Player License / откат версии
+
+| # | Проблема | Решение |
+|---|----------|---------|
+| 1 | JZMediaAliyun: «video loading failed»; logcat `NoDefaultLicense` / license check on prepare | Не R8/NDK: Aliyun Player SDK License с 7.0; 6.x с Maven тоже гейтит. В root-коммите был pin `4.5.0-full` (закомментирован). Вернули `aliyunPlayer = "4.5.0-full"`. Конспект: `ARCHITECTURE/aliyun-player-license.md` |
+
+---
+
 ```markdown
 ## YYYY-MM-DD — Краткое название
 

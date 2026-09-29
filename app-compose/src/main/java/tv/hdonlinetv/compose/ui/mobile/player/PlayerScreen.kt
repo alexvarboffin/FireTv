@@ -182,6 +182,15 @@ fun PlayerScreenBody(
 
     HandlePlayerScreenSystemUi()
 
+    // Portrait phone: fit video inside the frame (letterbox). FILL_SCROP scales to height and crops sides.
+    DisposableEffect(Unit) {
+        val previous = Jzvd.VIDEO_IMAGE_DISPLAY_TYPE
+        Jzvd.setVideoImageDisplayType(Jzvd.VIDEO_IMAGE_DISPLAY_TYPE_ADAPTER)
+        onDispose {
+            Jzvd.setVideoImageDisplayType(previous)
+        }
+    }
+
     HandleJzPlayerFullscreen(
         isFullscreen = isFullscreen,
         onFullscreenChange = { isFullscreen = it },

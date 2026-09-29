@@ -64,7 +64,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "FireTv"
 include(":app")
-include(":features:ui")
+
 include(":simplesearchview")
 include(":data")
 include(":xtream")
