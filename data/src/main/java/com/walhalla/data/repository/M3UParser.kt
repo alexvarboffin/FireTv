@@ -27,6 +27,28 @@ object M3UParser {
 
     private var categorySet: TreeSet<String> = TreeSet()
 
+    private val headerEpgRegex =
+        Regex("""(url-tvg|x-tvg-url)\s*=\s*"([^"]*)"""", RegexOption.IGNORE_CASE)
+
+    /**
+     * EPG (XMLTV) URLs from the `#EXTM3U` header (`url-tvg` / `x-tvg-url`, comma-separated).
+     * Independent of [parseM3U]; returns empty list when the header or attributes are absent.
+     */
+    @JvmStatic
+    fun parseHeaderEpgUrls(text: String): List<String> = runCatching {
+        val header = text.lineSequence()
+            .map { it.removePrefix("\uFEFF").trim() }
+            .firstOrNull { it.isNotEmpty() }
+            ?.takeIf { it.startsWith("#EXTM3U", ignoreCase = true) }
+            ?: return emptyList()
+        headerEpgRegex.findAll(header)
+            .flatMap { it.groupValues[2].split(',').asSequence() }
+            .map { it.trim() }
+            .filter { it.startsWith("http://", ignoreCase = true) || it.startsWith("https://", ignoreCase = true) }
+            .distinct()
+            .toList()
+    }.getOrDefault(emptyList())
+
 
     @JvmStatic
     fun parseM3U(context: Context, text: String): List<Channel> {

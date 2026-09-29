@@ -48,4 +48,5 @@ dependencies {
     implementation(libs.room.ktx) // Дополнительно для Kotlin Coroutines, Kotlin Flows
     implementation(libs.kotlinx.coroutines.android)
 
+    testImplementation(libs.junit)
 }
