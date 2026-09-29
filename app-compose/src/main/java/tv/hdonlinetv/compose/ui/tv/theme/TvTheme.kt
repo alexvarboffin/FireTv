@@ -14,18 +14,16 @@ import androidx.tv.material3.darkColorScheme
 import androidx.tv.material3.lightColorScheme
 
 /**
- * TV themes copied from CinemaKMP:
- * - `LightColorsTv` / palette from `ui/theme/AppTheme.kt`
- * - Active dark scheme from `presentation/theme/Theme.kt` (JetStream) + `values/colors.xml`
- * - Wrapper matches `AppTheme(isTv = true)`: surface fill + LocalContentColor
+ * TV themes: CinemaKMP JetStream surfaces + phone brand accent (`colorPrimary` #FF0044).
+ * Wrapper matches `AppTheme(isTv = true)`: surface fill + LocalContentColor
  */
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 private val LightColorsTv = lightColorScheme(
-    primary = Color(0xFF5E35B1),
+    primary = Color(0xFFFF0044),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFE3D8FD),
-    onPrimaryContainer = Color(0xFF1A0057),
+    primaryContainer = Color(0xFFFFE0E8),
+    onPrimaryContainer = Color(0xFFFF0044),
     secondary = Color(0xFF2196F3),
     onSecondary = Color.White,
     secondaryContainer = Color(0xFFD1E9FF),
@@ -40,13 +38,13 @@ private val LightColorsTv = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
 )
 
-/** Cinema JetStream dark — `colors.xml` + hard surface from `Theme.kt`. */
+/** Cinema JetStream dark surfaces + phone `colorPrimary` accent. */
 @OptIn(ExperimentalTvMaterial3Api::class)
 private val JetStreamDarkColorScheme = darkColorScheme(
-    primary = Color(0xFFA8C8FF),
-    onPrimary = Color(0xFF003062),
-    primaryContainer = Color(0xFF00468A),
-    onPrimaryContainer = Color(0xFFD6E3FF),
+    primary = Color(0xFFFF0044),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFF9A0029),
+    onPrimaryContainer = Color(0xFFFFD6DE),
     secondary = Color(0xFFBDC7DC),
     onSecondary = Color(0xFF273141),
     secondaryContainer = Color(0xFF3E4758),

@@ -43,6 +43,9 @@
 - [ ] A9 — Drawer Search label = `menu_search` («Поиск» / Search), **не** `search_hint` («Какие каналы…»)
   Verify: `MainShellScreen` drawer item; string `menu_search` в `app-compose` / common
 
+- [ ] A10 — TV табы того же акцента, что phone (`colorPrimary` #FF0044), не JetStream-фиолетовый / дефолтный `onSurface` pill
+  Verify: `TvFocusTabRow` `PillIndicator(activeColor = colorPrimary, inactiveColor = colorLight)`; focused text white; `TvTheme` primary `#FF0044`; phone `LegacyTabRow` `colorLight`+`colorPrimary`
+
 ---
 
 ## B. Списки, карточки, иконки
