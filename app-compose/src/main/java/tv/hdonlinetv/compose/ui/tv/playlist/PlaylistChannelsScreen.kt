@@ -3,6 +3,7 @@ package tv.hdonlinetv.compose.ui.tv.playlist
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -127,38 +129,33 @@ fun PlaylistChannelsScreenBody(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colors.background)
-            .padding(horizontal = 48.dp, vertical = 24.dp),
+            .background(colors.background),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 12.dp),
+                .padding(start = 48.dp, end = 48.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Button(onClick = onBack) {
                 Text(text = stringResource(R.string.ok))
             }
-            Row(
+            Text(
+                text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false),
+            )
+            Button(onClick = onRefresh) {
+                PlaylistActionLabel(
+                    icon = Icons.Filled.Refresh,
+                    text = stringResource(R.string.refresh),
                 )
-                Button(onClick = onRefresh) {
-                    PlaylistActionLabel(
-                        icon = Icons.Filled.Refresh,
-                        text = stringResource(R.string.refresh),
-                    )
-                }
             }
+            Spacer(modifier = Modifier.width(16.dp))
             Button(onClick = { showDeleteConfirm = true }) {
                 PlaylistActionLabel(
                     icon = Icons.Filled.Delete,
@@ -169,6 +166,7 @@ fun PlaylistChannelsScreenBody(
         ChannelGridBody(
             channels = channels,
             isLoading = false,
+            contentPadding = PaddingValues(start = 48.dp, end = 48.dp, top = 8.dp, bottom = 16.dp),
             onChannelClick = onChannelClick,
         )
     }
@@ -193,7 +191,7 @@ private fun RowScope.PlaylistActionLabel(
     Icon(
         imageVector = icon,
         contentDescription = null,
-        modifier = Modifier.size(22.dp),
+        modifier = Modifier.size(24.dp),
     )
     Spacer(modifier = Modifier.width(8.dp))
     Text(text = text)

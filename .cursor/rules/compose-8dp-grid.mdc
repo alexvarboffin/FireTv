@@ -1,0 +1,21 @@
+---
+description: Compose spacing on the Material 8dp grid
+globs: "**/*.kt"
+alwaysApply: false
+---
+
+# 8dp grid
+
+All Compose `dp` values — padding, spacing (`spacedBy`, `Spacer`), sizes, widths, corner radii — are multiples of **8.dp** (Material design grid).
+
+- 4.dp is the only allowed half-step, for tiny gaps inside a component (text-to-text, progress bar thickness).
+- Never 2, 3, 6, 10, 12, 14, 20, 22… — round to the nearest multiple of 8 (or 4 for tiny gaps).
+
+```kotlin
+// ❌
+Modifier.padding(horizontal = 12.dp, vertical = 10.dp).width(380.dp)
+// ✅
+Modifier.padding(horizontal = 16.dp, vertical = 8.dp).width(384.dp)
+```
+
+When touching an existing file, fix off-grid values in the code you change.

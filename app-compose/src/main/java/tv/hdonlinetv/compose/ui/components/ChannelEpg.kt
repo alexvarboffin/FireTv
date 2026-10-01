@@ -67,7 +67,7 @@ fun ChannelEpgNowStrip(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = TextStyle(color = Color.White, fontSize = 11.sp),
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
         )
         EpgProgress(programme)
     }
@@ -91,7 +91,7 @@ fun ChannelEpgNowNextLines(
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(color = color, fontSize = 13.sp),
             )
-            EpgProgress(p, Modifier.padding(top = 3.dp, bottom = 2.dp))
+            EpgProgress(p, Modifier.padding(vertical = 4.dp))
         }
         nowNext.next?.takeIf { showNext }?.let { p ->
             BasicText(
@@ -106,7 +106,7 @@ fun ChannelEpgNowNextLines(
 
 @Composable
 private fun EpgProgress(programme: EpgProgramme, modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth().height(3.dp).background(Color(0x40FFFFFF))) {
+    Box(modifier.fillMaxWidth().height(4.dp).background(Color(0x40FFFFFF))) {
         Box(
             Modifier
                 .fillMaxHeight()

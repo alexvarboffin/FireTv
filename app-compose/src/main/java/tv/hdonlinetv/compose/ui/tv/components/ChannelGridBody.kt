@@ -40,6 +40,7 @@ fun ChannelGridBody(
     modifier: Modifier = Modifier,
     /** Scrolls with the items (first full-width item). */
     header: (@Composable () -> Unit)? = null,
+    contentPadding: PaddingValues? = null,
     onChannelClick: (ChannelUi) -> Unit,
 ) {
     val drawerFocus = LocalTvDrawerFocusRequester.current
@@ -68,7 +69,7 @@ fun ChannelGridBody(
         listMode -> LazyColumn(
             state = listState,
             modifier = modifier.fillMaxSize().tvLazyFocusGroup(listRestorer),
-            contentPadding = PaddingValues(
+            contentPadding = contentPadding ?: PaddingValues(
                 start = 48.dp,
                 end = 48.dp,
                 top = if (header != null) HeaderTopPadding else 24.dp,
@@ -99,7 +100,7 @@ fun ChannelGridBody(
             columns = GridCells.Adaptive(minSize = TvChannelGridMinCell),
             state = gridState,
             modifier = modifier.fillMaxSize().tvLazyFocusGroup(listRestorer),
-            contentPadding = PaddingValues(
+            contentPadding = contentPadding ?: PaddingValues(
                 start = 48.dp,
                 end = 48.dp,
                 top = if (header != null) HeaderTopPadding else 48.dp,

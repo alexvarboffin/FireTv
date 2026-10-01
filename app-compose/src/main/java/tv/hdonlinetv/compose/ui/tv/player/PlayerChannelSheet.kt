@@ -138,9 +138,9 @@ fun PlayerChannelSheet(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(380.dp)
+                    .width(384.dp)
                     .background(Color.Black.copy(alpha = 0.45f))
-                    .padding(vertical = 12.dp)
+                    .padding(vertical = 16.dp)
                     .focusGroup(),
             ) {
                 Text(
@@ -169,7 +169,7 @@ fun PlayerChannelSheet(
                                 color = Color.White.copy(alpha = 0.65f),
                                 modifier = Modifier.padding(
                                     horizontal = 16.dp,
-                                    vertical = 10.dp,
+                                    vertical = 8.dp,
                                 ),
                             )
                         }
@@ -197,7 +197,7 @@ fun PlayerChannelSheet(
                 onBackToChannels = { channelsGroup.requestFocus() },
                 onDismiss = onDismiss,
                 onHasProgrammes = { guideHasProgrammes = it },
-                modifier = Modifier.width(460.dp),
+                modifier = Modifier.width(464.dp),
             )
         }
     }
@@ -218,7 +218,7 @@ private fun ChannelSheetRow(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
@@ -243,12 +243,12 @@ private fun ChannelSheetRow(
             focusedContainerColor = colors.primary.copy(alpha = 0.72f),
             pressedContainerColor = colors.primary.copy(alpha = 0.85f),
         ),
-        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
+        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             RemoteImage(
                 url = channel.cover,
@@ -269,7 +269,7 @@ private fun ChannelSheetRow(
                         nowNext = nowNext,
                         color = Color.White.copy(alpha = 0.85f),
                         showNext = false,
-                        modifier = Modifier.padding(top = 2.dp),
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                 } else channel.category?.takeIf { it.isNotBlank() }?.let { cat ->
                     Text(

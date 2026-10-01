@@ -97,7 +97,7 @@ fun PlayerChannelGuide(
         modifier = modifier
             .fillMaxHeight()
             .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
-            .padding(vertical = 12.dp),
+            .padding(vertical = 16.dp),
     ) {
         Text(
             text = channel?.name.orEmpty(),
@@ -129,7 +129,7 @@ fun PlayerChannelGuide(
                             text = row.title,
                             style = MaterialTheme.typography.labelLarge,
                             color = Color.White.copy(alpha = 0.65f),
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 4.dp),
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
                         )
                         is GuideRow.Item -> GuideProgrammeRow(
                             programme = row.programme,
@@ -165,7 +165,7 @@ private fun GuideProgrammeRow(
         onClick = {},
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 2.dp)
+            .padding(horizontal = 8.dp)
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
@@ -186,12 +186,12 @@ private fun GuideProgrammeRow(
             focusedContainerColor = colors.primary.copy(alpha = 0.72f),
             pressedContainerColor = colors.primary.copy(alpha = 0.85f),
         ),
-        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
+        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
     ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(
                     text = time,
@@ -214,14 +214,14 @@ private fun GuideProgrammeRow(
                         color = Color.White.copy(alpha = 0.75f),
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 4.dp),
+                        modifier = Modifier.padding(top = 8.dp),
                     )
                 }
                 Box(
                     Modifier
-                        .padding(top = 6.dp)
+                        .padding(top = 8.dp)
                         .fillMaxWidth()
-                        .height(3.dp)
+                        .height(4.dp)
                         .background(Color.White.copy(alpha = 0.25f)),
                 ) {
                     Box(
