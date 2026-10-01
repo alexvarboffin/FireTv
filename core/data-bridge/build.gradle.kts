@@ -22,6 +22,7 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:epg"))
     implementation(project(":data"))
     implementation(project(":xtream"))
     implementation(libs.androidx.core.ktx)

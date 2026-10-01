@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
 import tv.hdonlinetv.compose.core.epg.EpgStore
 import tv.hdonlinetv.compose.core.epg.EpgSyncResult
+import tv.hdonlinetv.compose.core.epg.db.EpgDatabase
 import tv.hdonlinetv.compose.core.epg.index.EpgChannelRef
 
 /** Wait for the channel list to settle (playlist import emits many times). */
@@ -24,29 +25,52 @@ object EpgSync {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var job: Job? = null
+    /** Latest request that arrived while [job] was running; replayed when it finishes. */
+    private var pending: List<ChannelUi>? = null
 
     @Synchronized
     fun request(context: Context, channels: List<ChannelUi>) {
+        if (job?.isActive == true) {
+            pending = channels
+            return
+        }
         val refs = channels
             .map { EpgChannelRef(it.tvgId?.trim()?.ifEmpty { null }, it.name) }
             .filter { it.tvgId != null || !it.name.isNullOrBlank() }
             .distinct()
-        if (refs.isEmpty() || job?.isActive == true) return
+        if (refs.isEmpty()) return
         val prefs = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val hash = refs.hashCode()
+        val hash = refs.hashCode() * 31 + EpgDatabase.VERSION
         val now = System.currentTimeMillis()
         if (prefs.getInt(KEY_HASH, 0) == hash && now - prefs.getLong(KEY_AT, 0) < MIN_INTERVAL_MS) return
         val store = EpgStore.get(context)
         job = scope.launch {
-            runCatching { store.syncFromIndex(refs) }
+            runCatching { store.syncAll(refs) }
                 .onSuccess { r ->
-                    val partial = r.files.values.any { it is EpgSyncResult.Failed }
+                    val results = r.playlistGuides.values + r.index.files.values
+                    val partial = results.any { it is EpgSyncResult.Failed }
                     val syncedAt = if (partial) now - MIN_INTERVAL_MS + RETRY_PARTIAL_MS else now
                     prefs.edit().putInt(KEY_HASH, hash).putLong(KEY_AT, syncedAt).apply()
-                    Log.i(TAG, "channels=${r.channels} id=${r.matchedById} name=${r.matchedByName} files=${r.files}")
+                    Log.i(
+                        TAG,
+                        "channels=${r.index.channels + r.matchedByPlaylist} playlist=${r.matchedByPlaylist} " +
+                            "id=${r.index.matchedById} name=${r.index.matchedByName} " +
+                            "guides=${r.playlistGuides} files=${r.index.files}",
+                    )
                 }
                 .onFailure { Log.w(TAG, "sync failed", it) }
+        }.also { started ->
+            started.invokeOnCompletion { replayPending(context, started) }
         }
+    }
+
+    @Synchronized
+    private fun replayPending(context: Context, finished: Job) {
+        if (job !== finished) return
+        job = null
+        val next = pending ?: return
+        pending = null
+        request(context, next)
     }
 
     private const val TAG = "EpgSync"

@@ -15,6 +15,10 @@ data class EpgSourceEntity(
     val lastSyncAt: Long = 0,
     val lastStatus: String? = null,
     val programmeCount: Int = 0,
+    /** Latest programme stop stored from this source; the cache is usable until then. */
+    val coverageUntil: Long = 0,
+    /** Hash of the channel keys the last sync kept; a different set forces a re-download. */
+    val wantedHash: Int = 0,
 )
 
 @Entity(
@@ -44,7 +48,7 @@ data class ProgrammeEntity(
 )
 
 /**
- * Playlist channel → guide channel, filled from the epg-index lookup.
+ * Playlist channel → guide channel and the guide file it is read from.
  * [appKey] is `i:<EpgKey.normalize(tvgId)>` or `n:<EpgKey.nameKey(name)>`.
  */
 @Entity(tableName = "channel_map")
@@ -53,4 +57,26 @@ data class ChannelMapEntity(
     /** [tv.hdonlinetv.compose.core.epg.EpgKey.normalize]d guide channel id, matches [ProgrammeEntity.channelKey]. */
     val guideKey: String,
     val icon: String?,
+    /** [EpgSourceEntity.id] holding this channel; null = any source with [guideKey]. */
+    val sourceId: Long? = null,
+    val origin: String = ORIGIN_INDEX,
+) {
+    companion object {
+        const val ORIGIN_INDEX = "index"
+        /** From the playlist's own `url-tvg`: never looked up in the epg-index. */
+        const val ORIGIN_PLAYLIST = "playlist"
+    }
+}
+
+/** `url-tvg` of an imported playlist and the `tvg-id`s it is expected to cover. */
+@Entity(
+    tableName = "guide_binding",
+    primaryKeys = ["playlistId", "url", "channelKey"],
+    indices = [Index(value = ["url"])],
+)
+data class GuideBindingEntity(
+    val playlistId: Long,
+    val url: String,
+    /** [tv.hdonlinetv.compose.core.epg.EpgKey.normalize]d `tvg-id`. */
+    val channelKey: String,
 )

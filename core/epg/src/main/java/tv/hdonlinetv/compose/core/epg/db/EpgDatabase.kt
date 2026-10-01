@@ -7,14 +7,22 @@ import androidx.room.RoomDatabase
 
 /** Separate from the legacy `FavoriteDatabase`: guide data is a disposable cache. */
 @Database(
-    entities = [EpgSourceEntity::class, ProgrammeEntity::class, ChannelMapEntity::class],
-    version = 2,
+    entities = [
+        EpgSourceEntity::class,
+        ProgrammeEntity::class,
+        ChannelMapEntity::class,
+        GuideBindingEntity::class,
+    ],
+    version = EpgDatabase.VERSION,
     exportSchema = false,
 )
 abstract class EpgDatabase : RoomDatabase() {
     abstract fun dao(): EpgDao
 
     companion object {
+        /** Destructive upgrades wipe the cache: callers that throttle syncs must key on this. */
+        const val VERSION = 3
+
         @Volatile
         private var instance: EpgDatabase? = null
 

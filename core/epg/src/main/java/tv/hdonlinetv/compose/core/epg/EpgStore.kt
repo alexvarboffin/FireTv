@@ -14,6 +14,7 @@ import tv.hdonlinetv.compose.core.epg.db.ChannelMapEntity
 import tv.hdonlinetv.compose.core.epg.db.EpgDao
 import tv.hdonlinetv.compose.core.epg.db.EpgDatabase
 import tv.hdonlinetv.compose.core.epg.db.EpgSourceEntity
+import tv.hdonlinetv.compose.core.epg.db.GuideBindingEntity
 import tv.hdonlinetv.compose.core.epg.db.ProgrammeEntity
 import tv.hdonlinetv.compose.core.epg.index.EpgChannelRef
 import tv.hdonlinetv.compose.core.epg.index.EpgIndexClient
@@ -46,16 +47,23 @@ class EpgStore private constructor(context: Context) {
 
     /**
      * Downloads [url] and replaces its programmes. [tvgIds] limits stored channels (null = all).
+     * Returns [EpgSyncResult.Cached] without downloading while the stored copy is fresh for the
+     * same channel set (unless [force]).
      * On any failure the previously stored programmes of this source stay untouched.
      */
     suspend fun sync(
         url: String,
         tvgIds: Collection<String?>?,
         now: Long = System.currentTimeMillis(),
+        force: Boolean = false,
     ): EpgSyncResult = withContext(Dispatchers.IO) {
         val wanted = tvgIds?.mapNotNullTo(HashSet()) { EpgKey.normalize(it) }
         if (wanted != null && wanted.isEmpty()) return@withContext EpgSyncResult.Failed("no tvg-id")
+        val wantedHash = wanted?.sorted()?.hashCode() ?: 0
         val sourceId = sourceIdFor(url)
+        if (!force && dao.sourceByUrl(url)?.isFresh(wantedHash, now) == true) {
+            return@withContext EpgSyncResult.Cached
+        }
         val tmp = File(appContext.cacheDir, "epg_${sourceId}.tmp")
         try {
             download(url, tmp)
@@ -90,7 +98,14 @@ class EpgStore private constructor(context: Context) {
                     result!!
                 }
             }
-            dao.updateSourceStatus(sourceId, now, "ok", stats.programmesKept)
+            dao.updateSourceStatus(
+                id = sourceId,
+                at = now,
+                status = STATUS_OK,
+                count = stats.programmesKept,
+                coverageUntil = dao.maxStop(sourceId) ?: 0,
+                wantedHash = wantedHash,
+            )
             dao.deleteEndedBefore(now - KEEP_PAST_MS)
             _version.update { it + 1 }
             stats
@@ -117,20 +132,26 @@ class EpgStore private constructor(context: Context) {
         now: Long = System.currentTimeMillis(),
     ): EpgIndexSyncResult = withContext(Dispatchers.IO) {
         val resolution = index.resolve(channels)
+        val plan = EpgSourcePlan.plan(resolution.matches.values).entries.take(maxFiles)
+        val sourceByGuideKey = HashMap<String, Long>()
+        plan.forEach { (url, guideIds) ->
+            val sourceId = sourceIdFor(url)
+            guideIds.forEach { id -> EpgKey.normalize(id)?.let { sourceByGuideKey.putIfAbsent(it, sourceId) } }
+        }
         val mapRows = resolution.matches.mapNotNull { (i, m) ->
             val guideKey = EpgKey.normalize(m.guideChannelId) ?: return@mapNotNull null
             val appKey = when (m.level) {
                 EpgMatchLevel.ID -> idAppKey(channels[i])
                 EpgMatchLevel.NAME -> nameAppKey(channels[i])
             } ?: return@mapNotNull null
-            ChannelMapEntity(appKey, guideKey, m.icon)
+            ChannelMapEntity(appKey, guideKey, m.icon, sourceByGuideKey[guideKey])
         }
         if (mapRows.isNotEmpty()) {
             dao.upsertChannelMap(mapRows)
             _version.update { it + 1 }
         }
         val files = LinkedHashMap<String, EpgSyncResult>()
-        EpgSourcePlan.plan(resolution.matches.values).entries.take(maxFiles).forEach { (url, guideIds) ->
+        plan.forEach { (url, guideIds) ->
             files[url] = sync(url, guideIds, now)
         }
         EpgIndexSyncResult(
@@ -140,6 +161,65 @@ class EpgStore private constructor(context: Context) {
             files = files,
             icons = resolution.matches.mapNotNull { (i, m) -> m.icon?.let { i to it } }.toMap(),
         )
+    }
+
+    /**
+     * Remembers the `url-tvg` guides of an imported playlist and the `tvg-id`s they should cover,
+     * replacing the previous binding of [playlistId]. Empty [urls] just clears it.
+     */
+    suspend fun bindPlaylistGuides(
+        playlistId: Long,
+        urls: Collection<String>,
+        tvgIds: Collection<String?>,
+    ) = withContext(Dispatchers.IO) {
+        val keys = tvgIds.mapNotNullTo(HashSet()) { EpgKey.normalize(it) }
+        database.runInTransaction {
+            dao.deleteBindings(playlistId)
+            if (keys.isNotEmpty()) {
+                dao.insertBindings(urls.flatMap { url -> keys.map { GuideBindingEntity(playlistId, url, it) } })
+            }
+        }
+    }
+
+    suspend fun unbindPlaylist(playlistId: Long) = withContext(Dispatchers.IO) {
+        dao.deleteBindings(playlistId)
+    }
+
+    /**
+     * Playlist `url-tvg` guides first: channels found there are bound to that guide and never
+     * looked up in the epg-index. The rest go through [syncFromIndex].
+     */
+    suspend fun syncAll(
+        channels: List<EpgChannelRef>,
+        index: EpgIndexClient = EpgIndexClient.http(http),
+        maxFiles: Int = DEFAULT_MAX_FILES,
+        now: Long = System.currentTimeMillis(),
+    ): EpgFullSyncResult = withContext(Dispatchers.IO) {
+        val guides = LinkedHashMap<String, EpgSyncResult>()
+        dao.bindings().groupBy({ it.url }, { it.channelKey }).forEach { (url, keys) ->
+            val result = sync(url, keys, now)
+            guides[url] = result
+            if (result is EpgSyncResult.Success) bindFoundChannels(url, keys.toSet())
+        }
+        val playlistBound = dao.mappedAppKeys(ChannelMapEntity.ORIGIN_PLAYLIST).toHashSet()
+        val rest = channels.filter { idAppKey(it) !in playlistBound }
+        EpgFullSyncResult(
+            playlistGuides = guides,
+            matchedByPlaylist = channels.size - rest.size,
+            index = syncFromIndex(rest, index, maxFiles, now),
+        )
+    }
+
+    private fun bindFoundChannels(url: String, keys: Set<String>) {
+        val sourceId = sourceIdFor(url)
+        val found = dao.channelKeys(sourceId).filter { it in keys }
+        database.runInTransaction {
+            dao.deleteChannelMap(sourceId, ChannelMapEntity.ORIGIN_PLAYLIST)
+            dao.upsertChannelMap(
+                found.map { ChannelMapEntity("i:$it", it, null, sourceId, ChannelMapEntity.ORIGIN_PLAYLIST) },
+            )
+        }
+        _version.update { it + 1 }
     }
 
     /** Now/next per raw id from [tvgIds]; ids without guide data are absent. */
@@ -161,9 +241,20 @@ class EpgStore private constructor(context: Context) {
         channels: Collection<EpgChannelRef>,
         now: Long = System.currentTimeMillis(),
     ): Map<EpgChannelRef, EpgNowNext> = withContext(Dispatchers.IO) {
-        val keyByRef = guideKeys(channels)
-        val byKey = nowNextByGuideKey(keyByRef.values.toSet(), now)
-        keyByRef.mapNotNull { (ref, key) -> byKey[key]?.let { ref to it } }.toMap()
+        val guideByRef = guideRefs(channels)
+        val keys = guideByRef.values.mapTo(HashSet()) { it.key }
+        if (keys.isEmpty()) return@withContext emptyMap()
+        val rowsByKey = keys.toList().chunked(SQL_IN_LIMIT)
+            .flatMap { dao.upcoming(it, now) }
+            .groupBy { it.channelKey }
+        guideByRef.mapNotNull { (ref, guide) ->
+            val rows = rowsByKey[guide.key]?.let(guide::select)?.sortedBy { it.start }
+            if (rows.isNullOrEmpty()) return@mapNotNull null
+            ref to EpgNowNext(
+                now = rows.firstOrNull { it.start <= now }?.toModel(),
+                next = rows.firstOrNull { it.start > now }?.toModel(),
+            )
+        }.toMap()
     }
 
     suspend fun schedule(
@@ -180,24 +271,36 @@ class EpgStore private constructor(context: Context) {
         from: Long,
         to: Long,
     ): List<EpgProgramme> = withContext(Dispatchers.IO) {
-        val key = guideKeys(listOf(channel))[channel] ?: return@withContext emptyList()
-        dao.schedule(key, from, to).map { it.toModel() }
+        val guide = guideRefs(listOf(channel))[channel] ?: return@withContext emptyList()
+        guide.select(dao.schedule(guide.key, from, to)).map { it.toModel() }
     }
 
-    private fun guideKeys(channels: Collection<EpgChannelRef>): Map<EpgChannelRef, String> {
+    /** Guide channel of a playlist channel; [sourceId] pins it to one file (ids collide across guides). */
+    private class GuideRef(val key: String, val sourceId: Long?) {
+        fun select(rows: List<ProgrammeEntity>): List<ProgrammeEntity> =
+            if (sourceId == null) rows else rows.filter { it.sourceId == sourceId }
+    }
+
+    private fun guideRefs(channels: Collection<EpgChannelRef>): Map<EpgChannelRef, GuideRef> {
         val appKeys = channels.flatMapTo(HashSet()) { listOfNotNull(idAppKey(it), nameAppKey(it)) }
         val mapped = appKeys.toList().chunked(SQL_IN_LIMIT)
             .flatMap { dao.channelMap(it) }
-            .associate { it.appKey to it.guideKey }
-        val out = HashMap<EpgChannelRef, String>()
+            .associateBy { it.appKey }
+        val out = HashMap<EpgChannelRef, GuideRef>()
         channels.forEach { ref ->
-            val key = idAppKey(ref)?.let(mapped::get)
-                ?: nameAppKey(ref)?.let(mapped::get)
-                ?: EpgKey.normalize(ref.tvgId)
-            if (key != null) out[ref] = key
+            val row = idAppKey(ref)?.let(mapped::get) ?: nameAppKey(ref)?.let(mapped::get)
+            val guide = row?.let { GuideRef(it.guideKey, it.sourceId) }
+                ?: EpgKey.normalize(ref.tvgId)?.let { GuideRef(it, null) }
+            if (guide != null) out[ref] = guide
         }
         return out
     }
+
+    private fun EpgSourceEntity.isFresh(wantedHash: Int, now: Long): Boolean =
+        lastStatus == STATUS_OK &&
+            this.wantedHash == wantedHash &&
+            now - lastSyncAt < FRESH_MS &&
+            coverageUntil - now > MIN_AHEAD_MS
 
     private fun nowNextByGuideKey(keys: Set<String>, now: Long): Map<String, EpgNowNext> {
         if (keys.isEmpty()) return emptyMap()
@@ -250,5 +353,9 @@ class EpgStore private constructor(context: Context) {
         private const val SQL_IN_LIMIT = 900
         private const val KEEP_PAST_MS = 2 * 60 * 60_000L
         private const val KEEP_AHEAD_MS = 36 * 60 * 60_000L
+        private const val FRESH_MS = 12 * 60 * 60_000L
+        /** Re-download before the stored guide runs out, not when the screen is already empty. */
+        private const val MIN_AHEAD_MS = 12 * 60 * 60_000L
+        private const val STATUS_OK = "ok"
     }
 }

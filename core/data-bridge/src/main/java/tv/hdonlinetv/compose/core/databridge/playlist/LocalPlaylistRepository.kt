@@ -2,6 +2,7 @@ package tv.hdonlinetv.compose.core.databridge.playlist
 
 import android.content.Context
 import android.net.Uri
+import com.walhalla.data.model.Channel
 import com.walhalla.data.model.PlaylistImpl
 import com.walhalla.data.repository.LocalDatabaseRepo
 import com.walhalla.data.repository.M3UParser
@@ -17,6 +18,7 @@ import tv.hdonlinetv.compose.core.domain.model.PlaylistType
 import tv.hdonlinetv.compose.core.domain.model.PlaylistRefreshResult
 import tv.hdonlinetv.compose.core.domain.model.PlaylistUi
 import tv.hdonlinetv.compose.core.domain.repository.PlaylistRepository
+import tv.hdonlinetv.compose.core.epg.EpgStore
 import tv.hdonlinetv.compose.core.databridge.settings.LocalSettingsRepository
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -29,6 +31,7 @@ class LocalPlaylistRepository(
     private val database = LocalDatabaseRepo.getStoreInfoDatabase(appContext)
     private val settingsRepository = LocalSettingsRepository(appContext)
     private val httpClient = OkHttpClient()
+    private val epgStore = EpgStore.get(appContext)
 
     override suspend fun getAllPlaylists(): List<PlaylistUi> = withContext(Dispatchers.IO) {
         PlaylistMapper.toUiList(database.selectAllPlaylist())
@@ -49,13 +52,16 @@ class LocalPlaylistRepository(
         val playlist = database.selectAllPlaylist().firstOrNull { it._id == playlistId }
             ?: return@withContext 0
         val cleanupEmptyCategories = settingsRepository.getSettings().cleanupEmptyCategories
-        database.deletePlaylistAndRelatedChannels(playlist, cleanupEmptyCategories)
+        val deleted = database.deletePlaylistAndRelatedChannels(playlist, cleanupEmptyCategories)
+        runCatching { epgStore.unbindPlaylist(playlistId) }
+        deleted
     }
 
     override suspend fun refreshFromUrl(playlist: PlaylistUi): PlaylistRefreshResult = withContext(Dispatchers.IO) {
         try {
-            val channels = downloadM3u(playlist.fileName)
+            val body = downloadText(playlist.fileName)
                 ?: return@withContext PlaylistRefreshResult.Failed
+            val channels = M3UParser.parseM3U(appContext, body)
             if (channels.isEmpty()) {
                 return@withContext PlaylistRefreshResult.Empty
             }
@@ -66,6 +72,7 @@ class LocalPlaylistRepository(
             refreshed.updateDate = System.currentTimeMillis()
             refreshed.count = channels.size
             database.addChannelAndPlaylist(channels, refreshed)
+            bindGuides(playlist.id, body, channels)
             PlaylistRefreshResult.Success(
                 channelCount = channels.size,
                 previousCount = previousCount,
@@ -80,12 +87,14 @@ class LocalPlaylistRepository(
             val resolvedTitle = title.ifBlank {
                 PlaylistUrlHelper.deriveTitleFromUrl(url)
             }
-            val channels = downloadM3u(url) ?: return@withContext null
+            val body = downloadText(url) ?: return@withContext null
+            val channels = M3UParser.parseM3U(appContext, body)
             if (channels.isEmpty()) return@withContext null
             val playlist = PlaylistMapper.newCloudPlaylist(resolvedTitle, url)
             playlist.updateDate = System.currentTimeMillis()
             database.addChannelAndPlaylist(channels, playlist)
             database.selectAllPlaylist().lastOrNull()?._id
+                ?.also { bindGuides(it, body, channels) }
         } catch (_: Exception) {
             null
         }
@@ -111,6 +120,7 @@ class LocalPlaylistRepository(
             )
             database.addChannelAndPlaylist(channels, playlist)
             database.selectAllPlaylist().lastOrNull()?._id
+                ?.also { bindGuides(it, content, channels) }
         } catch (_: Exception) {
             null
         }
@@ -131,6 +141,7 @@ class LocalPlaylistRepository(
             )
             database.addChannelAndPlaylist(channels, playlist)
             database.selectAllPlaylist().lastOrNull()?._id
+                ?.also { bindGuides(it, content, channels) }
         } catch (_: Exception) {
             null
         }
@@ -165,11 +176,22 @@ class LocalPlaylistRepository(
         }
     }
 
-    private fun downloadM3u(url: String): List<com.walhalla.data.model.Channel>? {
+    private fun downloadText(url: String): String? {
         val request = Request.Builder().url(url).build()
-        val response = httpClient.newCall(request).execute()
-        if (!response.isSuccessful) return null
-        val body = response.body?.string() ?: return null
-        return M3UParser.parseM3U(appContext, body)
+        httpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) return null
+            return response.body?.string()
+        }
+    }
+
+    /** Playlist's own `url-tvg` guides; a failure here must never fail the import. */
+    private suspend fun bindGuides(playlistId: Long, body: String, channels: List<Channel>) {
+        runCatching {
+            epgStore.bindPlaylistGuides(
+                playlistId = playlistId,
+                urls = M3UParser.parseHeaderEpgUrls(body),
+                tvgIds = channels.map { it.tvgId },
+            )
+        }
     }
 }

@@ -23,6 +23,9 @@ sealed interface EpgSyncResult {
     ) : EpgSyncResult
 
     data class Failed(val reason: String) : EpgSyncResult
+
+    /** Stored programmes are still fresh for the same channel set; nothing downloaded. */
+    data object Cached : EpgSyncResult
 }
 
 data class EpgIndexSyncResult(
@@ -33,4 +36,12 @@ data class EpgIndexSyncResult(
     val files: Map<String, EpgSyncResult>,
     /** Index in the input list → guide icon, for channels without their own logo. */
     val icons: Map<Int, String>,
+)
+
+data class EpgFullSyncResult(
+    /** Playlist `url-tvg` → its download/parse result. */
+    val playlistGuides: Map<String, EpgSyncResult>,
+    /** Channels served by a playlist guide; they skip the epg-index. */
+    val matchedByPlaylist: Int,
+    val index: EpgIndexSyncResult,
 )
