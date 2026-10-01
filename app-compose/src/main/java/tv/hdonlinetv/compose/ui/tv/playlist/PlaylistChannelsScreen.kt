@@ -21,10 +21,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
@@ -128,24 +130,34 @@ fun PlaylistChannelsScreenBody(
             .background(colors.background)
             .padding(horizontal = 48.dp, vertical = 24.dp),
     ) {
-        Button(onClick = onBack) {
-            Text(text = stringResource(R.string.ok))
-        }
-        Text(
-            text = title,
-            modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
-        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Button(onClick = onRefresh) {
-                PlaylistActionLabel(
-                    icon = Icons.Filled.Refresh,
-                    text = stringResource(R.string.refresh),
+            Button(onClick = onBack) {
+                Text(text = stringResource(R.string.ok))
+            }
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
                 )
+                Button(onClick = onRefresh) {
+                    PlaylistActionLabel(
+                        icon = Icons.Filled.Refresh,
+                        text = stringResource(R.string.refresh),
+                    )
+                }
             }
             Button(onClick = { showDeleteConfirm = true }) {
                 PlaylistActionLabel(

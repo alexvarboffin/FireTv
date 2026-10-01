@@ -79,6 +79,7 @@ fun ChannelEpgNowNextLines(
     nowNext: EpgNowNext?,
     color: Color,
     modifier: Modifier = Modifier,
+    showNext: Boolean = true,
 ) {
     nowNext ?: return
     val format = DateFormat.getTimeFormat(LocalContext.current)
@@ -92,7 +93,7 @@ fun ChannelEpgNowNextLines(
             )
             EpgProgress(p, Modifier.padding(top = 3.dp, bottom = 2.dp))
         }
-        nowNext.next?.let { p ->
+        nowNext.next?.takeIf { showNext }?.let { p ->
             BasicText(
                 text = stringResource(R.string.epg_next, format.format(p.start), p.title),
                 maxLines = 1,

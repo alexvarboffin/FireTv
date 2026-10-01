@@ -263,6 +263,9 @@
 - [ ] E13 — Drawer Feedback / Rate / Share не крашат при отсутствии почты/Play/шера: `startActivitySafe` + Toast `no_app_to_handle`; `<queries>` mailto/market/SEND в манифесте
   Verify: эмулятор без Gmail → Feedback → Toast, процесс жив; phone + TV `MainShellScreen`
 
+- [ ] E14 — В шторе каналов справа телепрограмма **сфокусированного** канала (как CinemaKMP `ProgramGuideContainer`). Клавиши: в списке каналов Right открывает программу (если в ней есть передачи, иначе закрывает штору), Left/Home закрывают штору; в программе Left возвращает на тот же канал (`focusRestorer`), Right/Home закрывают. Строка канала показывает текущую передачу + шкалу прогресса (как на карточках; без EPG — категория). Внешний `onPreviewKeyEvent` шторы **не** съедает Left/Right (родитель получает событие раньше детей)
+  Verify: `PlayerChannelSheet.kt` + `PlayerChannelGuide.kt`; плейлист → канал → Left → Up/Down меняет программу → Right → фокус на текущей передаче → Left обратно
+
 ---
 
 ## F. Диалоги / long-press / поля / loading

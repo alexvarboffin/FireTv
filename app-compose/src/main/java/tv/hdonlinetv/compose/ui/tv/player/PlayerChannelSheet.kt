@@ -51,7 +51,9 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
+import tv.hdonlinetv.compose.ui.components.ChannelEpgNowNextLines
 import tv.hdonlinetv.compose.ui.components.RemoteImage
+import tv.hdonlinetv.compose.ui.components.rememberChannelNowNext
 
 /**
  * Cinema-style in-player channel curtain (left): categories as section headers,
@@ -254,6 +256,7 @@ private fun ChannelSheetRow(
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(48.dp),
             )
+            val nowNext = rememberChannelNowNext(channel)
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = channel.name,
@@ -261,7 +264,14 @@ private fun ChannelSheetRow(
                     overflow = TextOverflow.Ellipsis,
                     color = Color.White,
                 )
-                channel.category?.takeIf { it.isNotBlank() }?.let { cat ->
+                if (nowNext?.now != null) {
+                    ChannelEpgNowNextLines(
+                        nowNext = nowNext,
+                        color = Color.White.copy(alpha = 0.85f),
+                        showNext = false,
+                        modifier = Modifier.padding(top = 2.dp),
+                    )
+                } else channel.category?.takeIf { it.isNotBlank() }?.let { cat ->
                     Text(
                         text = cat,
                         maxLines = 1,
