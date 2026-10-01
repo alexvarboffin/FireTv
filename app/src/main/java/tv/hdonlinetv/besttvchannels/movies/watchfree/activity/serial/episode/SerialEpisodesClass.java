@@ -139,12 +139,9 @@ public class SerialEpisodesClass
             items.addAll(entry.getValue());
         }
 
-        adapter = new EpisodeAdapter(items, new EpisodeAdapter.OnEpisodeClickListener() {
-            @Override
-            public void onEpisodeClick(ResponseData.Episode episode) {
-                if (listener != null) {
-                    listener.onEpisodeSelected(episode);
-                }
+        adapter = new EpisodeAdapter(items, episode -> {
+            if (listener != null) {
+                listener.onEpisodeSelected(episode);
             }
         });
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
