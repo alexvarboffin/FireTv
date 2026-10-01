@@ -67,6 +67,12 @@ interface EpgDao {
     @Query("DELETE FROM channel_map WHERE sourceId = :sourceId AND origin = :origin")
     fun deleteChannelMap(sourceId: Long, origin: String)
 
+    @Query("DELETE FROM channel_map WHERE origin = :origin AND (sourceId IS NULL OR sourceId NOT IN (:keep))")
+    fun deleteChannelMapExcept(origin: String, keep: List<Long>)
+
+    @Query("DELETE FROM channel_map WHERE origin = :origin")
+    fun deleteChannelMap(origin: String)
+
     @Query(
         "SELECT * FROM programme WHERE channelKey = :key AND stop > :from AND start < :to ORDER BY start",
     )

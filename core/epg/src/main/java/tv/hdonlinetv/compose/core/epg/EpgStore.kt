@@ -201,7 +201,9 @@ class EpgStore private constructor(context: Context) {
         now: Long = System.currentTimeMillis(),
     ): EpgFullSyncResult = withContext(Dispatchers.IO) {
         val guides = LinkedHashMap<String, EpgSyncResult>()
-        dao.bindings().groupBy({ it.url }, { it.channelKey }).forEach { (url, keys) ->
+        val bound = dao.bindings().groupBy({ it.url }, { it.channelKey })
+        dropUnboundPlaylistChannels(bound.keys)
+        bound.forEach { (url, keys) ->
             val result = sync(url, keys, now)
             guides[url] = result
             if (result is EpgSyncResult.Success) bindFoundChannels(url, keys.toSet())
@@ -213,6 +215,16 @@ class EpgStore private constructor(context: Context) {
             matchedByPlaylist = channels.size - rest.size,
             index = syncFromIndex(rest, index, maxFiles, now),
         )
+    }
+
+    /** Channels of deleted playlists' guides must fall back to the epg-index. */
+    private fun dropUnboundPlaylistChannels(urls: Collection<String>) {
+        val keep = urls.mapNotNull { dao.sourceByUrl(it)?.id }
+        if (keep.isEmpty()) {
+            dao.deleteChannelMap(ChannelMapEntity.ORIGIN_PLAYLIST)
+        } else {
+            dao.deleteChannelMapExcept(ChannelMapEntity.ORIGIN_PLAYLIST, keep)
+        }
     }
 
     private fun bindFoundChannels(url: String, keys: Set<String>) {
