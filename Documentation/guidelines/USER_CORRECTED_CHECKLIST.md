@@ -275,6 +275,9 @@
 - [ ] E16 — Экран плейлиста: шапка-тулбар в одну строку (OK слева, имя по центру во всю ширину, Обновить+Удалить справа); без двойных полей экран+сетка, компактные отступы сверху/снизу (`ChannelGridBody(contentPadding = …)`). Зазор шапка→сетка — **внешний** `padding(bottom = 8.dp)` у шапки (сетка обрезает прокрученные карточки ниже кнопок); внутри сетки сверху только 8.dp под зум фокуса первого ряда
   Verify: `ui/tv/playlist/PlaylistChannelsScreen.kt`; прокрутить сетку — карточки не касаются кнопок; фокус на первом ряду — карточка не обрезана
 
+- [ ] E17 — Иконки бокового меню TV меняют цвет вместе с текстом при фокусе/выборе: `Icon` в `NavigationDrawerItem` **без** `tint` (берёт `LocalContentColor` из состояния пункта). Общие drawable не трогаем — phone/legacy не меняются
+  Verify: `ui/tv/main/MainShellScreen.kt`; drawer → фокус на пункте → иконка светлая на тёмном фоне, как текст
+
 ---
 
 ## F. Диалоги / long-press / поля / loading
@@ -353,6 +356,8 @@
   Verify: `EpgStore.guideRefs` / `GuideRef.select`
 - [ ] K5 — Новый лист во время идущего синка получает программу без перезапуска приложения
   Verify: `EpgSync.pending` + `replayPending`
+- [ ] K6 — Удаление листа с `url-tvg` снимает метку `origin=playlist` с его каналов (иначе тот же `tvg-id` из другого листа никогда не пошёл бы в epg-index); повторное добавление листа восстанавливает привязку даже при `Cached` гиде
+  Verify: удалить RU → `playlist=0 guides={}`; добавить RU снова → `playlist=208`, гид `=Cached`. Код: `EpgStore.dropUnboundPlaylistChannels`, `bindFoundChannels` для любого не-`Failed` результата
 
 Код: `core/epg/.../EpgStore.kt` (`syncAll`, `bindPlaylistGuides`, `isFresh`), `db/EpgEntities.kt` (`guide_binding`, `channel_map.origin/sourceId`, `epg_source.coverageUntil/wantedHash`), `core/data-bridge/.../LocalPlaylistRepository.kt`, `app-compose/.../epg/EpgSync.kt`. Подробно: `Documentation/ARCHITECTURE/epg.md`.
 

@@ -115,7 +115,6 @@ fun MainShellScreen() {
     var shellPanel by remember { mutableStateOf(ShellPanel.Tabs) }
     var showAbout by remember { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
-    val iconTint = colors.onSurface
 
     val playlistRepository = LocalPlaylistRepository.current
     val channelRepository = LocalChannelRepository.current
@@ -267,7 +266,6 @@ fun MainShellScreen() {
                                     Icon(
                                         painter = painterResource(item.iconRes),
                                         contentDescription = null,
-                                        tint = iconTint,
                                     )
                                 },
                             ) {

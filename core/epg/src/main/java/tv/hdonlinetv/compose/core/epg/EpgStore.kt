@@ -206,7 +206,7 @@ class EpgStore private constructor(context: Context) {
         bound.forEach { (url, keys) ->
             val result = sync(url, keys, now)
             guides[url] = result
-            if (result is EpgSyncResult.Success) bindFoundChannels(url, keys.toSet())
+            if (result !is EpgSyncResult.Failed) bindFoundChannels(url, keys.toSet())
         }
         val playlistBound = dao.mappedAppKeys(ChannelMapEntity.ORIGIN_PLAYLIST).toHashSet()
         val rest = channels.filter { idAppKey(it) !in playlistBound }
