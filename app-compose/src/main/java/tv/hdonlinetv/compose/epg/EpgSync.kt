@@ -40,11 +40,13 @@ object EpgSync {
             .distinct()
         if (refs.isEmpty()) return
         val prefs = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val hash = refs.hashCode() * 31 + EpgDatabase.VERSION
-        val now = System.currentTimeMillis()
-        if (prefs.getInt(KEY_HASH, 0) == hash && now - prefs.getLong(KEY_AT, 0) < MIN_INTERVAL_MS) return
         val store = EpgStore.get(context)
         job = scope.launch {
+            val hash = (refs.hashCode() * 31 + store.bindingsHash()) * 31 + EpgDatabase.VERSION
+            val now = System.currentTimeMillis()
+            if (prefs.getInt(KEY_HASH, 0) == hash && now - prefs.getLong(KEY_AT, 0) < MIN_INTERVAL_MS) {
+                return@launch
+            }
             runCatching { store.syncAll(refs) }
                 .onSuccess { r ->
                     val results = r.playlistGuides.values + r.index.files.values

@@ -76,9 +76,13 @@ python resolve.py $env:TEMP\es.m3u --local dist
 | `EpgKey` | `normalize` (id), `nameKey`, `shardOf` |
 | `index/EpgIndexClient` | `resolve(List<EpgChannelRef>)` → совпадения + какие файлы гайда; потоковый Gson, держит только нужные ключи. `EpgIndexClient.http(okHttp)` — Pages, затем `data` |
 | `index/EpgSourcePlan` | по одному XMLTV-файлу на канал, минимизируя число файлов |
-| `EpgStore.syncFromIndex(channels)` | lookup → `channel_map` → `sync(url, guideIds)` на каждый файл |
-| `EpgStore.nowNextFor(channels)` / `schedule(ref, …)` | `channel_map`, иначе прямой `tvg-id` (гайд из `url-tvg` плейлиста) |
-| `EpgStore.sync(url, tvgIds)` | прямой XMLTV (`url-tvg` / `x-tvg-url`, `M3UParser.parseHeaderEpgUrls`) |
+| `EpgStore.bindPlaylistGuides(playlistId, urls, tvgIds)` | при импорте/обновлении листа: `url-tvg` → `guide_binding` |
+| `EpgStore.syncAll(channels)` | гиды плейлистов → `channel_map(origin=playlist)`; остальные каналы → `syncFromIndex` |
+| `EpgStore.syncFromIndex(channels)` | lookup → `channel_map(origin=index, sourceId)` → `sync(url, guideIds)` на каждый файл |
+| `EpgStore.nowNextFor(channels)` / `schedule(ref, …)` | `channel_map` (строго из его `sourceId`), иначе прямой `tvg-id` |
+| `EpgStore.sync(url, tvgIds)` | XMLTV-файл; `Cached`, если свежий (< 12 ч, покрытие ≥ 12 ч вперёд, тот же набор каналов) |
+
+Стратегия источников и свежести — `Documentation/guidelines/USER_CORRECTED_CHECKLIST.md`, раздел K.
 
 `EpgChannelRef(tvgId, name)`: M3U `tvg-id` / Xtream `epg_channel_id` + название канала
 (`ChannelUi.tvgId`, `ChannelUi.name`). Иконку из индекса (`EpgIndexSyncResult.icons`)
@@ -101,9 +105,11 @@ python resolve.py $env:TEMP\es.m3u --local dist
 
 ## В приложении (`:app-compose`)
 
-- `epg/EpgSync` — фоновый `syncFromIndex` в app-wide scope. Запуск: `TvNavHost` / `PhoneNavHost`
+- `epg/EpgSync` — фоновый `syncAll` в app-wide scope. Запуск: `TvNavHost` / `PhoneNavHost`
   слушают `ChannelRepository.observeAllChannels()`, ждут 5 с тишины, затем `EpgSync.request`.
-  Не чаще раза в 12 ч для того же набора каналов (`shared_prefs/epg_sync.xml`); если часть файлов
+  Запрос во время идущего синка ставится в очередь (`pending`) и выполняется после него.
+  Не чаще раза в 12 ч для того же набора каналов + привязок `url-tvg` + версии `epg.db`
+  (`shared_prefs/epg_sync.xml`); если часть файлов
   упала — повтор через 1 ч. Максимум `EpgStore.DEFAULT_MAX_FILES` (12) файлов гайда — самые «покрывающие».
 - `ui/components/ChannelEpg.kt`: `rememberChannelNowNext(channel)` (перезапрос по `EpgStore.version`
   и по концу текущей передачи), `ChannelEpgNowStrip` — полоса «сейчас» + прогресс внизу логотипа
@@ -113,6 +119,9 @@ python resolve.py $env:TEMP\es.m3u --local dist
 Проверено 2026-10-01 (LDPlayer, `index.m3u` 10994 канала): id 2445 + name 740, 12/12 файлов,
 ~60 тыс. передач в окне −2 ч…+36 ч, синк ~3,5 мин.
 
+Проверено 2026-10-01 (UK iptv-org 299 + IPTVru 223 с `url-tvg` iptvx.one): `playlist=208` из 223 RU
+(индекс давал 0 по id), 17,5 МБ гида → 13 374 передач; повторный синк — 11 из 12 файлов индекса `Cached`.
+
 Грабли:
 - Android ICU regex не понимает `(?U)` → `EpgKey` использует явные `\p{L}\p{N}` lookaround вместо `\b`.
 - Часть epgshare01 файлов начинается с UTF-8 BOM → `XmlTvStreams.reader` его пропускает.
@@ -121,6 +130,8 @@ python resolve.py $env:TEMP\es.m3u --local dist
 
 - Экран полной программы канала (`EpgStore.schedule`).
 - Подстановка иконки из индекса в карточки без `tvg-logo` (`EpgIndexSyncResult.icons` пока не сохраняются).
-- Гайд из `url-tvg` самого плейлиста (`M3UParser.parseHeaderEpgUrls` есть, URL нигде не хранится).
+- `url-tvg` у листов, импортированных до 2026-10-01, появится только после «Обновить».
+- Отдельный периодический воркер (WorkManager): сейчас синк живёт в процессе и стартует от списка каналов.
+- Условные запросы (`ETag` / `If-Modified-Since`) — пока решаем свежесть по времени и покрытию.
 - На устройстве по названию находится 740 каналов `index.m3u`, а в JVM-тесте 782: имена из БД
   отличаются от сырых M3U — не разбиралось.

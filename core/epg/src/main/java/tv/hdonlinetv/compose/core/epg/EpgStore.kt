@@ -185,6 +185,11 @@ class EpgStore private constructor(context: Context) {
         dao.deleteBindings(playlistId)
     }
 
+    /** Changes whenever a playlist's `url-tvg` binding changes — part of the sync throttle key. */
+    suspend fun bindingsHash(): Int = withContext(Dispatchers.IO) {
+        dao.bindings().map { "${it.url} ${it.channelKey}" }.sorted().hashCode()
+    }
+
     /**
      * Playlist `url-tvg` guides first: channels found there are bound to that guide and never
      * looked up in the epg-index. The rest go through [syncFromIndex].
