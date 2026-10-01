@@ -107,6 +107,9 @@
 - [ ] B15 — TV сетки (`CategoryScreen`, `ChannelGridBody`) — просто `LazyVerticalGrid(GridCells.Adaptive)`, **без `BoxWithConstraints`** и `index % columns`. Заголовок экрана над сеткой — в `Column` (заголовок, затем сетка `weight(1f)`), а не соседним узлом в `Box` NavHost: иначе сетка на весь экран и айтемы при скролле наезжают на заголовок
   Verify: TV Категория → «Auto» → вниз 3 раза: заголовок «Auto» на месте, карточки обрезаются под ним; Категория: Left с первой колонки → drawer
 
+- [ ] B16 — Phone: цвета в Compose берём из `MaterialTheme.colorScheme` (`PhoneTheme` light/dark), а не `colorResource(R.color.tabText/black/bgMain)`. Legacy `tabText` в `values-night` остался тёмным `#353940` → тёмный текст на тёмном фоне. Drawer: `NavigationDrawerItem` без явных цветов (дефолт `onSurfaceVariant`), фон `colorScheme.surface`, имя приложения `onSurface`
+  Verify: `ui/mobile/main/MainShellScreen.kt` `LegacyDrawerItem`; тёмная тема → бургер → пункты читаются
+
 ---
 
 ## C. Плейлисты: delete / refresh / категории

@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -144,13 +145,12 @@ fun MainShellScreen() {
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet(
-                    drawerContainerColor = colorResource(R.color.bgMain),
+                    drawerContainerColor = MaterialTheme.colorScheme.surface,
                 ) {
                     Column(modifier = Modifier.fillMaxSize()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(colorResource(R.color.bgMain))
                                 .padding(horizontal = 16.dp, vertical = 24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
@@ -161,7 +161,7 @@ fun MainShellScreen() {
                             )
                             Text(
                                 text = stringResource(R.string.app_name_legacy),
-                                color = colorResource(R.color.black),
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 16.sp,
                                 modifier = Modifier.padding(top = 8.dp),
                             )
@@ -350,13 +350,12 @@ private fun LegacyDrawerItem(
     onClick: () -> Unit,
 ) {
     NavigationDrawerItem(
-        label = { Text(label, color = colorResource(R.color.tabText)) },
+        label = { Text(label) },
         selected = false,
         icon = {
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = null,
-                tint = colorResource(R.color.tabText),
             )
         },
         onClick = onClick,
