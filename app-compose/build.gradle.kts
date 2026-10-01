@@ -91,6 +91,7 @@ dependencies {
     implementation(project(":core:presentation"))
     implementation(project(":core:domain"))
     implementation(project(":core:data-bridge"))
+    implementation(project(":core:epg"))
     implementation(project(":features:ui"))
 
     val bom = platform(libs.androidx.compose.bom)

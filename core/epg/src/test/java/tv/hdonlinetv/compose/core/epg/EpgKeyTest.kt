@@ -26,6 +26,8 @@ class EpgKeyTest {
         assertEquals("daserste", EpgKey.nameKey("Das Erste 720p"))
         assertEquals("apunt", EpgKey.nameKey("À Punt (720p)"))
         assertEquals("hdtv", EpgKey.nameKey("HDTV"))
+        assertEquals("tvhd", EpgKey.nameKey("TV_HD"))
+        assertEquals("canalehd", EpgKey.nameKey("Canal éHD"))
         assertNull(EpgKey.nameKey("(720p)"))
         assertNull(EpgKey.nameKey("Первый канал"))
         assertEquals(38, EpgKey.shardOf("123456789", 256))

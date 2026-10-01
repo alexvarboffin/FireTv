@@ -3,6 +3,10 @@ package tv.hdonlinetv.compose.core.epg
 import android.content.Context
 import android.util.Xml
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -24,7 +28,12 @@ import java.util.concurrent.TimeUnit
  * Guide download + local cache. Keys are raw `tvg-id` / `epg_channel_id` values;
  * matching goes through [EpgKey.normalize].
  */
-class EpgStore(context: Context) {
+class EpgStore private constructor(context: Context) {
+
+    private val _version = MutableStateFlow(0L)
+
+    /** Bumped after every sync that stored programmes — re-query now/next on change. */
+    val version: StateFlow<Long> = _version.asStateFlow()
 
     private val appContext = context.applicationContext
     private val database = EpgDatabase.get(appContext)
@@ -83,6 +92,7 @@ class EpgStore(context: Context) {
             }
             dao.updateSourceStatus(sourceId, now, "ok", stats.programmesKept)
             dao.deleteEndedBefore(now - KEEP_PAST_MS)
+            _version.update { it + 1 }
             stats
         } catch (e: Exception) {
             val reason = e.message ?: e.javaClass.simpleName
@@ -98,10 +108,12 @@ class EpgStore(context: Context) {
      * channel → guide mapping and syncs only the needed XMLTV files, keeping only matched channels.
      * Each guide file is replaced as a whole, so pass every channel of the active playlist at once.
      * Throws [java.io.IOException] when the index itself is unreachable (nothing is changed then).
+     * Only the [maxFiles] guide files covering the most channels are downloaded.
      */
     suspend fun syncFromIndex(
         channels: List<EpgChannelRef>,
         index: EpgIndexClient = EpgIndexClient.http(http),
+        maxFiles: Int = DEFAULT_MAX_FILES,
         now: Long = System.currentTimeMillis(),
     ): EpgIndexSyncResult = withContext(Dispatchers.IO) {
         val resolution = index.resolve(channels)
@@ -113,9 +125,12 @@ class EpgStore(context: Context) {
             } ?: return@mapNotNull null
             ChannelMapEntity(appKey, guideKey, m.icon)
         }
-        if (mapRows.isNotEmpty()) dao.upsertChannelMap(mapRows)
+        if (mapRows.isNotEmpty()) {
+            dao.upsertChannelMap(mapRows)
+            _version.update { it + 1 }
+        }
         val files = LinkedHashMap<String, EpgSyncResult>()
-        EpgSourcePlan.plan(resolution.matches.values).forEach { (url, guideIds) ->
+        EpgSourcePlan.plan(resolution.matches.values).entries.take(maxFiles).forEach { (url, guideIds) ->
             files[url] = sync(url, guideIds, now)
         }
         EpgIndexSyncResult(
@@ -219,10 +234,21 @@ class EpgStore(context: Context) {
 
     private fun ProgrammeEntity.toModel() = EpgProgramme(title, desc, start, stop)
 
-    private companion object {
-        const val BATCH = 500
-        const val SQL_IN_LIMIT = 900
-        const val KEEP_PAST_MS = 2 * 60 * 60_000L
-        const val KEEP_AHEAD_MS = 36 * 60 * 60_000L
+    companion object {
+        /** Guide files are 1–20 MB gzip each; a big playlist would otherwise pull ~80 of them. */
+        const val DEFAULT_MAX_FILES = 12
+
+        @Volatile
+        private var instance: EpgStore? = null
+
+        fun get(context: Context): EpgStore =
+            instance ?: synchronized(this) {
+                instance ?: EpgStore(context.applicationContext).also { instance = it }
+            }
+
+        private const val BATCH = 500
+        private const val SQL_IN_LIMIT = 900
+        private const val KEEP_PAST_MS = 2 * 60 * 60_000L
+        private const val KEEP_AHEAD_MS = 36 * 60 * 60_000L
     }
 }

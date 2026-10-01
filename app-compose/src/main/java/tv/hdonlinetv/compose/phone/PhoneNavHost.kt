@@ -2,12 +2,17 @@ package tv.hdonlinetv.compose.phone
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import tv.hdonlinetv.compose.epg.EPG_SYNC_SETTLE_MS
+import tv.hdonlinetv.compose.epg.EpgSync
 import tv.hdonlinetv.compose.core.databridge.channel.LocalChannelRepository as ChannelRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.category.LocalCategoryRepository as CategoryRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.playlist.LocalPlaylistRepository as PlaylistRepositoryImpl
@@ -40,6 +45,12 @@ fun PhoneNavHost() {
     val settingsRepository = SettingsRepositoryImpl(context.applicationContext)
     val xtreamRepository = XtreamRepositoryImpl()
     val gridColumns = settingsRepository.getSettings().gridColumns
+    LaunchedEffect(Unit) {
+        channelRepository.observeAllChannels().collectLatest { channels ->
+            delay(EPG_SYNC_SETTLE_MS)
+            EpgSync.request(context, channels)
+        }
+    }
 
     CompositionLocalProvider(
         LocalPhoneNavController provides navController,

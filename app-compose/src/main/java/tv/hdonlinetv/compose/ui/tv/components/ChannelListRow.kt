@@ -24,10 +24,12 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.BuildConfig
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
+import tv.hdonlinetv.compose.ui.components.ChannelEpgNowNextLines
 import tv.hdonlinetv.compose.ui.components.ChannelGeoLockBadge
 import tv.hdonlinetv.compose.ui.components.ChannelTvgIdDebugLabel
 import tv.hdonlinetv.compose.ui.components.RemoteImage
 import tv.hdonlinetv.compose.ui.components.isGeoBlocked
+import tv.hdonlinetv.compose.ui.components.rememberChannelNowNext
 
 /** Legacy [item_channel_list] parity — name, category, desc, geo, favorite. */
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -72,6 +74,11 @@ fun ChannelListRow(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleMedium,
+                    )
+                    ChannelEpgNowNextLines(
+                        nowNext = rememberChannelNowNext(channel),
+                        color = colors.onSurface,
+                        modifier = Modifier.padding(top = 4.dp),
                     )
                     channel.category?.takeIf { it.isNotBlank() }?.let { cat ->
                         Text(

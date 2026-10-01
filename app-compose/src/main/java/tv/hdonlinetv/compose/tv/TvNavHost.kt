@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,6 +18,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.tv.material3.MaterialTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import tv.hdonlinetv.compose.epg.EPG_SYNC_SETTLE_MS
+import tv.hdonlinetv.compose.epg.EpgSync
 import tv.hdonlinetv.compose.core.databridge.channel.LocalChannelRepository as ChannelRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.category.LocalCategoryRepository as CategoryRepositoryImpl
 import tv.hdonlinetv.compose.core.databridge.playlist.LocalPlaylistRepository as PlaylistRepositoryImpl
@@ -62,6 +67,12 @@ fun TvNavHost() {
     // TV: grid mode is always 4 columns (phone settings may still store 3).
     val gridColumns = if (storedColumns <= 1) 1 else 4
     val colors = MaterialTheme.colorScheme
+    LaunchedEffect(Unit) {
+        channelRepository.observeAllChannels().collectLatest { channels ->
+            delay(EPG_SYNC_SETTLE_MS)
+            EpgSync.request(context, channels)
+        }
+    }
     CompositionLocalProvider(
         LocalTvNavController provides navController,
         LocalTvNotificationManager provides notificationManager,

@@ -99,8 +99,28 @@ python resolve.py $env:TEMP\es.m3u --local dist
 | iptv-org `index` | 10994 | 2445 | 782 | 29% |
 | `index` без `tvg-id` | 10994 | — | 1669 | 15% |
 
+## В приложении (`:app-compose`)
+
+- `epg/EpgSync` — фоновый `syncFromIndex` в app-wide scope. Запуск: `TvNavHost` / `PhoneNavHost`
+  слушают `ChannelRepository.observeAllChannels()`, ждут 5 с тишины, затем `EpgSync.request`.
+  Не чаще раза в 12 ч для того же набора каналов (`shared_prefs/epg_sync.xml`); если часть файлов
+  упала — повтор через 1 ч. Максимум `EpgStore.DEFAULT_MAX_FILES` (12) файлов гайда — самые «покрывающие».
+- `ui/components/ChannelEpg.kt`: `rememberChannelNowNext(channel)` (перезапрос по `EpgStore.version`
+  и по концу текущей передачи), `ChannelEpgNowStrip` — полоса «сейчас» + прогресс внизу логотипа
+  (карточки сетки TV/phone, высота карточки не меняется), `ChannelEpgNowNextLines` — «сейчас / далее»
+  в строках списка. Debug-чип `tvg-id` переехал в TopStart логотипа.
+
+Проверено 2026-10-01 (LDPlayer, `index.m3u` 10994 канала): id 2445 + name 740, 12/12 файлов,
+~60 тыс. передач в окне −2 ч…+36 ч, синк ~3,5 мин.
+
+Грабли:
+- Android ICU regex не понимает `(?U)` → `EpgKey` использует явные `\p{L}\p{N}` lookaround вместо `\b`.
+- Часть epgshare01 файлов начинается с UTF-8 BOM → `XmlTvStreams.reader` его пропускает.
+
 ## Не сделано
 
-- WorkManager: периодический `syncFromIndex` для активного плейлиста.
-- Now/Next в UI (TV + phone), экран программы.
-- Подстановка иконки из индекса в карточки без `tvg-logo`.
+- Экран полной программы канала (`EpgStore.schedule`).
+- Подстановка иконки из индекса в карточки без `tvg-logo` (`EpgIndexSyncResult.icons` пока не сохраняются).
+- Гайд из `url-tvg` самого плейлиста (`M3UParser.parseHeaderEpgUrls` есть, URL нигде не хранится).
+- На устройстве по названию находится 740 каналов `index.m3u`, а в JVM-тесте 782: имена из БД
+  отличаются от сырых M3U — не разбиралось.

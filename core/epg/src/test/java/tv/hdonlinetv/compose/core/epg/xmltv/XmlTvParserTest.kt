@@ -88,6 +88,15 @@ class XmlTvParserTest {
         assertEquals(2, items.size)
     }
 
+    @Test
+    fun leadingBomIsSkipped() {
+        val gz = ByteArrayOutputStream().also { bos ->
+            GZIPOutputStream(bos).use { it.write(byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())); it.write(xml.toByteArray()) }
+        }.toByteArray()
+        val (_, items) = run(gz, setOf("3catinfoes"))
+        assertEquals(2, items.size)
+    }
+
     @Test(expected = Exception::class)
     fun malformedXmlThrows() {
         run("<tv><programme channel=\"a\" start=\"20260928100000\"><title>x</tv>".toByteArray(), null)

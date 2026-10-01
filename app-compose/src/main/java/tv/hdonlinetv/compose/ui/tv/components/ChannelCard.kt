@@ -16,9 +16,11 @@ import androidx.tv.material3.Card
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
 import tv.hdonlinetv.compose.core.domain.model.ChannelUi
+import tv.hdonlinetv.compose.ui.components.ChannelEpgNowStrip
 import tv.hdonlinetv.compose.ui.components.ChannelGeoLockBadge
 import tv.hdonlinetv.compose.ui.components.ChannelTvgIdDebugLabel
 import tv.hdonlinetv.compose.ui.components.RemoteImage
+import tv.hdonlinetv.compose.ui.components.rememberChannelNowNext
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -49,8 +51,12 @@ fun ChannelCard(
                 ChannelTvgIdDebugLabel(
                     channel = channel,
                     modifier = Modifier
-                        .align(Alignment.BottomStart)
+                        .align(Alignment.TopStart)
                         .padding(4.dp),
+                )
+                ChannelEpgNowStrip(
+                    nowNext = rememberChannelNowNext(channel),
+                    modifier = Modifier.align(Alignment.BottomCenter),
                 )
             }
             Text(

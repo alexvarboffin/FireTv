@@ -6,7 +6,7 @@ package tv.hdonlinetv.compose.core.epg.index
  */
 object EpgSourcePlan {
 
-    /** Guide file URL → guide channel ids to keep from it. */
+    /** Guide file URL → guide channel ids to keep from it; files with more channels first. */
     fun plan(matches: Collection<EpgGuideMatch>): Map<String, Set<String>> {
         val popularity = HashMap<String, Int>()
         matches.forEach { m -> m.sourceUrls.distinct().forEach { popularity.merge(it, 1, Int::plus) } }
@@ -15,6 +15,6 @@ object EpgSourcePlan {
             val url = m.sourceUrls.maxByOrNull { popularity.getValue(it) } ?: return@forEach
             out.getOrPut(url) { LinkedHashSet() } += m.guideChannelId
         }
-        return out
+        return out.entries.sortedByDescending { it.value.size }.associate { it.key to it.value }
     }
 }

@@ -43,6 +43,9 @@ object EpgKey {
 
     private val COMBINING = Regex("\\p{Mn}+")
     private val BRACKETS = Regex("\\([^)]*\\)|\\[[^\\]]*]")
-    private val QUALITY = Regex("(?U)\\b(?:hd|fhd|uhd|sd|4k|8k|hevc|h\\.?26[45]|\\d{3,4}[pi])\\b")
+    /** Python's Unicode `\b`/`\d`, spelled out: Android ICU rejects `(?U)`, plain JVM `\b` is ASCII-only. */
+    private val QUALITY = Regex(
+        "(?<![\\p{L}\\p{N}_])(?:hd|fhd|uhd|sd|4k|8k|hevc|h\\.?26[45]|\\p{Nd}{3,4}[pi])(?![\\p{L}\\p{N}_])",
+    )
     private val NON_ALNUM = Regex("[^0-9a-z]+")
 }
