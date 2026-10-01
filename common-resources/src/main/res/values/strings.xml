@@ -51,6 +51,7 @@
     <!-- Compose badge; legacy :app overrides with "Channels: %1$d" in its values/ -->
     <string name="channels_format">%1$d ch</string>
     <string name="epg_next">Next %1$s  %2$s</string>
+    <string name="epg_no_data">No programme guide for this channel</string>
     <string name="refresh_channels_stats">%1$d channels (was %2$d)</string>
     <string name="added_on">Added on: %1$s</string>
     <string name="updated_on">Updated on: %1$s</string>

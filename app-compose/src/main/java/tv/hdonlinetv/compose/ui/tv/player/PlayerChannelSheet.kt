@@ -24,11 +24,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -50,10 +55,12 @@ import tv.hdonlinetv.compose.ui.components.RemoteImage
 
 /**
  * Cinema-style in-player channel curtain (left): categories as section headers,
- * channels as focusable rows — zap without leaving the player route.
+ * channels as focusable rows — zap without leaving the player route. To the right,
+ * [PlayerChannelGuide] shows the schedule of the focused channel (Cinema `ProgramGuideContainer`).
  *
  * Click selects a channel but keeps the sheet open for further browsing.
- * Left / Right / Home dismiss the sheet.
+ * Channel list: Left / Home dismiss; Right enters the guide (dismisses when there is none).
+ * Guide: Left returns to the same channel; Right / Home dismiss.
  */
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -73,6 +80,13 @@ fun PlayerChannelSheet(
     }
     val listState = rememberLazyListState()
     val firstFocus = remember { FocusRequester() }
+    val channelsGroup = remember { FocusRequester() }
+    val guideGroup = remember { FocusRequester() }
+    var focusedChannel by remember { mutableStateOf<ChannelUi?>(null) }
+    var guideHasProgrammes by remember { mutableStateOf(false) }
+    LaunchedEffect(visible) {
+        if (visible) focusedChannel = channels.firstOrNull { it.id == currentChannelId } ?: channels.firstOrNull()
+    }
 
     // Scroll/focus to current only when the sheet opens — not on every zap
     // (otherwise focus jumps while the user is still browsing the list).
@@ -106,9 +120,7 @@ fun PlayerChannelSheet(
             .onPreviewKeyEvent { event ->
                 if (!visible || event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
-                    Key.DirectionLeft, Key.DirectionRight,
-                    Key.SystemHome, Key.MoveHome, Key.Escape,
-                    -> {
+                    Key.SystemHome, Key.MoveHome, Key.Escape -> {
                         onDismiss()
                         true
                     }
@@ -116,20 +128,16 @@ fun PlayerChannelSheet(
                 }
             },
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black.copy(alpha = 0.22f)),
         ) {
             Column(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
                     .fillMaxHeight()
                     .width(380.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.45f),
-                        RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp),
-                    )
+                    .background(Color.Black.copy(alpha = 0.45f))
                     .padding(vertical = 12.dp)
                     .focusGroup(),
             ) {
@@ -146,7 +154,10 @@ fun PlayerChannelSheet(
                 LazyColumn(
                     state = listState,
                     contentPadding = PaddingValues(bottom = 24.dp),
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .focusRequester(channelsGroup)
+                        .focusRestorer(firstFocus),
                 ) {
                     grouped.forEach { (category, list) ->
                         item(key = "h_$category") {
@@ -167,16 +178,25 @@ fun PlayerChannelSheet(
                                 isCurrent = isCurrent,
                                 onClick = { onChannelSelect(channel) },
                                 onDismissSheet = onDismiss,
-                                modifier = if (channel.id == focusChannelId) {
-                                    Modifier.focusRequester(firstFocus)
-                                } else {
-                                    Modifier
+                                onRight = {
+                                    if (guideHasProgrammes) guideGroup.requestFocus() else onDismiss()
                                 },
+                                modifier = Modifier
+                                    .then(if (channel.id == focusChannelId) Modifier.focusRequester(firstFocus) else Modifier)
+                                    .onFocusChanged { if (it.isFocused) focusedChannel = channel },
                             )
                         }
                     }
                 }
             }
+            PlayerChannelGuide(
+                channel = focusedChannel,
+                groupFocus = guideGroup,
+                onBackToChannels = { channelsGroup.requestFocus() },
+                onDismiss = onDismiss,
+                onHasProgrammes = { guideHasProgrammes = it },
+                modifier = Modifier.width(460.dp),
+            )
         }
     }
 }
@@ -188,6 +208,7 @@ private fun ChannelSheetRow(
     isCurrent: Boolean,
     onClick: () -> Unit,
     onDismissSheet: () -> Unit,
+    onRight: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -199,9 +220,11 @@ private fun ChannelSheetRow(
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
-                    Key.DirectionLeft, Key.DirectionRight,
-                    Key.SystemHome, Key.MoveHome, Key.Escape,
-                    -> {
+                    Key.DirectionRight -> {
+                        onRight()
+                        true
+                    }
+                    Key.DirectionLeft, Key.SystemHome, Key.MoveHome, Key.Escape -> {
                         onDismissSheet()
                         true
                     }

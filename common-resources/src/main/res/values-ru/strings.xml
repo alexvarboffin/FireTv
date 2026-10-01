@@ -47,6 +47,7 @@
     <string name="playlist_updated_short">обн %1$s</string>
     <string name="channels_format">%1$d кан.</string>
     <string name="epg_next">Далее %1$s  %2$s</string>
+    <string name="epg_no_data">Нет программы передач для этого канала</string>
     <string name="refresh_channels_stats">%1$d каналов (было %2$d)</string>
     <string name="added_on">Добавлен: %1$s</string>
     <string name="updated_on">Обновлен: %1$s</string>
