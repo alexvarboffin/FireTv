@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 base {
@@ -93,9 +94,10 @@ dependencies {
     implementation(project(":core:data-bridge"))
     implementation(project(":core:epg"))
     implementation(project(":features:ui"))
+    implementation(libs.firebase.crashlytics)
 
     val bom = platform(libs.androidx.compose.bom)
-    implementation(bom)
+    //implementation(bom)
     androidTestImplementation(bom)
 
     implementation(libs.androidx.compose.material3)
