@@ -207,6 +207,8 @@ fun PlayerScreenBody(
     // Audio / subtitles track selection (0 = closed, 1 = audio, 2 = subtitles).
     val tracksUi by PlayerTracksController.tracks.collectAsState()
     var trackDialog by remember { mutableIntStateOf(0) }
+    // D-pad Left from Settings/Subtitles must move focus to the track chips, not open the channel sheet.
+    var leftNavRowFocused by remember { mutableStateOf(false) }
     var restoreTrackFocus by remember { mutableStateOf<FocusRequester?>(null) }
     val (frAudio, frSubs) = remember { FocusRequester.createRefs() }
     val showAudioChip = tracksUi.showAudioButton
@@ -431,7 +433,8 @@ fun PlayerScreenBody(
                         return@onKeyEvent true
                     }
                     Key.DirectionLeft, Key.Menu -> {
-                        if (!channelSheetVisible && !showMediaPlayerDialog && siblings.isNotEmpty()) {
+//                        if (!channelSheetVisible && !showMediaPlayerDialog && siblings.isNotEmpty()) {
+                        if (!channelSheetVisible && !leftNavRowFocused && !showMediaPlayerDialog && siblings.isNotEmpty()) {
                             openChannelSheet()
                             return@onKeyEvent true
                         }
@@ -688,7 +691,8 @@ fun PlayerScreenBody(
                                         left = if (showAudioChip) frAudio else FocusRequester.Cancel
                                         right = frSettings
                                     }
-                                    .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                                    // .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                                    .onFocusChanged { leftNavRowFocused = it.isFocused; if (it.isFocused) resetHideTimer() },
                             )
                         }
                         TvPlayerIconButton(
@@ -710,7 +714,8 @@ fun PlayerScreenBody(
                                     }
                                     right = FocusRequester.Cancel
                                 }
-                                .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                                // .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                                .onFocusChanged { leftNavRowFocused = it.isFocused; if (it.isFocused) resetHideTimer() },
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
