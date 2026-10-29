@@ -24,7 +24,7 @@ class LauncherActivity : Activity() {
         super.onCreate(savedInstanceState)
         val isTv =
             (resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION
-                    || (BuildConfig.DEBUG && "SM-S906N".equals(Build.MODEL))
+                    //|| (BuildConfig.DEBUG && "SM-S906N".equals(Build.MODEL))
         val target = if (isTv) TvMainActivity::class.java else PhoneMainActivity::class.java
         startActivity(Intent(this, target))
         finish()
