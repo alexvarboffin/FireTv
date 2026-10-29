@@ -1,4 +1,4 @@
-import java.text.SimpleDateFormat
+﻿import java.text.SimpleDateFormat
 import java.util.Date
 
 fun versionCodeDate(): Int {
@@ -97,7 +97,8 @@ dependencies {
     implementation(libs.firebase.crashlytics)
 
     val bom = platform(libs.androidx.compose.bom)
-    //implementation(bom)
+    implementation(bom)
+    implementation(platform(libs.firebase.bom))
     androidTestImplementation(bom)
 
     implementation(libs.androidx.compose.material3)
@@ -143,7 +144,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
 
-// OneSignal 5.1.x wants firebase-messaging in [21, 23.4.99]; app uses 25.x — skip strict check.
+// OneSignal 5.1.x wants firebase-messaging in [21, 23.4.99]; app uses 25.x вЂ” skip strict check.
 googleServices {
     disableVersionCheck = true
 }
