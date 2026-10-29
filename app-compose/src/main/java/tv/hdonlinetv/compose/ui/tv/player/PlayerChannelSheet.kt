@@ -113,28 +113,36 @@ fun PlayerChannelSheet(
         firstFocus.requestFocus()
     }
 
-    AnimatedVisibility(
+    // Old container (moved into shared TvSidePanel, same slide/scrim/Home-Escape behaviour):
+//    AnimatedVisibility(
+//        visible = visible,
+//        enter = slideInHorizontally { -it } + fadeIn(),
+//        exit = slideOutHorizontally { -it } + fadeOut(),
+//        modifier = modifier
+//            .fillMaxSize()
+//            .onPreviewKeyEvent { event ->
+//                if (!visible || event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+//                when (event.key) {
+//                    Key.SystemHome, Key.MoveHome, Key.Escape -> {
+//                        onDismiss()
+//                        true
+//                    }
+//                    else -> false
+//                }
+//            },
+//    ) {
+//        Row(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(Color.Black.copy(alpha = 0.22f)),
+//        ) {
+    TvSidePanel(
         visible = visible,
-        enter = slideInHorizontally { -it } + fadeIn(),
-        exit = slideOutHorizontally { -it } + fadeOut(),
-        modifier = modifier
-            .fillMaxSize()
-            .onPreviewKeyEvent { event ->
-                if (!visible || event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
-                when (event.key) {
-                    Key.SystemHome, Key.MoveHome, Key.Escape -> {
-                        onDismiss()
-                        true
-                    }
-                    else -> false
-                }
-            },
+        side = TvSidePanelSide.Start,
+        onDismiss = onDismiss,
+        modifier = modifier,
+        scrimAlpha = 0.22f,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.22f)),
-        ) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -199,7 +207,7 @@ fun PlayerChannelSheet(
                 onHasProgrammes = { guideHasProgrammes = it },
                 modifier = Modifier.width(464.dp),
             )
-        }
+//        }  // old Row end
     }
 }
 

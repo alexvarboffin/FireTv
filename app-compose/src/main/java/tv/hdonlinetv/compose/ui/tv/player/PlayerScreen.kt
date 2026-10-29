@@ -213,6 +213,13 @@ fun PlayerScreenBody(
     val (frAudio, frSubs) = remember { FocusRequester.createRefs() }
     val showAudioChip = tracksUi.showAudioButton
     val showSubsChip = tracksUi.showSubtitlesButton
+    // New TV "Audio & subtitles" right side panel (replaces separate Audio / Subtitles chips + TvTrackDialog).
+    // val showTracksGear = showAudioChip || showSubsChip
+    // Settings side panel always has the "Media player" row; Audio/Subs rows hide themselves.
+    val showTracksGear = true
+    var tracksPanelVisible by remember { mutableStateOf(false) }
+    var tracksPanelPage by remember { mutableIntStateOf(TRACKS_PAGE_MAIN) }
+    val frGear = remember { FocusRequester() }
     val (frFavorite, frClose, frPlay, frProgress, frSettings, frFullscreen) = remember {
         FocusRequester.createRefs()
     }
@@ -258,13 +265,35 @@ fun PlayerScreenBody(
     fun resetHideTimer() {
         lastInteractionTime = System.currentTimeMillis()
         hideControlsJob?.cancel()
-        if (!controlsVisible || showMediaPlayerDialog || channelSheetVisible || trackDialog != 0) return
+//        if (!controlsVisible || showMediaPlayerDialog || channelSheetVisible || trackDialog != 0) return
+        if (!controlsVisible || showMediaPlayerDialog || channelSheetVisible || trackDialog != 0 || tracksPanelVisible) return
         hideControlsJob = scope.launch {
             delay(CONTROL_VISIBILITY_TIMEOUT_MS)
             if (System.currentTimeMillis() - lastInteractionTime >= CONTROL_VISIBILITY_TIMEOUT_MS) {
                 controlsVisible = false
             }
         }
+    }
+
+    val tracksFocusReturn = rememberTvFocusReturn { resetHideTimer() }
+
+    fun openTracksPanel() {
+        if (!showTracksGear) return
+        channelSheetVisible = false // never both side panels at once
+        hideControlsJob?.cancel()
+        tracksFocusReturn.open(if (controlsVisible) frSettings else rootFocus)
+        tracksPanelPage = TRACKS_PAGE_MAIN
+        tracksPanelVisible = true
+    }
+
+    fun closeTracksPanel() {
+        tracksPanelVisible = false
+        tracksPanelPage = TRACKS_PAGE_MAIN
+        tracksFocusReturn.close()
+    }
+
+    LaunchedEffect(showTracksGear) {
+        if (!showTracksGear && tracksPanelVisible) closeTracksPanel()
     }
 
     fun onCenterControlClick() {
@@ -296,6 +325,9 @@ fun PlayerScreenBody(
     BackHandler {
         when {
             showMediaPlayerDialog -> showMediaPlayerDialog = false
+            // Tracks panel: Back goes one level up, then closes.
+            tracksPanelVisible && tracksPanelPage != TRACKS_PAGE_MAIN -> tracksPanelPage = TRACKS_PAGE_MAIN
+            tracksPanelVisible -> closeTracksPanel()
             channelSheetVisible -> channelSheetVisible = false
             else -> exitPlayer()
         }
@@ -338,10 +370,13 @@ fun PlayerScreenBody(
         controlsVisible,
         showMediaPlayerDialog,
         channelSheetVisible,
+        tracksPanelVisible,
         isPreparing,
         canFavorite,
     ) {
-        if (channelSheetVisible) return@LaunchedEffect
+//        if (channelSheetVisible) return@LaunchedEffect
+        if (channelSheetVisible || tracksPanelVisible) return@LaunchedEffect
+        if (tracksFocusReturn.pending != null) return@LaunchedEffect // side panel restores focus itself
         if (controlsVisible && !showMediaPlayerDialog) {
             resetHideTimer()
             chromePrimaryFocus.requestFocus()
@@ -389,12 +424,12 @@ fun PlayerScreenBody(
                 // Cinema root: when chrome visible, D-pad enters primary control.
                 left = FocusRequester.Cancel
                 up = FocusRequester.Cancel
-                right = if (controlsVisible && !channelSheetVisible) {
+                right = if (controlsVisible && !channelSheetVisible && !tracksPanelVisible) {
                     chromePrimaryFocus
                 } else {
                     FocusRequester.Cancel
                 }
-                down = if (controlsVisible && !channelSheetVisible) {
+                down = if (controlsVisible && !channelSheetVisible && !tracksPanelVisible) {
                     chromePrimaryFocus
                 } else {
                     FocusRequester.Cancel
@@ -404,6 +439,16 @@ fun PlayerScreenBody(
             .onKeyEvent { keyEvent ->
                 if (keyEvent.type != KeyEventType.KeyDown) return@onKeyEvent false
                 if (keyEvent.key == Key.Back) return@onKeyEvent false
+
+                // Tracks panel open: swallow unhandled D-pad (no EPG/controls behind it); Menu toggles it closed.
+                if (tracksPanelVisible) {
+                    // Don't consume D-pad here: default focus navigation inside the panel runs after this bubble.
+                    if (keyEvent.key == Key.Menu) {
+                        closeTracksPanel()
+                        return@onKeyEvent true
+                    }
+                    return@onKeyEvent false
+                }
 
                 // Sheet open: Home / Left / Right close it (click does not).
                 if (channelSheetVisible) {
@@ -432,7 +477,19 @@ fun PlayerScreenBody(
                         resetHideTimer()
                         return@onKeyEvent true
                     }
-                    Key.DirectionLeft, Key.Menu -> {
+                    // Menu now opens the "Audio & subtitles" panel when tracks exist (was: channel sheet).
+                    Key.Menu -> {
+                        if (!showMediaPlayerDialog && showTracksGear) {
+                            openTracksPanel()
+                            return@onKeyEvent true
+                        }
+                        if (!channelSheetVisible && !showMediaPlayerDialog && siblings.isNotEmpty()) {
+                            openChannelSheet()
+                            return@onKeyEvent true
+                        }
+                    }
+                    // Key.DirectionLeft, Key.Menu -> {
+                    Key.DirectionLeft -> {
 //                        if (!channelSheetVisible && !showMediaPlayerDialog && siblings.isNotEmpty()) {
                         if (!channelSheetVisible && !leftNavRowFocused && !showMediaPlayerDialog && siblings.isNotEmpty()) {
                             openChannelSheet()
@@ -658,48 +715,64 @@ fun PlayerScreenBody(
                         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        if (showAudioChip) {
-                            TvNewClickableChip(
-                                text = stringResource(R.string.player_audio_track),
-                                onClick = {
-                                    trackDialog = 1
-                                    resetHideTimer()
-                                },
+                        // Old separate Audio / Subtitles chips (replaced by one gear → TvTracksPanel):
+//                        if (showAudioChip) {
+//                            TvNewClickableChip(
+//                                text = stringResource(R.string.player_audio_track),
+//                                onClick = {
+//                                    trackDialog = 1
+//                                    resetHideTimer()
+//                                },
+//                                modifier = Modifier
+//                                    .focusRequester(frAudio)
+//                                    .focusProperties {
+//                                        up = if (durationMs > 0L) frProgress else chromeUpFromBottom
+//                                        down = chromePrimaryFocus
+//                                        left = FocusRequester.Cancel
+//                                        right = if (showSubsChip) frSubs else frSettings
+//                                    }
+//                                    .onFocusChanged { if (it.isFocused) resetHideTimer() },
+//                            )
+//                        }
+//                        if (showSubsChip) {
+//                            TvNewClickableChip(
+//                                text = stringResource(R.string.player_subtitles),
+//                                onClick = {
+//                                    trackDialog = 2
+//                                    resetHideTimer()
+//                                },
+//                                modifier = Modifier
+//                                    .focusRequester(frSubs)
+//                                    .focusProperties {
+//                                        up = if (durationMs > 0L) frProgress else chromeUpFromBottom
+//                                        down = chromePrimaryFocus
+//                                        left = if (showAudioChip) frAudio else FocusRequester.Cancel
+//                                        right = frSettings
+//                                    }
+//                                    // .onFocusChanged { if (it.isFocused) resetHideTimer() },
+//                                    .onFocusChanged { leftNavRowFocused = it.isFocused; if (it.isFocused) resetHideTimer() },
+//                            )
+//                        }
+                        if (false) { // separate TV gear dropped: Settings button opens the side panel instead
+                            TvTracksGearChip(
+                                onClick = { openTracksPanel() },
                                 modifier = Modifier
-                                    .focusRequester(frAudio)
+                                    .focusRequester(frGear)
                                     .focusProperties {
                                         up = if (durationMs > 0L) frProgress else chromeUpFromBottom
                                         down = chromePrimaryFocus
                                         left = FocusRequester.Cancel
-                                        right = if (showSubsChip) frSubs else frSettings
+                                        right = frSettings
                                     }
                                     .onFocusChanged { if (it.isFocused) resetHideTimer() },
                             )
                         }
-                        if (showSubsChip) {
-                            TvNewClickableChip(
-                                text = stringResource(R.string.player_subtitles),
-                                onClick = {
-                                    trackDialog = 2
-                                    resetHideTimer()
-                                },
-                                modifier = Modifier
-                                    .focusRequester(frSubs)
-                                    .focusProperties {
-                                        up = if (durationMs > 0L) frProgress else chromeUpFromBottom
-                                        down = chromePrimaryFocus
-                                        left = if (showAudioChip) frAudio else FocusRequester.Cancel
-                                        right = frSettings
-                                    }
-                                    // .onFocusChanged { if (it.isFocused) resetHideTimer() },
-                                    .onFocusChanged { leftNavRowFocused = it.isFocused; if (it.isFocused) resetHideTimer() },
-                            )
-                        }
                         TvPlayerIconButton(
-                            onClick = {
-                                resetHideTimer()
-                                showMediaPlayerDialog = true
-                            },
+                            // onClick = {
+                            //     resetHideTimer()
+                            //     showMediaPlayerDialog = true
+                            // },
+                            onClick = { openTracksPanel() },
                             modifier = Modifier
                                 .focusRequester(frSettings)
                                 .focusProperties {
@@ -707,11 +780,12 @@ fun PlayerScreenBody(
                                     down = chromePrimaryFocus
                                     // left = FocusRequester.Cancel
                                     // Left now moves to the new Subtitles / Audio chips when shown.
-                                    left = when {
-                                        showSubsChip -> frSubs
-                                        showAudioChip -> frAudio
-                                        else -> FocusRequester.Cancel
-                                    }
+                                    // left = when {
+                                    //     showSubsChip -> frSubs
+                                    //     showAudioChip -> frAudio
+                                    //     else -> FocusRequester.Cancel
+                                    // }
+                                    left = FocusRequester.Cancel
                                     right = FocusRequester.Cancel
                                 }
                                 // .onFocusChanged { if (it.isFocused) resetHideTimer() },
@@ -767,6 +841,13 @@ fun PlayerScreenBody(
             }
         }
 
+        // Non-focusable key hints (Left / Menu / Back) while the controls overlay is shown.
+        TvKeyHints(
+            visible = controlsVisible && !channelSheetVisible && !tracksPanelVisible,
+            // modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 6.dp),
+            modifier = Modifier.align(Alignment.TopStart).padding(start = 48.dp, top = 60.dp), // TV safe area (>=27dp top), below the channel title
+        )
+
         PlayerChannelSheet(
             visible = channelSheetVisible,
             channels = siblings,
@@ -774,35 +855,47 @@ fun PlayerScreenBody(
             onChannelSelect = onSelectChannel,
             onDismiss = { channelSheetVisible = false },
         )
+
+        TvTracksPanel(
+            visible = tracksPanelVisible,
+            tracks = tracksUi,
+            page = tracksPanelPage,
+            onPageChange = { tracksPanelPage = it },
+            onDismiss = { closeTracksPanel() },
+            engineOptions = mediaPlayerOptions,
+            engineSelected = mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex),
+            onEngineSelect = { onMediaPlayerOptionChange(it) },
+        )
     }
 
-    if (trackDialog == 1) {
-        TvTrackDialog(
-            title = stringResource(R.string.player_audio_track),
-            options = tracksUi.audio.map { it.label },
-            selectedIndex = tracksUi.audio.indexOfFirst { it.selected }.coerceAtLeast(0),
-            onDismiss = { closeTrackDialog() },
-            onSelect = { index ->
-                tracksUi.audio.getOrNull(index)?.let(PlayerTracksController::selectAudio)
-                closeTrackDialog()
-            },
-        )
-    } else if (trackDialog == 2) {
-        TvTrackDialog(
-            title = stringResource(R.string.player_subtitles),
-            options = listOf(stringResource(R.string.player_subtitles_off)) + tracksUi.text.map { it.label },
-            selectedIndex = tracksUi.text.indexOfFirst { it.selected } + 1,
-            onDismiss = { closeTrackDialog() },
-            onSelect = { index ->
-                if (index == 0) {
-                    PlayerTracksController.disableSubtitles()
-                } else {
-                    tracksUi.text.getOrNull(index - 1)?.let(PlayerTracksController::selectText)
-                }
-                closeTrackDialog()
-            },
-        )
-    }
+    // Old TvTrackDialog (replaced by TvTracksPanel):
+//    if (trackDialog == 1) {
+//        TvTrackDialog(
+//            title = stringResource(R.string.player_audio_track),
+//            options = tracksUi.audio.map { it.label },
+//            selectedIndex = tracksUi.audio.indexOfFirst { it.selected }.coerceAtLeast(0),
+//            onDismiss = { closeTrackDialog() },
+//            onSelect = { index ->
+//                tracksUi.audio.getOrNull(index)?.let(PlayerTracksController::selectAudio)
+//                closeTrackDialog()
+//            },
+//        )
+//    } else if (trackDialog == 2) {
+//        TvTrackDialog(
+//            title = stringResource(R.string.player_subtitles),
+//            options = listOf(stringResource(R.string.player_subtitles_off)) + tracksUi.text.map { it.label },
+//            selectedIndex = tracksUi.text.indexOfFirst { it.selected } + 1,
+//            onDismiss = { closeTrackDialog() },
+//            onSelect = { index ->
+//                if (index == 0) {
+//                    PlayerTracksController.disableSubtitles()
+//                } else {
+//                    tracksUi.text.getOrNull(index - 1)?.let(PlayerTracksController::selectText)
+//                }
+//                closeTrackDialog()
+//            },
+//        )
+//    }
 
     if (showMediaPlayerDialog) {
         PlayerMediaPlayerDialog(

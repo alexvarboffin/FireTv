@@ -44,4 +44,9 @@
     <string name="player_subtitles">Subtitles</string>
     <string name="player_subtitles_off">Off</string>
     <string name="player_tracks_settings">Audio &amp; subtitles</string>
+    <string name="tv_hint_channels">Channels &amp; TV guide</string>
+    <string name="tv_hint_settings">Settings</string>
+    <string name="tv_hint_hide">Hide</string>
+    <string name="tv_settings_panel_title">Settings</string>
+    <string name="tv_settings_player_row">Player</string>
 </resources>

@@ -34,4 +34,9 @@
     <string name="player_subtitles">Субтитры</string>
     <string name="player_subtitles_off">Выкл.</string>
     <string name="player_tracks_settings">Аудио и субтитры</string>
+    <string name="tv_hint_channels">Каналы и телепрограмма</string>
+    <string name="tv_hint_settings">Настройки</string>
+    <string name="tv_hint_hide">Скрыть</string>
+    <string name="tv_settings_panel_title">Настройки</string>
+    <string name="tv_settings_player_row">Медиаплеер</string>
 </resources>
