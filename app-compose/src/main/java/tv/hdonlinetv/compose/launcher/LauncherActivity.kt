@@ -22,8 +22,7 @@ class LauncherActivity : Activity() {
         val settingsRepository = LocalSettingsRepository(applicationContext)
         NightModeApplier.apply(settingsRepository.getSettings().nightMode)
         super.onCreate(savedInstanceState)
-        val isTv =
-            (resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION
+        val isTv = (resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION
                     || (BuildConfig.DEBUG && "SM-S906N" == Build.MODEL)
         val target = if (isTv) TvMainActivity::class.java else PhoneMainActivity::class.java
         startActivity(Intent(this, target))
