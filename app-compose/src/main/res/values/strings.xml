@@ -40,4 +40,7 @@
 
     <!-- TV player seek bar: stream without duration -->
     <string name="player_live">LIVE</string>
+    <string name="player_audio_track">Audio</string>
+    <string name="player_subtitles">Subtitles</string>
+    <string name="player_subtitles_off">Off</string>
 </resources>

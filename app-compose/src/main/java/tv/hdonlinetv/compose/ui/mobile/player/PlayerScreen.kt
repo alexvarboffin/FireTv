@@ -3,7 +3,9 @@ package tv.hdonlinetv.compose.ui.mobile.player
 import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
@@ -60,6 +62,9 @@ import tv.hdonlinetv.compose.player.LegacyCastController
 import tv.hdonlinetv.compose.player.LegacyJzPlayerRelease
 import tv.hdonlinetv.compose.player.LegacyJzPlayerSetup
 import tv.hdonlinetv.compose.ui.mobile.components.LegacyTopAppBar
+import tv.hdonlinetv.compose.player.tracks.BindPlayerSubtitles
+import tv.hdonlinetv.compose.player.tracks.NewClickableChip
+import tv.hdonlinetv.compose.player.tracks.PlayerTracksController
 import tv.hdonlinetv.compose.ui.mobile.components.SettingsSingleChoiceBottomSheet
 
 private data class PlayerPlaybackKey(
@@ -142,6 +147,9 @@ fun PlayerScreenBody(
     val lifecycleOwner = LocalLifecycleOwner.current
     var showMediaPlayerSheet by remember { mutableStateOf(false) }
     var showChannelSheet by remember { mutableStateOf(false) }
+    // Track selection: 1 = audio sheet, 2 = subtitles sheet.
+    var trackSheet by remember { mutableIntStateOf(0) }
+    val tracksUi by PlayerTracksController.tracks.collectAsState()
     val canZap = siblings.size > 1
     val mediaPlayerOptions = listOf(
         stringResource(R.string.media_player_JZMediaSystem),
@@ -175,6 +183,8 @@ fun PlayerScreenBody(
     BackHandler {
         if (showChannelSheet) {
             showChannelSheet = false
+        } else if (trackSheet != 0) {
+            trackSheet = 0
         } else if (!Jzvd.backPress()) {
             exitPlayer()
         }
@@ -360,6 +370,28 @@ fun PlayerScreenBody(
                                 }
                             },
                         )
+                        BindPlayerSubtitles(playerRef)
+                        if (tracksUi.showAudioButton || tracksUi.showSubtitlesButton) {
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(top = if (isFullscreen) 12.dp else 8.dp, end = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                if (tracksUi.showAudioButton) {
+                                    NewClickableChip(
+                                        text = stringResource(R.string.player_audio_track),
+                                        onClick = { trackSheet = 1 },
+                                    )
+                                }
+                                if (tracksUi.showSubtitlesButton) {
+                                    NewClickableChip(
+                                        text = stringResource(R.string.player_subtitles),
+                                        onClick = { trackSheet = 2 },
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -421,6 +453,34 @@ fun PlayerScreenBody(
         selectedIndex = mediaPlayerOption.coerceIn(0, mediaPlayerOptions.lastIndex),
         onDismiss = { showMediaPlayerSheet = false },
         onSelect = onMediaPlayerOptionChange,
+    )
+
+    val subtitlesOffLabel = stringResource(R.string.player_subtitles_off)
+    SettingsSingleChoiceBottomSheet(
+        visible = trackSheet == 1,
+        title = stringResource(R.string.player_audio_track),
+        options = tracksUi.audio.map { it.label },
+        selectedIndex = tracksUi.audio.indexOfFirst { it.selected }.coerceAtLeast(0),
+        onDismiss = { trackSheet = 0 },
+        onSelect = { index ->
+            tracksUi.audio.getOrNull(index)?.let(PlayerTracksController::selectAudio)
+            trackSheet = 0
+        },
+    )
+    SettingsSingleChoiceBottomSheet(
+        visible = trackSheet == 2,
+        title = stringResource(R.string.player_subtitles),
+        options = listOf(subtitlesOffLabel) + tracksUi.text.map { it.label },
+        selectedIndex = tracksUi.text.indexOfFirst { it.selected } + 1,
+        onDismiss = { trackSheet = 0 },
+        onSelect = { index ->
+            if (index == 0) {
+                PlayerTracksController.disableSubtitles()
+            } else {
+                tracksUi.text.getOrNull(index - 1)?.let(PlayerTracksController::selectText)
+            }
+            trackSheet = 0
+        },
     )
 
     PlayerChannelSheet(

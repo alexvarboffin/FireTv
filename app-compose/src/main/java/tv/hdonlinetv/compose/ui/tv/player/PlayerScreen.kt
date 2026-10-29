@@ -98,6 +98,8 @@ import tv.hdonlinetv.compose.player.KeepPlayerScreenOn
 import tv.hdonlinetv.compose.player.LegacyJzPlayerRelease
 import tv.hdonlinetv.compose.player.LegacyJzPlayerSetup
 import tv.hdonlinetv.compose.tv.LocalTvNavController
+import tv.hdonlinetv.compose.player.tracks.BindPlayerSubtitles
+import tv.hdonlinetv.compose.player.tracks.PlayerTracksController
 
 private const val CONTROL_VISIBILITY_TIMEOUT_MS = 5_000L
 
@@ -202,6 +204,13 @@ fun PlayerScreenBody(
     var jzState by remember { mutableIntStateOf(Jzvd.STATE_IDLE) }
     var isJzFullscreen by remember { mutableStateOf(false) }
     val rootFocus = remember { FocusRequester() }
+    // Audio / subtitles track selection (0 = closed, 1 = audio, 2 = subtitles).
+    val tracksUi by PlayerTracksController.tracks.collectAsState()
+    var trackDialog by remember { mutableIntStateOf(0) }
+    var restoreTrackFocus by remember { mutableStateOf<FocusRequester?>(null) }
+    val (frAudio, frSubs) = remember { FocusRequester.createRefs() }
+    val showAudioChip = tracksUi.showAudioButton
+    val showSubsChip = tracksUi.showSubtitlesButton
     val (frFavorite, frClose, frPlay, frProgress, frSettings, frFullscreen) = remember {
         FocusRequester.createRefs()
     }
@@ -247,7 +256,7 @@ fun PlayerScreenBody(
     fun resetHideTimer() {
         lastInteractionTime = System.currentTimeMillis()
         hideControlsJob?.cancel()
-        if (!controlsVisible || showMediaPlayerDialog || channelSheetVisible) return
+        if (!controlsVisible || showMediaPlayerDialog || channelSheetVisible || trackDialog != 0) return
         hideControlsJob = scope.launch {
             delay(CONTROL_VISIBILITY_TIMEOUT_MS)
             if (System.currentTimeMillis() - lastInteractionTime >= CONTROL_VISIBILITY_TIMEOUT_MS) {
@@ -346,6 +355,21 @@ fun PlayerScreenBody(
         if (showJzXmlChrome && playerRef != null) {
             playerRef?.forceShowNativeChromeForDebug()
         }
+    }
+
+    // Back / selection closes the track dialog → focus returns to the chip that opened it.
+    LaunchedEffect(restoreTrackFocus) {
+        val target = restoreTrackFocus ?: return@LaunchedEffect
+        delay(50)
+        runCatching { target.requestFocus() }
+        restoreTrackFocus = null
+        resetHideTimer()
+    }
+
+    fun closeTrackDialog() {
+        val from = if (trackDialog == 1) frAudio else frSubs
+        trackDialog = 0
+        restoreTrackFocus = from
     }
 
     fun openChannelSheet() {
@@ -476,6 +500,7 @@ fun PlayerScreenBody(
                         }
                     },
                 )
+                BindPlayerSubtitles(playerRef)
             }
         }
 
@@ -630,6 +655,42 @@ fun PlayerScreenBody(
                         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        if (showAudioChip) {
+                            TvNewClickableChip(
+                                text = stringResource(R.string.player_audio_track),
+                                onClick = {
+                                    trackDialog = 1
+                                    resetHideTimer()
+                                },
+                                modifier = Modifier
+                                    .focusRequester(frAudio)
+                                    .focusProperties {
+                                        up = if (durationMs > 0L) frProgress else chromeUpFromBottom
+                                        down = chromePrimaryFocus
+                                        left = FocusRequester.Cancel
+                                        right = if (showSubsChip) frSubs else frSettings
+                                    }
+                                    .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                            )
+                        }
+                        if (showSubsChip) {
+                            TvNewClickableChip(
+                                text = stringResource(R.string.player_subtitles),
+                                onClick = {
+                                    trackDialog = 2
+                                    resetHideTimer()
+                                },
+                                modifier = Modifier
+                                    .focusRequester(frSubs)
+                                    .focusProperties {
+                                        up = if (durationMs > 0L) frProgress else chromeUpFromBottom
+                                        down = chromePrimaryFocus
+                                        left = if (showAudioChip) frAudio else FocusRequester.Cancel
+                                        right = frSettings
+                                    }
+                                    .onFocusChanged { if (it.isFocused) resetHideTimer() },
+                            )
+                        }
                         TvPlayerIconButton(
                             onClick = {
                                 resetHideTimer()
@@ -640,7 +701,13 @@ fun PlayerScreenBody(
                                 .focusProperties {
                                     up = if (durationMs > 0L) frProgress else chromeUpFromBottom
                                     down = chromePrimaryFocus
-                                    left = FocusRequester.Cancel
+                                    // left = FocusRequester.Cancel
+                                    // Left now moves to the new Subtitles / Audio chips when shown.
+                                    left = when {
+                                        showSubsChip -> frSubs
+                                        showAudioChip -> frAudio
+                                        else -> FocusRequester.Cancel
+                                    }
                                     right = FocusRequester.Cancel
                                 }
                                 .onFocusChanged { if (it.isFocused) resetHideTimer() },
@@ -701,6 +768,34 @@ fun PlayerScreenBody(
             currentChannelId = channel?.id ?: -1L,
             onChannelSelect = onSelectChannel,
             onDismiss = { channelSheetVisible = false },
+        )
+    }
+
+    if (trackDialog == 1) {
+        TvTrackDialog(
+            title = stringResource(R.string.player_audio_track),
+            options = tracksUi.audio.map { it.label },
+            selectedIndex = tracksUi.audio.indexOfFirst { it.selected }.coerceAtLeast(0),
+            onDismiss = { closeTrackDialog() },
+            onSelect = { index ->
+                tracksUi.audio.getOrNull(index)?.let(PlayerTracksController::selectAudio)
+                closeTrackDialog()
+            },
+        )
+    } else if (trackDialog == 2) {
+        TvTrackDialog(
+            title = stringResource(R.string.player_subtitles),
+            options = listOf(stringResource(R.string.player_subtitles_off)) + tracksUi.text.map { it.label },
+            selectedIndex = tracksUi.text.indexOfFirst { it.selected } + 1,
+            onDismiss = { closeTrackDialog() },
+            onSelect = { index ->
+                if (index == 0) {
+                    PlayerTracksController.disableSubtitles()
+                } else {
+                    tracksUi.text.getOrNull(index - 1)?.let(PlayerTracksController::selectText)
+                }
+                closeTrackDialog()
+            },
         )
     }
 

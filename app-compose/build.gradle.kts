@@ -134,6 +134,8 @@ dependencies {
     implementation(libs.androidx.media3.extractor)
     implementation(libs.androidx.media3.cast)
     implementation(libs.androidx.media3.datasource.okhttp)
+    // Remember preferred audio/subtitle language (player track selection).
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.okhttp)
     implementation(libs.libvlc.all)
     implementation(libs.androidx.mediarouter)

@@ -30,4 +30,7 @@
     </string-array>
 
     <string name="player_live">ЭФИР</string>
+    <string name="player_audio_track">Аудио</string>
+    <string name="player_subtitles">Субтитры</string>
+    <string name="player_subtitles_off">Выкл.</string>
 </resources>

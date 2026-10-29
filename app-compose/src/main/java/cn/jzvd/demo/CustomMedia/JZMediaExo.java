@@ -227,6 +227,8 @@ public class JZMediaExo extends JZMediaInterface implements Player.Listener {
             Log.e(TAG, "URL Link = " + currUrl);
 
             simpleExoPlayer.addListener(this);
+            // Audio/subtitle track selection bridge for Compose phone/TV UI.
+            tv.hdonlinetv.compose.player.tracks.PlayerTracksController.attach(context, simpleExoPlayer);
             boolean isLoop = jzvd.jzDataSource.looping;
             if (isLoop) {
                 simpleExoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
@@ -291,6 +293,7 @@ public class JZMediaExo extends JZMediaInterface implements Player.Listener {
         mMediaHandler = null;
         mMediaHandlerThread = null;
         simpleExoPlayer = null;
+        tv.hdonlinetv.compose.player.tracks.PlayerTracksController.detach(tmpMediaPlayer);
 
         if (tmpMediaPlayer != null) {
             try {
