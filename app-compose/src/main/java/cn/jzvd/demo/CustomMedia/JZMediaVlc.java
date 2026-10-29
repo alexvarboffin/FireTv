@@ -25,6 +25,8 @@ import cn.jzvd.Jzvd;
 public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventListener {
 
     private MediaPlayer vlcPlayer;
+    /** Audio / subtitle tracks for the shared tracks UI (phone gear sheet, TV settings panel). */
+    private tv.hdonlinetv.compose.player.tracks.VlcTracksBridge tracksBridge;
     private VLCVideoLayout vlcVideoLayout;
     private volatile boolean isReleased;
     private boolean preparedNotified;
@@ -106,6 +108,13 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
             media.release();
             vlcPlayer = player;
 
+            mainHandler.post(() -> {
+                if (isReleased || vlcPlayer != player) {
+                    return;
+                }
+                releaseTracksBridge();
+                tracksBridge = new tv.hdonlinetv.compose.player.tracks.VlcTracksBridge(jzvd.getContext(), player);
+            });
             mainHandler.post(this::notifyPreparedWhenSurfaceReady);
         });
     }
@@ -231,7 +240,9 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
         }
         videoOutputAttached = false;
 
-        vlcPlayer.attachViews(vlcVideoLayout, null, false, false);
+        // vlcPlayer.attachViews(vlcVideoLayout, null, false, false);
+        // enableSubtitles=true: libvlc renders the selected SPU track itself.
+        vlcPlayer.attachViews(vlcVideoLayout, null, true, false);
         videoOutputAttached = true;
         attachedWidth = width;
         attachedHeight = height;
@@ -300,6 +311,11 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
     @Override
     public void release() {
         isReleased = true;
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            releaseTracksBridge();
+        } else {
+            mainHandler.post(this::releaseTracksBridge);
+        }
         prepareGeneration++;
         pendingStart = false;
         videoOutputAttached = false;
@@ -331,6 +347,21 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
                 tmpHandler.post(stopAndRelease);
             } else {
                 new Thread(stopAndRelease, "JZVD-VLC-release").start();
+            }
+        });
+    }
+
+    private void releaseTracksBridge() {
+        if (tracksBridge != null) {
+            tracksBridge.release();
+            tracksBridge = null;
+        }
+    }
+
+    private void refreshTracks() {
+        mainHandler.post(() -> {
+            if (!isReleased && tracksBridge != null) {
+                tracksBridge.refresh();
             }
         });
     }
@@ -392,6 +423,12 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
             case MediaPlayer.Event.Playing:
                 cachedPlaying = true;
                 handler.post(() -> jzvd.onStatePlaying());
+                refreshTracks();
+                break;
+            case MediaPlayer.Event.ESAdded:
+            case MediaPlayer.Event.ESDeleted:
+            case MediaPlayer.Event.ESSelected:
+                refreshTracks();
                 break;
             case MediaPlayer.Event.Paused:
             case MediaPlayer.Event.Stopped:
@@ -405,6 +442,7 @@ public class JZMediaVlc extends JZMediaInterface implements MediaPlayer.EventLis
                 break;
             case MediaPlayer.Event.Vout:
                 postToMediaThread(this::notifyVideoSizeChanged);
+                refreshTracks();
                 break;
             case MediaPlayer.Event.EndReached:
                 cachedPlaying = false;

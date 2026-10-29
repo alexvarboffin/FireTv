@@ -83,6 +83,45 @@ object PlayerTracksController {
     private var player: Player? = null
     private var appContext: Context? = null
 
+    /** Non-Exo engines (VLC) that report tracks themselves. */
+    interface ExternalTracks {
+        fun selectAudio(id: Int)
+        fun selectText(id: Int)
+        fun disableText()
+    }
+
+    private var external: ExternalTracks? = null
+
+    @JvmStatic
+    fun attachExternal(context: Context, backend: ExternalTracks) {
+        player?.let { detach(it) }
+        external = backend
+        appContext = context.applicationContext
+        _tracks.value = PlayerTracksUi()
+        _cues.value = emptyList()
+    }
+
+    @JvmStatic
+    fun publishExternal(backend: ExternalTracks, ui: PlayerTracksUi) {
+        if (external !== backend) return
+        if (_tracks.value != ui) _tracks.value = ui
+    }
+
+    @JvmStatic
+    fun detachExternal(backend: ExternalTracks) {
+        if (external !== backend) return
+        external = null
+        _tracks.value = PlayerTracksUi()
+    }
+
+    /** Saved prefs (audio lang, text lang, subtitles off) for external engines; callback on main. */
+    fun readPreferences(context: Context, block: (String?, String?, Boolean) -> Unit) {
+        scope.launch {
+            val prefs = runCatching { context.applicationContext.trackPrefs.data.first() }.getOrNull()
+            block(prefs?.get(KEY_AUDIO_LANG), prefs?.get(KEY_TEXT_LANG), prefs?.get(KEY_TEXT_OFF) == true)
+        }
+    }
+
     private val listener = object : Player.Listener {
         override fun onTracksChanged(tracks: Tracks) {
             _tracks.value = buildUi(tracks)
@@ -96,6 +135,7 @@ object PlayerTracksController {
     @JvmStatic
     fun attach(context: Context, newPlayer: Player) {
         player?.let { detach(it) }
+        external = null
         player = newPlayer
         appContext = context.applicationContext
         newPlayer.addListener(listener)
@@ -136,6 +176,19 @@ object PlayerTracksController {
     fun selectText(option: TrackOption) = select(C.TRACK_TYPE_TEXT, option)
 
     private fun select(type: Int, option: TrackOption) {
+        external?.let { ext ->
+            if (type == C.TRACK_TYPE_AUDIO) ext.selectAudio(option.trackIndex) else ext.selectText(option.trackIndex)
+            val lang = option.language ?: return
+            save { prefs ->
+                if (type == C.TRACK_TYPE_AUDIO) {
+                    prefs[KEY_AUDIO_LANG] = lang
+                } else {
+                    prefs[KEY_TEXT_LANG] = lang
+                    prefs[KEY_TEXT_OFF] = false
+                }
+            }
+            return
+        }
         val p = player ?: return
         val group = p.currentTracks.groups.getOrNull(option.groupIndex) ?: return
         p.trackSelectionParameters = p.trackSelectionParameters.buildUpon()
@@ -154,6 +207,11 @@ object PlayerTracksController {
     }
 
     fun disableSubtitles() {
+        external?.let { ext ->
+            ext.disableText()
+            save { it[KEY_TEXT_OFF] = true }
+            return
+        }
         val p = player ?: return
         p.trackSelectionParameters = p.trackSelectionParameters.buildUpon()
             .clearOverridesOfType(C.TRACK_TYPE_TEXT)

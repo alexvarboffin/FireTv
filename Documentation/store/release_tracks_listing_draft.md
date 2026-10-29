@@ -1,5 +1,5 @@
 # Ultimate.TV: IPTV Player — release listing draft (tracks/subtitles)
-DRAFT — do not publish without approval. Fetched live 2026-10-29 (Play en-US = only locale shown, hl=ru serves the same English text; RuStore ru).
+APPROVED 2026-10-29 by user (texts as drafted). NOT published yet. Fetched live 2026-10-29 (Play en-US = only locale shown, hl=ru serves the same English text; RuStore ru).
 Additive only: title, short description and all existing text/keywords unchanged.
 
 ## Google Play en-US — full description (INSERT)

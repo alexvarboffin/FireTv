@@ -233,11 +233,24 @@ private fun TracksPanelRow(
         modifier = modifier.fillMaxWidth(),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
         shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
+        // Old amber "new clickable" marker styling:
+        // colors = ClickableSurfaceDefaults.colors(
+        //     containerColor = Color.White.copy(alpha = 0.08f),
+        //     contentColor = Color.White,
+        //     focusedContainerColor = NewClickableChipColor,
+        //     focusedContentColor = Color.Black,
+        // ),
+        // Same focus styling as the EPG / channel list rows (PlayerChannelSheet).
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = Color.White.copy(alpha = 0.08f),
+            containerColor = if (checked) {
+                androidx.tv.material3.MaterialTheme.colorScheme.primary.copy(alpha = 0.28f)
+            } else {
+                Color.White.copy(alpha = 0.10f)
+            },
             contentColor = Color.White,
-            focusedContainerColor = NewClickableChipColor,
-            focusedContentColor = Color.Black,
+            focusedContainerColor = androidx.tv.material3.MaterialTheme.colorScheme.primary.copy(alpha = 0.72f),
+            focusedContentColor = Color.White,
+            pressedContainerColor = androidx.tv.material3.MaterialTheme.colorScheme.primary.copy(alpha = 0.85f),
         ),
     ) {
         Row(
