@@ -206,9 +206,12 @@ object PlayerTracksController {
             else -> parts += "#$ordinal"
         }
         val langNameEn = lang?.let { Locale.forLanguageTag(it).getDisplayLanguage(Locale.ENGLISH) }
+        // Native name too ("Français" already says French) → no duplicate language.
+        val langNameNative = lang?.let { Locale.forLanguageTag(it).let { l -> l.getDisplayLanguage(l) } }
         if (!label.isNullOrBlank() && !langName.isNullOrBlank() &&
             !label.contains(langName, true) &&
-            (langNameEn.isNullOrBlank() || !label.contains(langNameEn, true))
+            (langNameEn.isNullOrBlank() || !label.contains(langNameEn, true)) &&
+            (langNameNative.isNullOrBlank() || !label.contains(langNameNative, true))
         ) {
             parts += langName
         }
@@ -223,7 +226,8 @@ object PlayerTracksController {
             }
         }
         codecName(format)?.let { parts += it }
-        if ((format.selectionFlags and C.SELECTION_FLAG_FORCED) != 0) parts += "forced"
+        // if ((format.selectionFlags and C.SELECTION_FLAG_FORCED) != 0) parts += "forced"
+        if ((format.selectionFlags and C.SELECTION_FLAG_FORCED) != 0 && label?.contains("forced", true) != true) parts += "forced"
         return parts.joinToString(" · ")
     }
 
@@ -264,7 +268,25 @@ fun ensureSubtitleView(host: ViewGroup): SubtitleView {
         isFocusable = false
     }
     host.addView(view)
+    keepSubtitlesAboveControls(host, view)
     return view
+}
+
+/**
+ * Lifts cues above the JZ bottom controls (seek bar) while they are visible, so subtitles
+ * never sit over the seek bar; small fixed margin otherwise.
+ */
+@OptIn(UnstableApi::class)
+private fun keepSubtitlesAboveControls(host: ViewGroup, view: SubtitleView) {
+    val bottom = (host as? cn.jzvd.JzvdStd)?.bottomContainer
+    view.setBottomPaddingFraction(0.04f)
+    host.viewTreeObserver.addOnPreDrawListener {
+        val pad = if (bottom != null && bottom.visibility == android.view.View.VISIBLE && bottom.height > 0) {
+            (host.height - bottom.top).coerceAtLeast(0)
+        } else 0
+        if (view.paddingBottom != pad) view.setPadding(0, 0, 0, pad)
+        true
+    }
 }
 
 /** Pushes current cues (Player.Listener.onCues) into the SubtitleView inside [host]. */

@@ -63,7 +63,7 @@ import tv.hdonlinetv.compose.player.LegacyJzPlayerRelease
 import tv.hdonlinetv.compose.player.LegacyJzPlayerSetup
 import tv.hdonlinetv.compose.ui.mobile.components.LegacyTopAppBar
 import tv.hdonlinetv.compose.player.tracks.BindPlayerSubtitles
-import tv.hdonlinetv.compose.player.tracks.NewClickableChip
+// import tv.hdonlinetv.compose.player.tracks.NewClickableChip
 import tv.hdonlinetv.compose.player.tracks.PlayerTracksController
 import tv.hdonlinetv.compose.ui.mobile.components.SettingsSingleChoiceBottomSheet
 
@@ -295,6 +295,10 @@ fun PlayerScreenBody(
                                     )
                                 }
                             }
+                            // YouTube-style: one gear for audio + subtitles (hidden when neither applies).
+                            if (tracksUi.showAudioButton || tracksUi.showSubtitlesButton) {
+                                PlayerTracksGearButton(onClick = { trackSheet = 3 })
+                            }
                             IconButton(onClick = { showMediaPlayerSheet = true }) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_actions_settings),
@@ -371,27 +375,27 @@ fun PlayerScreenBody(
                             },
                         )
                         BindPlayerSubtitles(playerRef)
-                        if (tracksUi.showAudioButton || tracksUi.showSubtitlesButton) {
-                            Row(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(top = if (isFullscreen) 12.dp else 8.dp, end = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                if (tracksUi.showAudioButton) {
-                                    NewClickableChip(
-                                        text = stringResource(R.string.player_audio_track),
-                                        onClick = { trackSheet = 1 },
-                                    )
-                                }
-                                if (tracksUi.showSubtitlesButton) {
-                                    NewClickableChip(
-                                        text = stringResource(R.string.player_subtitles),
-                                        onClick = { trackSheet = 2 },
-                                    )
-                                }
-                            }
-                        }
+//                         if (tracksUi.showAudioButton || tracksUi.showSubtitlesButton) {
+//                             Row(
+//                                 modifier = Modifier
+//                                     .align(Alignment.TopEnd)
+//                                     .padding(top = if (isFullscreen) 12.dp else 8.dp, end = 12.dp),
+//                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+//                             ) {
+//                                 if (tracksUi.showAudioButton) {
+//                                     NewClickableChip(
+//                                         text = stringResource(R.string.player_audio_track),
+//                                         onClick = { trackSheet = 1 },
+//                                     )
+//                                 }
+//                                 if (tracksUi.showSubtitlesButton) {
+//                                     NewClickableChip(
+//                                         text = stringResource(R.string.player_subtitles),
+//                                         onClick = { trackSheet = 2 },
+//                                     )
+//                                 }
+//                             }
+//                         }
                     }
                 }
 
@@ -455,32 +459,38 @@ fun PlayerScreenBody(
         onSelect = onMediaPlayerOptionChange,
     )
 
-    val subtitlesOffLabel = stringResource(R.string.player_subtitles_off)
-    SettingsSingleChoiceBottomSheet(
-        visible = trackSheet == 1,
-        title = stringResource(R.string.player_audio_track),
-        options = tracksUi.audio.map { it.label },
-        selectedIndex = tracksUi.audio.indexOfFirst { it.selected }.coerceAtLeast(0),
+// val subtitlesOffLabel = stringResource(R.string.player_subtitles_off)
+    // Replaced by the grouped YouTube-style sheet below.
+//     SettingsSingleChoiceBottomSheet(
+//         visible = trackSheet == 1,
+//         title = stringResource(R.string.player_audio_track),
+//         options = tracksUi.audio.map { it.label },
+//         selectedIndex = tracksUi.audio.indexOfFirst { it.selected }.coerceAtLeast(0),
+//         onDismiss = { trackSheet = 0 },
+//         onSelect = { index ->
+//             tracksUi.audio.getOrNull(index)?.let(PlayerTracksController::selectAudio)
+//             trackSheet = 0
+//         },
+//     )
+//     SettingsSingleChoiceBottomSheet(
+//         visible = trackSheet == 2,
+//         title = stringResource(R.string.player_subtitles),
+//         options = listOf(subtitlesOffLabel) + tracksUi.text.map { it.label },
+//         selectedIndex = tracksUi.text.indexOfFirst { it.selected } + 1,
+//         onDismiss = { trackSheet = 0 },
+//         onSelect = { index ->
+//             if (index == 0) {
+//                 PlayerTracksController.disableSubtitles()
+//             } else {
+//                 tracksUi.text.getOrNull(index - 1)?.let(PlayerTracksController::selectText)
+//             }
+//             trackSheet = 0
+//         },
+//     )
+    PlayerTracksSheet(
+        visible = trackSheet != 0,
+        tracks = tracksUi,
         onDismiss = { trackSheet = 0 },
-        onSelect = { index ->
-            tracksUi.audio.getOrNull(index)?.let(PlayerTracksController::selectAudio)
-            trackSheet = 0
-        },
-    )
-    SettingsSingleChoiceBottomSheet(
-        visible = trackSheet == 2,
-        title = stringResource(R.string.player_subtitles),
-        options = listOf(subtitlesOffLabel) + tracksUi.text.map { it.label },
-        selectedIndex = tracksUi.text.indexOfFirst { it.selected } + 1,
-        onDismiss = { trackSheet = 0 },
-        onSelect = { index ->
-            if (index == 0) {
-                PlayerTracksController.disableSubtitles()
-            } else {
-                tracksUi.text.getOrNull(index - 1)?.let(PlayerTracksController::selectText)
-            }
-            trackSheet = 0
-        },
     )
 
     PlayerChannelSheet(

@@ -43,4 +43,5 @@
     <string name="player_audio_track">Audio</string>
     <string name="player_subtitles">Subtitles</string>
     <string name="player_subtitles_off">Off</string>
+    <string name="player_tracks_settings">Audio &amp; subtitles</string>
 </resources>
