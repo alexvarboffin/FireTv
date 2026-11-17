@@ -29,3 +29,7 @@ Documentation/reference/
 .tmp-*/
 .tmp/
 /.idea/
+# Signing keys live outside the repo (C:\keystore, see ~/.gradle/gradle.properties FIRETV_*)
+*.jks
+*.keystore
+keystore/

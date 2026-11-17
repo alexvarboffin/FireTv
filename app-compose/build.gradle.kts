@@ -34,13 +34,24 @@ android {
         versionName = "1.4.$code"
     }
 
-    signingConfigs {
-        create("x") {
-            keyAlias = "release"
-            keyPassword = "release"
-            storeFile = file("../app/keystore/keystore.jks")
-            storePassword = "release"
+    // Release signing comes from the global ~/.gradle/gradle.properties (FIRETV_* keys).
+    // Without them the project still configures; debug falls back to the default debug key.
+    val firetvStoreFile = providers.gradleProperty("FIRETV_STORE_FILE").orNull
+    val firetvStorePassword = providers.gradleProperty("FIRETV_STORE_PASSWORD").orNull
+    val firetvKeyAlias = providers.gradleProperty("FIRETV_KEY_ALIAS").orNull
+    val firetvKeyPassword = providers.gradleProperty("FIRETV_KEY_PASSWORD").orNull
+    val firetvSigning = if (
+        firetvStoreFile != null && firetvStorePassword != null &&
+        firetvKeyAlias != null && firetvKeyPassword != null
+    ) {
+        signingConfigs.create("x") {
+            storeFile = file(firetvStoreFile)
+            storePassword = firetvStorePassword
+            keyAlias = firetvKeyAlias
+            keyPassword = firetvKeyPassword
         }
+    } else {
+        null
     }
 
     packaging {
@@ -55,14 +66,14 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("x")
+            if (firetvSigning != null) signingConfig = firetvSigning
             versionNameSuffix = ".DEMO"
             resValue("string", "app_name", "Ultimate.TV")
         }
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("x")
+            if (firetvSigning != null) signingConfig = firetvSigning
             versionNameSuffix = ".release"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
