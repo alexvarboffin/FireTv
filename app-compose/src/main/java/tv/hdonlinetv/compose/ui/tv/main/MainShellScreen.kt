@@ -42,7 +42,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.DrawerValue
@@ -64,6 +63,7 @@ import tv.hdonlinetv.compose.core.presentation.channel.FavoritesViewModelFactory
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModel
 import tv.hdonlinetv.compose.core.presentation.playlist.PlaylistViewModelFactory
 import tv.hdonlinetv.compose.navigation.Routes
+import tv.hdonlinetv.compose.rate.openRateStore
 import tv.hdonlinetv.compose.phone.LocalCategoryRepository
 import tv.hdonlinetv.compose.phone.LocalChannelRepository
 import tv.hdonlinetv.compose.phone.LocalPlaylistRepository
@@ -174,12 +174,7 @@ fun MainShellScreen() {
             showAbout = true
         },
         DrawerNavItem(R.string.menu_rate, R.drawable.ic_ic_actions_star) {
-            context.startActivitySafe(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    "market://details?id=${context.packageName}".toUri(),
-                ),
-            )
+            context.openRateStore()
         },
         DrawerNavItem(R.string.menu_share, R.drawable.ic_share) {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {

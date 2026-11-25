@@ -120,6 +120,7 @@ dependencies {
     implementation(project(":core:data-bridge"))
     implementation(project(":core:epg"))
     implementation(project(":features:ui"))
+    implementation(project(":ratemyapp"))
     implementation(libs.firebase.crashlytics)
 
     val bom = platform(libs.androidx.compose.bom)
