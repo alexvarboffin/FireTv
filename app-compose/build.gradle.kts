@@ -68,7 +68,6 @@ android {
             isMinifyEnabled = false
             if (firetvSigning != null) signingConfig = firetvSigning
             versionNameSuffix = ".DEMO"
-            resValue("string", "app_name", "Ultimate.TV")
         }
         getByName("release") {
             isMinifyEnabled = true
@@ -79,7 +78,23 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+        }
+    }
+
+    // UTV-R1: store flavors. Same applicationId and signing for both; only label + STORE differ.
+    // Signing/minify live in buildTypes, so they apply to every flavor.
+    flavorDimensions += "store"
+    productFlavors {
+        create("gplay") {
+            dimension = "store"
+            isDefault = true
             resValue("string", "app_name", "Ultimate.TV")
+            buildConfigField("String", "STORE", "\"gplay\"")
+        }
+        create("rustore") {
+            dimension = "store"
+            resValue("string", "app_name", "Ultimate.TV: IPTV Player")
+            buildConfigField("String", "STORE", "\"rustore\"")
         }
     }
 
