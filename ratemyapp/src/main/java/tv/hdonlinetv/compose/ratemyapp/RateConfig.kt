@@ -19,7 +19,7 @@ package tv.hdonlinetv.compose.ratemyapp
  * @property starFilterEnabled true: >= [positiveThreshold] -> [RateUiState.OpenStore],
  *   below -> [RateUiState.ThankYou] (UI offers e-mail feedback). false: any rating -> OpenStore.
  * @property feedbackEmail developer address for low-rating feedback, null = no e-mail offer.
- *   Legacy value from RateAppModule.v0 (public developer contact, not a secret).
+ *   The app passes it in; no address is stored in this module.
  * @property showOnTv false: never ask on TV devices (see [RateMyAppController] isTv input).
  */
 data class RateConfig(
@@ -29,7 +29,7 @@ data class RateConfig(
     val showDelayMillis: Long = 2_000L,
     val positiveThreshold: Int = 5,
     val starFilterEnabled: Boolean = true,
-    val feedbackEmail: String? = LEGACY_FEEDBACK_EMAIL,
+    val feedbackEmail: String? = null,
     val showOnTv: Boolean = false,
 ) {
     init {
@@ -40,10 +40,5 @@ data class RateConfig(
         require(minDaysSinceInstall >= 0) { "minDaysSinceInstall < 0" }
         require(showDelayMillis >= 0) { "showDelayMillis < 0" }
         require(positiveThreshold in 1..5) { "positiveThreshold must be 1..5" }
-    }
-
-    companion object {
-        /** Feedback address used by the legacy rate dialog. */
-        const val LEGACY_FEEDBACK_EMAIL: String = "alexvarboffin@gmail.com"
     }
 }

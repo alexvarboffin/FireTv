@@ -37,7 +37,7 @@ class RateMyAppControllerTest {
         assertEquals(5, d.positiveThreshold)
         assertTrue(d.starFilterEnabled)
         assertFalse(d.showOnTv)
-        assertEquals("alexvarboffin@gmail.com", d.feedbackEmail)
+        assertEquals(null, d.feedbackEmail)
     }
 
     @Test fun needsMinLaunches() {
@@ -84,9 +84,17 @@ class RateMyAppControllerTest {
     }
 
     @Test fun belowThresholdThankYouWithEmail() {
+        val e = controller(RateConfig(feedbackEmail = "dev@example.org"))
+        e.onRated(4)
+        assertEquals(RateUiState.ThankYou(4, "dev@example.org"), e.state.value)
+        e.onThankYouDone()
+        assertEquals(RateUiState.Hidden, e.state.value)
+    }
+
+    @Test fun belowThresholdThankYouDefaultNoEmail() {
         ready()
         c.onRated(4)
-        assertEquals(RateUiState.ThankYou(4, "alexvarboffin@gmail.com"), c.state.value)
+        assertEquals(RateUiState.ThankYou(4, null), c.state.value)
         c.onThankYouDone()
         assertEquals(RateUiState.Hidden, c.state.value)
         assertTrue(prefs.completed)

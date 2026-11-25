@@ -1,6 +1,7 @@
 package tv.hdonlinetv.compose.ratemyapp
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class StoreTest {
@@ -22,29 +23,43 @@ class StoreTest {
         assertEquals("https://www.rustore.ru/catalog/app/a.b.c", storeWebUri(Store.RUSTORE, p))
     }
 
+    private val play = "https://play.google.com/store/apps/details?id=a.b.c"
+    private val ru = "https://www.rustore.ru/catalog/app/a.b.c"
+    private val market = "market://details?id=a.b.c"
+
+    @Test fun webFallbackForFlavor() {
+        assertEquals(Store.RUSTORE, webFallbackFor("rustore"))
+        assertEquals(Store.RUSTORE, webFallbackFor(" RuStore "))
+        assertEquals(Store.GPLAY, webFallbackFor("gplay"))
+        assertEquals(Store.GPLAY, webFallbackFor(""))
+    }
+
     @Test fun candidatesGplay() = assertEquals(
-        listOf(
-            RateTarget("market://details?id=a.b.c", "com.android.vending"),
-            RateTarget("market://details?id=a.b.c", null),
-            RateTarget("https://play.google.com/store/apps/details?id=a.b.c", null),
-        ),
-        rateTargetCandidates(Store.GPLAY, p),
+        listOf(RateTarget(market, "com.android.vending"), RateTarget(market, null), RateTarget(play, null)),
+        rateTargetCandidates(Store.GPLAY, p, webFallback = Store.GPLAY),
     )
 
-    @Test fun candidatesRustore() = assertEquals(
-        listOf(
-            RateTarget("rustore://apps.rustore.ru/app/a.b.c", "ru.vk.store"),
-            RateTarget("market://details?id=a.b.c", null),
-            RateTarget("https://www.rustore.ru/catalog/app/a.b.c", null),
-        ),
-        rateTargetCandidates(Store.RUSTORE, p),
+    @Test fun candidatesAnyGplayFlavor() = assertEquals(
+        listOf(RateTarget(market, null), RateTarget(play, null)),
+        rateTargetCandidates(Store.ANY, p, webFallback = Store.GPLAY),
     )
 
-    @Test fun candidatesAny() = assertEquals(
-        listOf(
-            RateTarget("market://details?id=a.b.c", null),
-            RateTarget("https://play.google.com/store/apps/details?id=a.b.c", null),
-        ),
-        rateTargetCandidates(Store.ANY, p),
-    )
+    @Test fun rustoreInstallerGetsRustoreHttpsInBothFlavors() {
+        for (flavor in listOf(Store.GPLAY, Store.RUSTORE)) assertEquals(
+            listOf(
+                RateTarget("rustore://apps.rustore.ru/app/a.b.c", "ru.vk.store"),
+                RateTarget(market, null),
+                RateTarget(ru, null),
+            ),
+            rateTargetCandidates(Store.RUSTORE, p, webFallback = flavor),
+        )
+    }
+
+    @Test fun rustoreFlavorNeverLinksToPlay() {
+        for (store in Store.values()) {
+            val c = rateTargetCandidates(store, p, webFallback = webFallbackFor("rustore"))
+            assertTrue(c.none { "play.google.com" in it.uri })
+            assertEquals(RateTarget(ru, null), c.last())
+        }
+    }
 }
