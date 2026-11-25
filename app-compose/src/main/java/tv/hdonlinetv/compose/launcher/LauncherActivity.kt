@@ -18,11 +18,6 @@ import tv.hdonlinetv.compose.ui.mobile.theme.NightModeApplier
 class LauncherActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
-        println("@@@ www${Build.MODEL}")
-
-
         val settingsRepository = LocalSettingsRepository(applicationContext)
         NightModeApplier.apply(settingsRepository.getSettings().nightMode)
         super.onCreate(savedInstanceState)

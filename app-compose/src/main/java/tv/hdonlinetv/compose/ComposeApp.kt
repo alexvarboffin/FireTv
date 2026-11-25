@@ -34,7 +34,9 @@ class ComposeApp : Application() {
                 Log.i(TAG, "MobileAds initialized: ${status.adapterStatusMap}")
             }
             // Same app id as legacy MyApp — phone only.
-            OneSignal.Debug.logLevel = LogLevel.DEBUG
+            if (BuildConfig.DEBUG) {
+                OneSignal.Debug.logLevel = LogLevel.DEBUG
+            }
             OneSignal.initWithContext(this, ONESIGNAL_APP_ID)
             Log.i(TAG, "OneSignal init")
         }
