@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="rateme_cd_close">Закрити</string>
-    <string name="rateme_cd_share">Поділитися</string>
-    <string name="rateme_cd_star">%1$d з 5 зірок</string>
-</resources>
