@@ -5,9 +5,12 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import org.koin.android.ext.android.get
 import tv.hdonlinetv.compose.BuildConfig
 import tv.hdonlinetv.compose.core.databridge.settings.LocalSettingsRepository
 import tv.hdonlinetv.compose.phone.MainActivity as PhoneMainActivity
+import tv.hdonlinetv.compose.rate.shouldCountLaunch
+import tv.hdonlinetv.compose.ratemyapp.RateMyAppController
 import tv.hdonlinetv.compose.tv.MainActivity as TvMainActivity
 import tv.hdonlinetv.compose.ui.mobile.theme.NightModeApplier
 
@@ -22,6 +25,10 @@ class LauncherActivity : Activity() {
         val settingsRepository = LocalSettingsRepository(applicationContext)
         NightModeApplier.apply(settingsRepository.getSettings().nightMode)
         super.onCreate(savedInstanceState)
+        // UTV-R6c: one rate-me launch per user start of the app (phone + TV share this launcher).
+        if (shouldCountLaunch(isRestored = savedInstanceState != null)) {
+            get<RateMyAppController>().onAppLaunched()
+        }
         val isTv = (resources.configuration.uiMode and Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION
                     || (BuildConfig.DEBUG && "SM-S906N" == Build.MODEL)
         val target = if (isTv) TvMainActivity::class.java else PhoneMainActivity::class.java
