@@ -330,6 +330,13 @@ fun MainShellScreen() {
                             }
                         }
                         ShellPanel.Tabs -> {
+                            // Recently watched: first row of home (hidden when empty).
+                            tv.hdonlinetv.compose.ui.tv.components.TvRecentRow(onOpen = { item ->
+                                    navController.navigate(
+                                        if (item.channelId > 0) Routes.Player.build(item.channelId)
+                                        else Routes.Player.buildStream(item.link, item.title),
+                                    )
+                                })
                             TvFocusTabRow(
                                 tabs = tabTitles,
                                 selectedIndex = selectedTabIndex,

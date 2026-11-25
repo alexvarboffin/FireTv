@@ -113,6 +113,13 @@ fun PlayerScreen() {
         ),
     )
     val state by viewModel.uiState.collectAsState()
+    val recentCtx = androidx.compose.ui.platform.LocalContext.current
+    androidx.compose.runtime.LaunchedEffect(state.channel?.let { tv.hdonlinetv.compose.recent.RecentHistory.keyOf(it) }) {
+        state.channel?.let {
+            tv.hdonlinetv.compose.recent.RecentHistory.init(recentCtx)
+            tv.hdonlinetv.compose.recent.RecentHistory.onStart(it)
+        }
+    }
     PlayerScreenBody(
         channel = state.channel,
         siblings = state.siblings,
@@ -161,6 +168,26 @@ fun PlayerScreenBody(
     val playbackKey = channel?.playbackKey()
     val setup = remember(playbackKey) { channel?.let { LegacyJzPlayerSetup.prepare(it) } }
     var playerRef by remember { mutableStateOf<JZVideoPlayerNew?>(null) }
+    // Recently watched: last known position, flushed on pause/stop/exit.
+    var recentPos by remember { androidx.compose.runtime.mutableLongStateOf(0L) }
+    var recentDur by remember { androidx.compose.runtime.mutableLongStateOf(0L) }
+    val recentChannel by androidx.compose.runtime.rememberUpdatedState(channel)
+    fun flushRecent() {
+        val ch = recentChannel ?: return
+        if (recentPos > 0L) {
+            tv.hdonlinetv.compose.recent.RecentHistory.onProgress(ch, recentPos, recentDur, force = true)
+        }
+    }
+    DisposableEffect(lifecycleOwner) {
+        val obs = androidx.lifecycle.LifecycleEventObserver { _, e ->
+            if (e == Lifecycle.Event.ON_PAUSE || e == Lifecycle.Event.ON_STOP) flushRecent()
+        }
+        lifecycleOwner.lifecycle.addObserver(obs)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(obs)
+            flushRecent()
+        }
+    }
     var isFullscreen by remember { mutableStateOf(false) }
     var isExiting by remember { mutableStateOf(false) }
     val castController = remember(playbackKey, setup) {
@@ -364,6 +391,17 @@ fun PlayerScreenBody(
                             },
                             update = { player ->
                                 playerRef = player
+                                player.onPlaybackProgress = { position, duration ->
+                                    if (position > 0L) {
+                                        recentPos = position
+                                        recentDur = duration
+                                    }
+                                    channel?.let { ch ->
+                                        tv.hdonlinetv.compose.recent.RecentHistory
+                                            .onProgress(ch, position, duration)
+                                            ?.let { player.seekToMs(it) }
+                                    }
+                                }
                                 player.onFullscreenChange = { fullscreen ->
                                     isFullscreen = fullscreen
                                 }

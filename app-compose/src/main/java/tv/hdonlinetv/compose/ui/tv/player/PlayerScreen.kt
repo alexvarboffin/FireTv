@@ -149,6 +149,13 @@ fun PlayerScreen() {
         ),
     )
     val state by viewModel.uiState.collectAsState()
+    val recentCtx = androidx.compose.ui.platform.LocalContext.current
+    androidx.compose.runtime.LaunchedEffect(state.channel?.let { tv.hdonlinetv.compose.recent.RecentHistory.keyOf(it) }) {
+        state.channel?.let {
+            tv.hdonlinetv.compose.recent.RecentHistory.init(recentCtx)
+            tv.hdonlinetv.compose.recent.RecentHistory.onStart(it)
+        }
+    }
     PlayerScreenBody(
         channel = state.channel,
         siblings = state.siblings,
@@ -543,6 +550,11 @@ fun PlayerScreenBody(
                                 positionMs = position
                             }
                             durationMs = duration
+                            channel?.let { ch ->
+                                tv.hdonlinetv.compose.recent.RecentHistory
+                                    .onProgress(ch, position, duration)
+                                    ?.let { player.seekToMs(it) }
+                            }
                         }
                         player.onPlaybackStateChanged = { jzState = it }
                         player.onFullscreenChange = { fullscreen ->
@@ -552,6 +564,10 @@ fun PlayerScreenBody(
                         isJzFullscreen = player.screen == Jzvd.SCREEN_FULLSCREEN
                     },
                     onRelease = { player ->
+                        channel?.let {
+                            tv.hdonlinetv.compose.recent.RecentHistory
+                                .onProgress(it, positionMs, durationMs, force = true)
+                        }
                         player.onPlaybackProgress = null
                         player.onPlaybackStateChanged = null
                         player.onFullscreenChange = null

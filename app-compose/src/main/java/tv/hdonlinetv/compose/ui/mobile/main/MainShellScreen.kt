@@ -315,6 +315,9 @@ fun MainShellScreen() {
                         .fillMaxSize()
                         .background(colorResource(R.color.bgMain)),
                 ) {
+                    // Moved to bottom (phone): top area as before.
+                    // // Recently watched: first row of home (hidden when empty).
+                    // tv.hdonlinetv.compose.ui.mobile.components.RecentRow(onOpen = { item -> ... })
                     LegacyTabRow(
                         tabs = tabTitleRes.map { stringResource(it) },
                         selectedIndex = pagerState.currentPage,
@@ -336,6 +339,14 @@ fun MainShellScreen() {
                             else -> FavoritesScreen()
                         }
                     }
+                    // Recently watched: pinned at the bottom of the content column (inside
+                    // Scaffold padding, above the ad banner); pager shrinks, nothing is covered.
+                    tv.hdonlinetv.compose.ui.mobile.components.RecentRow(onOpen = { item ->
+                                    navController.navigate(
+                                        if (item.channelId > 0) Routes.Player.build(item.channelId)
+                                        else Routes.Player.buildStream(item.link, item.title),
+                                    )
+                                })
                 }
             }
         }

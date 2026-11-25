@@ -124,4 +124,7 @@
     <string name="season_number_format">Сезон %1$d</string>
     <string name="episode_number_format">Эпизод %1$d</string>
     <string name="episode_count_format">%1$d эп.</string>
+    <string name="recent_watched_title">Недавно просмотренные</string>
+    <string name="recent_remove_confirm">Убрать из недавно просмотренных?</string>
+    <string name="recent_remove">Убрать</string>
 </resources>

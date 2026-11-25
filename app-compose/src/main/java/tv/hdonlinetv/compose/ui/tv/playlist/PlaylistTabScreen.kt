@@ -63,6 +63,7 @@ import tv.hdonlinetv.compose.tv.LocalTvDrawerFocusRequester
 import tv.hdonlinetv.compose.tv.LocalTvNavController
 import tv.hdonlinetv.compose.ui.tv.components.RestoreFocusOnReturn
 import tv.hdonlinetv.compose.ui.tv.components.TvLoadingOverlay
+import tv.hdonlinetv.compose.ui.tv.components.tvDpadClick
 import tv.hdonlinetv.compose.ui.tv.components.rememberTvLazyFocusRestorer
 import tv.hdonlinetv.compose.ui.tv.components.tvLazyFocusGroup
 import tv.hdonlinetv.compose.ui.tv.notifications.LocalTvNotificationManager
@@ -214,7 +215,7 @@ private fun PlaylistCardTv(
     Card(
         onClick = {
             // Click path for pointer/mouse; D-pad handled in onPreviewKeyEvent.
-            if (!longPressTriggered) onClick()
+            onClick()
         },
         onLongClick = {
             // Pointer long-press; D-pad uses KeyUp path below.
@@ -229,35 +230,37 @@ private fun PlaylistCardTv(
                     Modifier
                 },
             )
-            .onPreviewKeyEvent { event ->
-                when (event.key) {
-                    Key.Enter, Key.DirectionCenter -> {
-                        when (event.type) {
-                            KeyEventType.KeyDown -> {
-                                if (!isKeyDown) {
-                                    isKeyDown = true
-                                    longPressTriggered = false
-                                }
-                                true
-                            }
-                            KeyEventType.KeyUp -> {
-                                if (isKeyDown) {
-                                    if (longPressTriggered) {
-                                        onLongClick()
-                                    } else {
-                                        onClick()
-                                    }
-                                }
-                                isKeyDown = false
-                                longPressTriggered = false
-                                true
-                            }
-                            else -> false
-                        }
-                    }
-                    else -> false
-                }
-            },
+            // Old timer-based handler (navigated after long-press on some remotes):
+            // .onPreviewKeyEvent { event ->
+            // when (event.key) {
+            // Key.Enter, Key.DirectionCenter -> {
+            // when (event.type) {
+            // KeyEventType.KeyDown -> {
+            // if (!isKeyDown) {
+            // isKeyDown = true
+            // longPressTriggered = false
+            // }
+            // true
+            // }
+            // KeyEventType.KeyUp -> {
+            // if (isKeyDown) {
+            // if (longPressTriggered) {
+            // onLongClick()
+            // } else {
+            // onClick()
+            // }
+            // }
+            // isKeyDown = false
+            // longPressTriggered = false
+            // true
+            // }
+            // else -> false
+            // }
+            // }
+            // else -> false
+            // }
+            // },
+            .tvDpadClick(onClick = onClick, onLongClick = onLongClick),
     ) {
         Row(
             modifier = Modifier

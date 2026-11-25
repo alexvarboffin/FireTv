@@ -158,4 +158,7 @@
         <item>M3U</item>
         <item>Xtream</item>
     </string-array>
+    <string name="recent_watched_title">Recently watched</string>
+    <string name="recent_remove_confirm">Remove from recently watched?</string>
+    <string name="recent_remove">Remove</string>
 </resources>
