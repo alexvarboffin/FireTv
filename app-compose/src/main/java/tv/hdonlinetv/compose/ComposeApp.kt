@@ -8,10 +8,21 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.cast.framework.CastContext
 import com.onesignal.OneSignal
 import com.onesignal.debug.LogLevel
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import tv.hdonlinetv.compose.rate.rateAppConfigModule
+import tv.hdonlinetv.compose.ratemyapp.RateMyAppController
+import tv.hdonlinetv.compose.ratemyapp.ratemyappModule
 
 class ComposeApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        // UTV-R6c: rate-me flow. rateAppConfigModule overrides RateConfig (feedback e-mail).
+        val koin = startKoin {
+            androidContext(this@ComposeApp)
+            modules(ratemyappModule, rateAppConfigModule)
+        }.koin
+        koin.get<RateMyAppController>().onAppLaunched()
         try {
             CastContext.getSharedInstance(this)
         } catch (_: Exception) {

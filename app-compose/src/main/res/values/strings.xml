@@ -54,4 +54,7 @@
     <string name="rateme_cd_close">Close</string>
     <string name="rateme_cd_share">Share</string>
     <string name="rateme_cd_star">%1$d of 5 stars</string>
+
+    <!-- UTV-R6c: legacy WalhallaUI rateme__email_subject (low-rating feedback e-mail). -->
+    <string name="rate_feedback_subject" translatable="false">🥇Feedback for %1$s</string>
 </resources>

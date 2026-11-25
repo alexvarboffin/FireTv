@@ -121,6 +121,7 @@ dependencies {
     implementation(project(":core:epg"))
     implementation(project(":features:ui"))
     implementation(project(":ratemyapp"))
+    implementation(libs.koin.android)
     implementation(libs.firebase.crashlytics)
 
     val bom = platform(libs.androidx.compose.bom)
@@ -171,6 +172,8 @@ dependencies {
     compileOnly("com.google.errorprone:error_prone_annotations:2.36.0")
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    testImplementation(libs.junit)
 }
 
 // OneSignal 5.1.x wants firebase-messaging in [21, 23.4.99]; app uses 25.x вЂ” skip strict check.

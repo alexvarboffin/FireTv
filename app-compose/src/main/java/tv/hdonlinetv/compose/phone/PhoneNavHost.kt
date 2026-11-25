@@ -20,6 +20,7 @@ import tv.hdonlinetv.compose.core.databridge.settings.LocalSettingsRepository as
 import tv.hdonlinetv.compose.core.databridge.xtream.LocalXtreamRepository as XtreamRepositoryImpl
 import tv.hdonlinetv.compose.navigation.PlayerBrowseScope
 import tv.hdonlinetv.compose.navigation.Routes
+import tv.hdonlinetv.compose.rate.RateAppHost
 import tv.hdonlinetv.compose.ui.mobile.channel.ChannelListScreen
 import tv.hdonlinetv.compose.ui.mobile.details.DetailsScreen
 import tv.hdonlinetv.compose.ui.mobile.info.InfoWebScreen
@@ -67,7 +68,10 @@ fun PhoneNavHost() {
         ) {
             composable(Routes.Splash.route) { SplashScreen() }
             composable(Routes.Onboarding.route) { OnboardingScreen() }
-            composable(Routes.Main.route) { MainShellScreen() }
+            composable(Routes.Main.route) {
+                MainShellScreen()
+                RateAppHost()
+            }
             composable(
                 route = Routes.Channels.route,
                 arguments = listOf(
