@@ -1,7 +1,7 @@
 package tv.hdonlinetv.compose.ratemyapp
 
-/** App store the rating request targets. */
-enum class Store { GPLAY, RUSTORE }
+/** Store the rating request targets. [ANY] = unknown installer: let the user choose. */
+enum class Store { GPLAY, RUSTORE, ANY }
 
 /** Installer package of Google Play. */
 const val INSTALLER_GPLAY: String = "com.android.vending"
@@ -9,34 +9,26 @@ const val INSTALLER_GPLAY: String = "com.android.vending"
 /** Installer package of RuStore. */
 const val INSTALLER_RUSTORE: String = "ru.vk.store"
 
-/** BuildConfig.STORE values of :app-compose. */
-const val FLAVOR_GPLAY: String = "gplay"
-const val FLAVOR_RUSTORE: String = "rustore"
-
-/**
- * Picks the store: the actual installer wins, otherwise the build flavor.
- * Unknown flavor falls back to [Store.GPLAY].
- *
- * @param storeFlavor BuildConfig.STORE ("gplay" / "rustore").
- * @param installerPackage installer package name, or null if unknown / sideloaded.
- */
-fun selectStore(storeFlavor: String, installerPackage: String?): Store = when (installerPackage) {
+/** Store by installer package: Play -> GPLAY, RuStore -> RUSTORE, anything else / null -> ANY. */
+fun selectStore(installerPackage: String?): Store = when (installerPackage) {
     INSTALLER_GPLAY -> Store.GPLAY
     INSTALLER_RUSTORE -> Store.RUSTORE
-    else -> when (storeFlavor.trim().lowercase()) {
-        FLAVOR_RUSTORE -> Store.RUSTORE
-        else -> Store.GPLAY
-    }
+    else -> Store.ANY
 }
 
-/** Store app deep link (market:// for Google Play, rustore:// for RuStore). */
+/**
+ * Store deep link.
+ * GPLAY: market:// (caller pins package [INSTALLER_GPLAY]).
+ * ANY: the same market:// URI, meant for an Intent without a package (system chooser).
+ * RUSTORE: rustore:// app card.
+ */
 fun storeUri(store: Store, packageName: String): String = when (store) {
-    Store.GPLAY -> "market://details?id=$packageName"
+    Store.GPLAY, Store.ANY -> "market://details?id=$packageName"
     Store.RUSTORE -> "rustore://apps.rustore.ru/app/$packageName"
 }
 
-/** https fallback for when the store app is not installed. */
+/** https fallback when no app can handle [storeUri]. ANY falls back to Google Play web. */
 fun storeWebUri(store: Store, packageName: String): String = when (store) {
-    Store.GPLAY -> "https://play.google.com/store/apps/details?id=$packageName"
+    Store.GPLAY, Store.ANY -> "https://play.google.com/store/apps/details?id=$packageName"
     Store.RUSTORE -> "https://www.rustore.ru/catalog/app/$packageName"
 }

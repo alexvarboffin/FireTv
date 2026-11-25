@@ -7,9 +7,12 @@ interface RatePrefs {
     /** Epoch millis of the first recorded launch, 0 = not recorded yet. */
     var firstLaunchMillis: Long
 
-    /** Epoch millis before which the prompt is snoozed (after Later), 0 = no snooze. */
-    var remindAtMillis: Long
+    /** Epoch millis the current pause step counts from (armed / last Later), 0 = not armed. */
+    var anchorMillis: Long
 
-    /** True after the user rated or pressed Never: never ask again. */
+    /** Number of Later presses = index into [RateConfig.pauseStepsMinutes]. */
+    var laterCount: Int
+
+    /** True after the user rated, pressed Never or used up all pause steps: never ask again. */
     var completed: Boolean
 }

@@ -9,8 +9,15 @@ sealed interface RateUiState {
     data object AskRating : RateUiState
 
     /**
-     * User gave >= [RateConfig.positiveThreshold] stars: the app should open the store page
-     * (target chosen outside this controller), then call [RateMyAppController.onStoreOpened].
+     * Open the store page (see [rateTargetCandidates]), then call
+     * [RateMyAppController.onStoreOpened].
      */
     data object OpenStore : RateUiState
+
+    /**
+     * Rating below [RateConfig.positiveThreshold] with the star filter on: thank the user and,
+     * if [feedbackEmail] != null, offer an e-mail to the developer. Then call
+     * [RateMyAppController.onThankYouDone].
+     */
+    data class ThankYou(val stars: Int, val feedbackEmail: String?) : RateUiState
 }
