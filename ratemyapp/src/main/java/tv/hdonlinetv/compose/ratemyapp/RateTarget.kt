@@ -23,3 +23,17 @@ fun rateTargetCandidates(store: Store, packageName: String): List<RateTarget> = 
     add(RateTarget(storeUri(Store.ANY, packageName), null))
     add(RateTarget(storeWebUri(store, packageName), null))
 }
+
+/**
+ * UTV-R5: first candidate of [rateTargetCandidates] the device can handle;
+ * the last candidate (https) is the final fallback even if [canHandle] rejects it.
+ * Pure: [canHandle] is supplied by the app (Intent + resolveActivity).
+ */
+fun resolveRateTarget(
+    packageName: String,
+    installerPackage: String?,
+    canHandle: (RateTarget) -> Boolean,
+): RateTarget {
+    val candidates = rateTargetCandidates(selectStore(installerPackage), packageName)
+    return candidates.firstOrNull(canHandle) ?: candidates.last()
+}
