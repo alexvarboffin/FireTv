@@ -93,7 +93,7 @@ android {
         }
         create("rustore") {
             dimension = "store"
-            resValue("string", "app_name", "Ultimate.TV: IPTV Player")
+            resValue("string", "app_name", "Ultimate-TV: IPTV плеер M3U")
             buildConfigField("String", "STORE", "\"rustore\"")
         }
     }
