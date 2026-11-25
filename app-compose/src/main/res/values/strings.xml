@@ -49,4 +49,9 @@
     <string name="tv_hint_hide">Hide</string>
     <string name="tv_settings_panel_title">Settings</string>
     <string name="tv_settings_player_row">Player</string>
+
+    <!-- A11y for RateAppDialog (legacy close/share had no contentDescription). -->
+    <string name="rateme_cd_close">Close</string>
+    <string name="rateme_cd_share">Share</string>
+    <string name="rateme_cd_star">%1$d of 5 stars</string>
 </resources>

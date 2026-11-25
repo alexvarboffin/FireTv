@@ -39,4 +39,8 @@
     <string name="tv_hint_hide">Скрыть</string>
     <string name="tv_settings_panel_title">Настройки</string>
     <string name="tv_settings_player_row">Медиаплеер</string>
+
+    <string name="rateme_cd_close">Закрыть</string>
+    <string name="rateme_cd_share">Поделиться</string>
+    <string name="rateme_cd_star">%1$d из 5 звёзд</string>
 </resources>
