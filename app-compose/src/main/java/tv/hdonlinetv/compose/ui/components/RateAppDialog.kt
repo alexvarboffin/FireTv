@@ -71,25 +71,25 @@ import tv.hdonlinetv.compose.ui.tv.theme.TvTheme
  * layouts `rateme__dialog_title` / `rateme__dialog_message`).
  *
  * This composable is UI-only: no ViewModel, no Play/RuStore review API calls,
- * no preferences and no DI. It does not depend on the R6a `:ratemyapp` module;
- * the host maps these callbacks after R6a is published:
- * - [onRate] → `onRated(stars)` then `RateUiState.OpenStore` (positive threshold = 5)
- * - [onLater] → `onLater()` after 1–4 stars; host should then show [RateThankYouDialog]
- *   (upcoming `RateUiState.ThankYou`, then email to the developer)
- * - [onNever] → `onNever()`
- * - [onDismiss] for Back (legacy used `setCancelable(false)`; TV/D-pad still needs Back)
+ * no preferences and no DI. It does not depend on the R6a `:ratemyapp` module
+ * (`feature/UTV-R6a-ratemyapp` @ f94cc38). The host maps these callbacks to
+ * `RateUiState { Hidden; AskRating; OpenStore; ThankYou(stars, feedbackEmail) }`
+ * and the controller (`onRated`, `onLater`, `onNever`, `onStoreOpened`, `onThankYouDone`):
+ * - [onRate] → `onRated(stars)` then `OpenStore` (positive threshold = 5)
+ * - [onLater] → `onLater()`: 1–4 star "Thanks" button, close (X), and Back.
+ *   The host may then show [RateThankYouDialog] for `ThankYou`.
+ *   There is no Never button in the legacy UI; the close X is not `onNever()`.
  *
- * R6a will set `showOnTv = false`, so this dialog is not presented on TV in production.
+ * R6a sets `showOnTv = false`, so this dialog is not presented on TV in production.
  * D-pad focus, focus indication and TV previews are still implemented here for completeness.
  *
  * Legacy action mapping:
  * - 5 stars + "Rate" (`rateme__dialog_first_button_rate`) → [onRate]
  * - 1–4 stars + "Thanks" (`rateme__dialog_first_thanks`) → [onLater]
- * - Close (X) → [onNever] (legacy: `appRated(false)`, opt-out, DISMISSED_WITH_CROSS)
- * - Back → [onDismiss]
+ * - Close (X) and Back → [onLater] (legacy had no Never button; dialog was `setCancelable(false)`)
  * - Optional share icon (hidden by default, same as the RateAppModule builder) → [onShare]
  *
- * @param visible whether the dialog is shown
+ * @param visible whether the dialog is shown (`AskRating`)
  * @param appName app display name interpolated into `rateme__dialog_first_message`
  * @param selectedStars currently selected integer rating, 0..5 (legacy step size is 1)
  * @param showShareButton when true, shows the title-bar share icon
@@ -97,9 +97,7 @@ import tv.hdonlinetv.compose.ui.tv.theme.TvTheme
  * @param appIcon optional icon painter used only when [showAppIcon] is true
  * @param onStarsChange called when the user picks a star; keep this controlled/stateless
  * @param onRate 5-star confirm ("Rate our app…")
- * @param onLater 1–4 star confirm ("Thanks for the rating!")
- * @param onNever close (X)
- * @param onDismiss Back / system dismiss request
+ * @param onLater postpone / close: Thanks (1–4), close X, or Back
  * @param onShare title-bar share, only if [showShareButton] is true
  */
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -111,8 +109,6 @@ fun RateAppDialog(
     onStarsChange: (Int) -> Unit,
     onRate: (stars: Int) -> Unit,
     onLater: () -> Unit,
-    onNever: () -> Unit,
-    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     showShareButton: Boolean = false,
     showAppIcon: Boolean = false,
@@ -123,7 +119,7 @@ fun RateAppDialog(
 
     val isTv = isTelevision()
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = onLater,
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = false,
@@ -136,7 +132,6 @@ fun RateAppDialog(
             onStarsChange = onStarsChange,
             onRate = onRate,
             onLater = onLater,
-            onNever = onNever,
             onShare = onShare,
             showShareButton = showShareButton,
             showAppIcon = showAppIcon,
@@ -156,7 +151,6 @@ fun RateAppDialogContent(
     onStarsChange: (Int) -> Unit,
     onRate: (stars: Int) -> Unit,
     onLater: () -> Unit,
-    onNever: () -> Unit,
     modifier: Modifier = Modifier,
     showShareButton: Boolean = false,
     showAppIcon: Boolean = false,
@@ -196,7 +190,7 @@ fun RateAppDialogContent(
         RateAppDialogTitleBar(
             showShareButton = showShareButton,
             onShare = onShare,
-            onNever = onNever,
+            onLater = onLater,
         )
         Column(
             modifier = Modifier
@@ -259,7 +253,7 @@ fun RateAppDialogContent(
 private fun RateAppDialogTitleBar(
     showShareButton: Boolean,
     onShare: () -> Unit,
-    onNever: () -> Unit,
+    onLater: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -286,7 +280,7 @@ private fun RateAppDialogTitleBar(
         RateTitleIconButton(
             imageVector = Icons.Filled.Close,
             contentDescription = stringResource(R.string.rateme_cd_close),
-            onClick = onNever,
+            onClick = onLater,
         )
     }
 }
@@ -464,18 +458,28 @@ private fun isTelevision(): Boolean {
  * (`com.androidsx.rateme.FeedbackDialog`, layouts `rateme__feedback_dialog_title`
  * / `rateme__feedback_dialog_message`).
  *
- * Shown after a below-threshold rating (1–4 stars). This composable does not
- * send email itself: [onWriteToDeveloper] is for the host (upcoming R6a
- * `RateUiState.ThankYou`). Cancel and Back call [onDismiss].
- * Does not depend on `:ratemyapp`. D-pad focus is implemented even though
- * the production rate flow is not shown on TV (`showOnTv = false`).
+ * Maps to R6a `RateUiState.ThankYou(stars, feedbackEmail)` (contract f94cc38)
+ * without depending on `:ratemyapp`. This composable does not send email itself:
+ * [onWriteToDeveloper] is for the host when [feedbackEmail] is non-null.
+ * Cancel and Back call [onDone] (`onThankYouDone()`).
+ * If [feedbackEmail] is null, the write-to-developer / OK action is hidden
+ * and only cancel/close is shown.
+ * D-pad focus is implemented even though production rate flow is not shown on TV
+ * (`showOnTv = false`).
+ *
+ * @param stars below-threshold rating from `ThankYou` (1–4); kept for contract mapping
+ * @param feedbackEmail developer address, or null when writing back is not offered
+ * @param onWriteToDeveloper confirm / OK — host should open the mail app
+ * @param onDone cancel, close, or Back → `onThankYouDone()`
  */
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun RateThankYouDialog(
     visible: Boolean,
+    stars: Int,
+    feedbackEmail: String?,
     onWriteToDeveloper: () -> Unit,
-    onDismiss: () -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier,
     showAppIcon: Boolean = false,
     appIcon: Painter? = null,
@@ -484,7 +488,7 @@ fun RateThankYouDialog(
 
     val isTv = isTelevision()
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = onDone,
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = false,
@@ -492,8 +496,10 @@ fun RateThankYouDialog(
         ),
     ) {
         RateThankYouDialogContent(
+            stars = stars,
+            feedbackEmail = feedbackEmail,
             onWriteToDeveloper = onWriteToDeveloper,
-            onDismiss = onDismiss,
+            onDone = onDone,
             showAppIcon = showAppIcon,
             appIcon = appIcon,
             isTv = isTv,
@@ -506,17 +512,23 @@ fun RateThankYouDialog(
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun RateThankYouDialogContent(
+    stars: Int,
+    feedbackEmail: String?,
     onWriteToDeveloper: () -> Unit,
-    onDismiss: () -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier,
     showAppIcon: Boolean = false,
     appIcon: Painter? = null,
     isTv: Boolean = false,
 ) {
+    val canWriteToDeveloper = !feedbackEmail.isNullOrBlank()
     val primaryActionFocus = remember { FocusRequester() }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(canWriteToDeveloper) {
         primaryActionFocus.requestFocus()
     }
+    // `stars` is part of RateUiState.ThankYou; the legacy FeedbackDialog does not display it.
+    @Suppress("UNUSED_VARIABLE")
+    val thankedStars = stars
 
     val maxWidth = if (isTv) 560.dp else 400.dp
     Column(
@@ -568,19 +580,22 @@ fun RateThankYouDialogContent(
                 RateActionButton(
                     text = stringResource(android.R.string.cancel),
                     isTv = isTv,
-                    onClick = onDismiss,
-                    modifier = Modifier.weight(1f),
+                    onClick = onDone,
+                    modifier = if (canWriteToDeveloper) Modifier.weight(1f) else Modifier.fillMaxWidth(),
+                    focusRequester = if (canWriteToDeveloper) null else primaryActionFocus,
                 )
-                Spacer(
-                    Modifier.width(RateAppDialogDefaults.HorizontalSpacingSmall * 2),
-                )
-                RateActionButton(
-                    text = stringResource(android.R.string.ok),
-                    isTv = isTv,
-                    onClick = onWriteToDeveloper,
-                    modifier = Modifier.weight(1f),
-                    focusRequester = primaryActionFocus,
-                )
+                if (canWriteToDeveloper) {
+                    Spacer(
+                        Modifier.width(RateAppDialogDefaults.HorizontalSpacingSmall * 2),
+                    )
+                    RateActionButton(
+                        text = stringResource(android.R.string.ok),
+                        isTv = isTv,
+                        onClick = onWriteToDeveloper,
+                        modifier = Modifier.weight(1f),
+                        focusRequester = primaryActionFocus,
+                    )
+                }
             }
         }
     }
@@ -617,7 +632,6 @@ private fun PreviewRateAppDialog(initialStars: Int, showShareButton: Boolean = f
         onStarsChange = { stars = it },
         onRate = {},
         onLater = {},
-        onNever = {},
         showShareButton = showShareButton,
     )
 }
@@ -655,7 +669,6 @@ private fun RateAppDialogTvEmptyPreview() {
             onStarsChange = {},
             onRate = {},
             onLater = {},
-            onNever = {},
             isTv = true,
         )
     }
@@ -676,37 +689,73 @@ private fun RateAppDialogTvRatedPreview() {
             onStarsChange = {},
             onRate = {},
             onLater = {},
-            onNever = {},
             isTv = true,
         )
     }
 }
 
 
-@Preview(name = "Phone light — thank you", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(name = "Phone dark — thank you", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Phone light — thank you with email", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(name = "Phone dark — thank you with email", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun RateThankYouDialogPhonePreview() {
+private fun RateThankYouDialogPhoneWithEmailPreview() {
     PhoneTheme {
         RateThankYouDialogContent(
+            stars = 3,
+            feedbackEmail = "support@example.com",
             onWriteToDeveloper = {},
-            onDismiss = {},
+            onDone = {},
+        )
+    }
+}
+
+@Preview(name = "Phone light — thank you no email", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(name = "Phone dark — thank you no email", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun RateThankYouDialogPhoneNoEmailPreview() {
+    PhoneTheme {
+        RateThankYouDialogContent(
+            stars = 2,
+            feedbackEmail = null,
+            onWriteToDeveloper = {},
+            onDone = {},
         )
     }
 }
 
 @Preview(
-    name = "TV 1080p — thank you",
+    name = "TV 1080p — thank you with email",
     device = "id:tv_1080p",
     showBackground = true,
     uiMode = Configuration.UI_MODE_TYPE_TELEVISION or Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun RateThankYouDialogTvPreview() {
+private fun RateThankYouDialogTvWithEmailPreview() {
     TvTheme {
         RateThankYouDialogContent(
+            stars = 3,
+            feedbackEmail = "support@example.com",
             onWriteToDeveloper = {},
-            onDismiss = {},
+            onDone = {},
+            isTv = true,
+        )
+    }
+}
+
+@Preview(
+    name = "TV 1080p — thank you no email",
+    device = "id:tv_1080p",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_TYPE_TELEVISION or Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun RateThankYouDialogTvNoEmailPreview() {
+    TvTheme {
+        RateThankYouDialogContent(
+            stars = 2,
+            feedbackEmail = null,
+            onWriteToDeveloper = {},
+            onDone = {},
             isTv = true,
         )
     }
