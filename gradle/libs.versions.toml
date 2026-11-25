@@ -5,7 +5,7 @@
 #agp = "8.7.3"
 accompanistSwiperefresh = "0.36.0"
 activity-compose = "1.13.0"
-agp = "9.1.0"
+agp = "9.1.1"
 analytics = "8.5.1"
 android-buildTools = "37.0"
 android-compileSdk = "37"
@@ -76,7 +76,7 @@ kotlinGradlePlugin = "2.2.21"
 kotlinStdlibJdk7 = "2.1.21"
 kotlinx-coroutines = "1.10.2"
 kotlinxSerializationJson = "1.9.0"
-ksp = "2.2.21-2.0.4"
+ksp = "2.3.12"
 ktor = "3.6.0"
 legacySupportV4 = "1.0.0"
 
@@ -248,6 +248,7 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { version.ref = "lifecycle", group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose"}
 [plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { version.ref = "agp", id = "com.android.application"}
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt = { version.ref = "hilt", id = "com.google.dagger.hilt.android"}
