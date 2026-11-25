@@ -43,4 +43,5 @@
     <string name="rateme_cd_close">Закрыть</string>
     <string name="rateme_cd_share">Поделиться</string>
     <string name="rateme_cd_star">%1$d из 5 звёзд</string>
+    <string name="rate_dialog_rate_button">@string/rateme__dialog_first_button_rate</string>
 </resources>

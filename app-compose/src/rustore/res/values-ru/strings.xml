@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RuStore: rate button without store name (RuStore moderation). -->
+<resources>
+    <string name="rate_dialog_rate_button">Оценить приложение</string>
+</resources>

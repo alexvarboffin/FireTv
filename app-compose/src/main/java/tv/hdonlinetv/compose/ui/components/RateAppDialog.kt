@@ -84,7 +84,7 @@ import tv.hdonlinetv.compose.ui.tv.theme.TvTheme
  * D-pad focus, focus indication and TV previews are still implemented here for completeness.
  *
  * Legacy action mapping:
- * - 5 stars + "Rate" (`rateme__dialog_first_button_rate`) → [onRate]
+ * - 5 stars + "Rate" (`rate_dialog_rate_button`) → [onRate]
  * - 1–4 stars + "Thanks" (`rateme__dialog_first_thanks`) → [onLater]
  * - Close (X) and Back → [onLater] (legacy had no Never button; dialog was `setCancelable(false)`)
  * - Optional share icon (hidden by default, same as the RateAppModule builder) → [onShare]
@@ -230,7 +230,7 @@ fun RateAppDialogContent(
             }
             if (showRate) {
                 RateActionButton(
-                    text = stringResource(R.string.rateme__dialog_first_button_rate),
+                    text = stringResource(R.string.rate_dialog_rate_button),
                     isTv = isTv,
                     onClick = { onRate(stars) },
                     modifier = Modifier.fillMaxWidth(),

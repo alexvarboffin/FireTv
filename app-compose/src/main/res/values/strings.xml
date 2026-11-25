@@ -57,4 +57,6 @@
 
     <!-- UTV-R6c: legacy WalhallaUI rateme__email_subject (low-rating feedback e-mail). -->
     <string name="rate_feedback_subject" translatable="false">🥇Feedback for %1$s</string>
+    <!-- Rate button; gplay = library text, rustore overrides it (no store name). -->
+    <string name="rate_dialog_rate_button">@string/rateme__dialog_first_button_rate</string>
 </resources>
