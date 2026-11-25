@@ -36,3 +36,20 @@ fun rateTargetCandidates(store: Store, packageName: String, webFallback: Store):
         }
         add(RateTarget(web, null))
     }
+
+/**
+ * UTV-R5: first candidate of [rateTargetCandidates] the device can handle;
+ * the last candidate (https) is the final fallback even if [canHandle] rejects it.
+ * Pure: [canHandle] is supplied by the app (Intent + resolveActivity).
+ *
+ * @param webFallback [webFallbackFor] of the build flavor (BuildConfig.STORE).
+ */
+fun resolveRateTarget(
+    packageName: String,
+    installerPackage: String?,
+    webFallback: Store,
+    canHandle: (RateTarget) -> Boolean,
+): RateTarget {
+    val candidates = rateTargetCandidates(selectStore(installerPackage), packageName, webFallback)
+    return candidates.firstOrNull(canHandle) ?: candidates.last()
+}

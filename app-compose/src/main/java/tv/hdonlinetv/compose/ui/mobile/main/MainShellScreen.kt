@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 import tv.hdonlinetv.compose.BuildConfig
 import tv.hdonlinetv.compose.R
 import tv.hdonlinetv.compose.ads.AdMobBanner
+import tv.hdonlinetv.compose.rate.openRateStore
 import tv.hdonlinetv.compose.core.presentation.category.CategoryViewModel
 import tv.hdonlinetv.compose.core.presentation.category.CategoryViewModelFactory
 import tv.hdonlinetv.compose.core.presentation.channel.ChannelListViewModel
@@ -69,7 +70,6 @@ import tv.hdonlinetv.compose.ui.mobile.components.LegacyTopAppBar
 import tv.hdonlinetv.compose.ui.mobile.favorites.FavoritesScreen
 import tv.hdonlinetv.compose.ui.mobile.playlist.PlaylistTabScreen
 import tv.hdonlinetv.compose.util.startActivitySafe
-import androidx.core.net.toUri
 
 private val tabTitleRes = listOf(
     R.string.tab_playlists,
@@ -207,12 +207,7 @@ fun MainShellScreen() {
                                 label = stringResource(R.string.menu_rate),
                                 onClick = {
                                     scope.launch { drawerState.close() }
-                                    context.startActivitySafe(
-                                        Intent(
-                                            Intent.ACTION_VIEW,
-                                            "market://details?id=${context.packageName}".toUri(),
-                                        ),
-                                    )
+                                    context.openRateStore()
                                 },
                             )
                             LegacyDrawerItem(
